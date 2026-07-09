@@ -1,0 +1,21 @@
+airflow_systemd
+===============
+
+.. py:module:: airflow_systemd
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   airflow_systemd.__version__
+
+
+Package Contents
+----------------
+
+.. py:data:: __version__
+   :value: '0.1.0'
+
+
