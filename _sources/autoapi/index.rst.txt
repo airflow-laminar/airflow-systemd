@@ -6,7 +6,10 @@ This page contains auto-generated API reference documentation [#f1]_.
 .. toctree::
    :titlesonly:
 
-   /autoapi/test_all/index
+   /autoapi/conftest/index
+   /autoapi/test_task/index
+   /autoapi/test_local/index
+   /autoapi/test_config/index
    /autoapi/airflow_systemd/index
 
 .. [#f1] Created with `sphinx-autoapi <https://github.com/readthedocs/sphinx-autoapi>`_

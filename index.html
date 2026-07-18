@@ -198,8 +198,22 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/test_all/index.html">test_all</a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/airflow_systemd/index.html">airflow_systemd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/conftest/index.html">conftest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_task/index.html">test_task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_local/index.html">test_local</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_config/index.html">test_config</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/airflow_systemd/index.html">airflow_systemd</a><input aria-label="Toggle navigation of airflow_systemd" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/airflow_systemd/airflow/index.html">airflow_systemd.airflow</a><input aria-label="Toggle navigation of airflow_systemd.airflow" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/airflow/local/index.html">airflow_systemd.airflow.local</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/airflow_systemd/config/index.html">airflow_systemd.config</a><input aria-label="Toggle navigation of airflow_systemd.config" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/config/systemd/index.html">airflow_systemd.config.systemd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/config/task/index.html">airflow_systemd.config.task</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -251,6 +265,35 @@
 <a class="reference external" href="https://pypi.python.org/pypi/airflow-systemd"><img alt="PyPI" src="https://img.shields.io/pypi/v/airflow-systemd.svg" /></a></p>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">airflow-systemd</span></code> mirrors <code class="docutils literal notranslate"><span class="pre">airflow-supervisor</span></code> for hosts managed by systemd. It turns a
+<code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration</span></code> into an Airflow task lifecycle:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>configure-systemd -&gt; start-services -&gt; check-services
+                                      |             |
+                                      v             v
+                               restart-services  stop-services -&gt; unconfigure-systemd
+</pre></div>
+</div>
+<p>Airflow owns scheduling, so this integration runs service units directly rather than
+starting systemd timer units. Timer models remain available through <code class="docutils literal notranslate"><span class="pre">systemd-pydantic</span></code>
+for non-Airflow consumers.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">airflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAG</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">airflow_systemd</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceConfiguration</span><span class="p">,</span> <span class="n">ServiceUnitConfiguration</span><span class="p">,</span> <span class="n">Systemd</span><span class="p">,</span> <span class="n">SystemdAirflowConfiguration</span>
+
+<span class="n">dag</span> <span class="o">=</span> <span class="n">DAG</span><span class="p">(</span><span class="n">dag_id</span><span class="o">=</span><span class="s2">&quot;long-running-job&quot;</span><span class="p">,</span> <span class="n">schedule</span><span class="o">=</span><span class="s2">&quot;@daily&quot;</span><span class="p">)</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">SystemdAirflowConfiguration</span><span class="p">(</span>
+    <span class="n">service</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;long-running-job&quot;</span><span class="p">:</span> <span class="n">ServiceUnitConfiguration</span><span class="p">(</span>
+            <span class="n">service</span><span class="o">=</span><span class="n">ServiceConfiguration</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">&quot;exec&quot;</span><span class="p">,</span> <span class="n">exec_start</span><span class="o">=</span><span class="s2">&quot;/opt/jobs/run&quot;</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">Systemd</span><span class="p">(</span><span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The local integration supports the same Airflow-specific controls as
+<code class="docutils literal notranslate"><span class="pre">airflow-supervisor</span></code>: status interval and timeout, runtime/end-time limits, retrigger
+limits, pools, optional restart behavior, stop-on-exit, and cleanup.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This library was generated using <a class="reference external" href="https://copier.readthedocs.io/en/stable/">copier</a> from the <a class="reference external" href="https://github.com/python-project-templates/base">Base Python Project Template repository</a>.</p>

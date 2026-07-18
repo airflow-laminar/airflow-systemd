@@ -1,17 +1,7 @@
-airflow_systemd
-===============
+airflow_systemd.config.task
+===========================
 
-.. py:module:: airflow_systemd
-
-
-Submodules
-----------
-
-.. toctree::
-   :maxdepth: 1
-
-   /autoapi/airflow_systemd/airflow/index
-   /autoapi/airflow_systemd/config/index
+.. py:module:: airflow_systemd.config.task
 
 
 Attributes
@@ -19,10 +9,8 @@ Attributes
 
 .. autoapisummary::
 
-   airflow_systemd.load_airflow_config
-   airflow_systemd.SystemdOperator
-   airflow_systemd.SystemdOperatorArgs
-   airflow_systemd.__version__
+   airflow_systemd.config.task.SystemdOperatorArgs
+   airflow_systemd.config.task.SystemdOperator
 
 
 Classes
@@ -30,112 +18,99 @@ Classes
 
 .. autoapisummary::
 
-   airflow_systemd.Systemd
-   airflow_systemd.SystemdAirflowConfiguration
-   airflow_systemd.SystemdTask
-   airflow_systemd.SystemdTaskArgs
+   airflow_systemd.config.task.SystemdTaskArgs
+   airflow_systemd.config.task.SystemdTask
 
 
-Package Contents
-----------------
+Module Contents
+---------------
 
-.. py:class:: Systemd(dag: DAG, cfg: airflow_systemd.config.systemd.SystemdAirflowConfiguration | dict, **kwargs: Any)
+.. py:class:: SystemdTaskArgs(/, **data: Any)
 
-   Airflow task group for a locally managed systemd job.
+   Bases: :py:obj:`airflow_pydantic.TaskArgs`
 
 
-   .. py:attribute:: _cfg
+   !!! abstract "Usage Documentation"
+       [Models](../concepts/models.md)
 
+   A base class for creating Pydantic models.
 
-   .. py:attribute:: _pool
+   .. attribute:: __class_vars__
 
+      The names of the class variables defined on the model.
 
-   .. py:attribute:: _systemd_client
+   .. attribute:: __private_attributes__
 
+      Metadata about the private attributes of the model.
 
-   .. py:attribute:: _dag
+   .. attribute:: __signature__
 
+      The synthesized `__init__` [`Signature`][inspect.Signature] of the model.
 
-   .. py:attribute:: _force_kill
+   .. attribute:: __pydantic_complete__
 
+      Whether model building is completed, or if there are still undefined fields.
 
-   .. py:method:: setup_dag() -> None
+   .. attribute:: __pydantic_core_schema__
 
+      The core schema of the model.
 
-   .. py:method:: initialize_tasks() -> None
+   .. attribute:: __pydantic_custom_init__
 
+      Whether the model has a custom `__init__` function.
 
-   .. py:property:: configure_systemd
-      :type: Operator
+   .. attribute:: __pydantic_decorators__
 
+      Metadata containing the decorators defined on the model.
+      This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
 
+   .. attribute:: __pydantic_generic_metadata__
 
-   .. py:property:: start_services
-      :type: Operator
+      A dictionary containing metadata about generic Pydantic models.
+      The `origin` and `args` items map to the [`__origin__`][genericalias.__origin__]
+      and [`__args__`][genericalias.__args__] attributes of [generic aliases][types-genericalias],
+      and the `parameter` item maps to the `__parameter__` attribute of generic classes.
 
+   .. attribute:: __pydantic_parent_namespace__
 
+      Parent namespace of the model, used for automatic rebuilding of models.
 
-   .. py:property:: check_services
-      :type: airflow_ha.HighAvailabilityOperator
+   .. attribute:: __pydantic_post_init__
 
+      The name of the post-init method for the model, if defined.
 
+   .. attribute:: __pydantic_root_model__
 
-   .. py:property:: stop_services
-      :type: Operator
+      Whether the model is a [`RootModel`][pydantic.root_model.RootModel].
 
+   .. attribute:: __pydantic_serializer__
 
+      The `pydantic-core` `SchemaSerializer` used to dump instances of the model.
 
-   .. py:property:: restart_services
-      :type: Operator
+   .. attribute:: __pydantic_validator__
 
+      The `pydantic-core` `SchemaValidator` used to validate instances of the model.
 
+   .. attribute:: __pydantic_fields__
 
-   .. py:property:: unconfigure_systemd
-      :type: Operator
+      A dictionary of field names and their corresponding [`FieldInfo`][pydantic.fields.FieldInfo] objects.
 
+   .. attribute:: __pydantic_computed_fields__
 
+      A dictionary of computed field names and their corresponding [`ComputedFieldInfo`][pydantic.fields.ComputedFieldInfo] objects.
 
-   .. py:property:: systemd_client
-      :type: systemd_pydantic.SystemdClient
+   .. attribute:: __pydantic_extra__
 
+      A dictionary containing extra values, if [`extra`][pydantic.config.ConfigDict.extra]
+      is set to `'allow'`.
 
+   .. attribute:: __pydantic_fields_set__
 
-   .. py:method:: get_base_operator_kwargs() -> dict[str, Any]
+      The names of fields explicitly set during instantiation.
 
+   .. attribute:: __pydantic_private__
 
-   .. py:method:: get_step_kwargs(step: Step) -> dict[str, Any]
-
-
-   .. py:method:: get_step_operator(step: Step) -> Operator
-
-
-   .. py:method:: __lshift__(other: Operator) -> Operator
-
-
-   .. py:method:: __rshift__(other: Operator) -> Operator
-
-
-   .. py:method:: set_upstream(other: Operator) -> None
-
-
-   .. py:method:: set_downstream(other: Operator) -> None
-
-
-   .. py:method:: update_relative(other: Operator, upstream: bool = True, edge_modifier: Any = None) -> Systemd
-
-
-   .. py:property:: leaves
-
-
-   .. py:property:: roots
-
-
-.. py:class:: SystemdAirflowConfiguration(/, **data: Any)
-
-   Bases: :py:obj:`systemd_pydantic.SystemdConvenienceConfiguration`
-
-
-   Systemd configuration for an Airflow-managed job.
+      Values of private attributes set on the model instance.
 
    Create a new model by parsing and validating input data from keyword arguments.
 
@@ -145,75 +120,9 @@ Package Contents
    `self` is explicitly positional-only to allow `self` as a field name.
 
 
-   .. py:attribute:: check_interval
-      :type:  datetime.timedelta
-      :value: None
+   .. py:attribute:: cfg
+      :type:  airflow_systemd.config.systemd.SystemdAirflowConfiguration
 
-
-
-   .. py:attribute:: check_timeout
-      :type:  datetime.timedelta
-      :value: None
-
-
-
-   .. py:attribute:: runtime
-      :type:  datetime.timedelta | None
-      :value: None
-
-
-
-   .. py:attribute:: endtime
-      :type:  datetime.time | None
-      :value: None
-
-
-
-   .. py:attribute:: maxretrigger
-      :type:  int | None
-      :value: None
-
-
-
-   .. py:attribute:: reference_date
-      :type:  Literal['start_date', 'logical_date', 'data_interval_end']
-      :value: None
-
-
-
-   .. py:attribute:: pool
-      :type:  str | airflow_pydantic.Pool | None
-      :value: None
-
-
-
-   .. py:attribute:: stop_on_exit
-      :type:  bool
-      :value: None
-
-
-
-   .. py:attribute:: cleanup
-      :type:  bool
-      :value: None
-
-
-
-   .. py:attribute:: restart_on_initial
-      :type:  bool
-      :value: None
-
-
-
-   .. py:attribute:: restart_on_retrigger
-      :type:  bool
-      :value: None
-
-
-
-.. py:data:: load_airflow_config
-
-.. py:data:: SystemdOperator
 
 .. py:data:: SystemdOperatorArgs
 
@@ -323,106 +232,5 @@ Package Contents
 
 
 
-.. py:class:: SystemdTaskArgs(/, **data: Any)
-
-   Bases: :py:obj:`airflow_pydantic.TaskArgs`
-
-
-   !!! abstract "Usage Documentation"
-       [Models](../concepts/models.md)
-
-   A base class for creating Pydantic models.
-
-   .. attribute:: __class_vars__
-
-      The names of the class variables defined on the model.
-
-   .. attribute:: __private_attributes__
-
-      Metadata about the private attributes of the model.
-
-   .. attribute:: __signature__
-
-      The synthesized `__init__` [`Signature`][inspect.Signature] of the model.
-
-   .. attribute:: __pydantic_complete__
-
-      Whether model building is completed, or if there are still undefined fields.
-
-   .. attribute:: __pydantic_core_schema__
-
-      The core schema of the model.
-
-   .. attribute:: __pydantic_custom_init__
-
-      Whether the model has a custom `__init__` function.
-
-   .. attribute:: __pydantic_decorators__
-
-      Metadata containing the decorators defined on the model.
-      This replaces `Model.__validators__` and `Model.__root_validators__` from Pydantic V1.
-
-   .. attribute:: __pydantic_generic_metadata__
-
-      A dictionary containing metadata about generic Pydantic models.
-      The `origin` and `args` items map to the [`__origin__`][genericalias.__origin__]
-      and [`__args__`][genericalias.__args__] attributes of [generic aliases][types-genericalias],
-      and the `parameter` item maps to the `__parameter__` attribute of generic classes.
-
-   .. attribute:: __pydantic_parent_namespace__
-
-      Parent namespace of the model, used for automatic rebuilding of models.
-
-   .. attribute:: __pydantic_post_init__
-
-      The name of the post-init method for the model, if defined.
-
-   .. attribute:: __pydantic_root_model__
-
-      Whether the model is a [`RootModel`][pydantic.root_model.RootModel].
-
-   .. attribute:: __pydantic_serializer__
-
-      The `pydantic-core` `SchemaSerializer` used to dump instances of the model.
-
-   .. attribute:: __pydantic_validator__
-
-      The `pydantic-core` `SchemaValidator` used to validate instances of the model.
-
-   .. attribute:: __pydantic_fields__
-
-      A dictionary of field names and their corresponding [`FieldInfo`][pydantic.fields.FieldInfo] objects.
-
-   .. attribute:: __pydantic_computed_fields__
-
-      A dictionary of computed field names and their corresponding [`ComputedFieldInfo`][pydantic.fields.ComputedFieldInfo] objects.
-
-   .. attribute:: __pydantic_extra__
-
-      A dictionary containing extra values, if [`extra`][pydantic.config.ConfigDict.extra]
-      is set to `'allow'`.
-
-   .. attribute:: __pydantic_fields_set__
-
-      The names of fields explicitly set during instantiation.
-
-   .. attribute:: __pydantic_private__
-
-      Values of private attributes set on the model instance.
-
-   Create a new model by parsing and validating input data from keyword arguments.
-
-   Raises [`ValidationError`][pydantic_core.ValidationError] if the input data cannot be
-   validated to form a valid model.
-
-   `self` is explicitly positional-only to allow `self` as a field name.
-
-
-   .. py:attribute:: cfg
-      :type:  airflow_systemd.config.systemd.SystemdAirflowConfiguration
-
-
-.. py:data:: __version__
-   :value: '0.1.0'
-
+.. py:data:: SystemdOperator
 

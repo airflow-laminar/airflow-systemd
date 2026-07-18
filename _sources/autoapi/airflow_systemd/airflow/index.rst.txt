@@ -1,0 +1,117 @@
+airflow_systemd.airflow
+=======================
+
+.. py:module:: airflow_systemd.airflow
+
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 1
+
+   /autoapi/airflow_systemd/airflow/local/index
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   airflow_systemd.airflow.Systemd
+
+
+Package Contents
+----------------
+
+.. py:class:: Systemd(dag: DAG, cfg: airflow_systemd.config.systemd.SystemdAirflowConfiguration | dict, **kwargs: Any)
+
+   Airflow task group for a locally managed systemd job.
+
+
+   .. py:attribute:: _cfg
+
+
+   .. py:attribute:: _pool
+
+
+   .. py:attribute:: _systemd_client
+
+
+   .. py:attribute:: _dag
+
+
+   .. py:attribute:: _force_kill
+
+
+   .. py:method:: setup_dag() -> None
+
+
+   .. py:method:: initialize_tasks() -> None
+
+
+   .. py:property:: configure_systemd
+      :type: Operator
+
+
+
+   .. py:property:: start_services
+      :type: Operator
+
+
+
+   .. py:property:: check_services
+      :type: airflow_ha.HighAvailabilityOperator
+
+
+
+   .. py:property:: stop_services
+      :type: Operator
+
+
+
+   .. py:property:: restart_services
+      :type: Operator
+
+
+
+   .. py:property:: unconfigure_systemd
+      :type: Operator
+
+
+
+   .. py:property:: systemd_client
+      :type: systemd_pydantic.SystemdClient
+
+
+
+   .. py:method:: get_base_operator_kwargs() -> dict[str, Any]
+
+
+   .. py:method:: get_step_kwargs(step: Step) -> dict[str, Any]
+
+
+   .. py:method:: get_step_operator(step: Step) -> Operator
+
+
+   .. py:method:: __lshift__(other: Operator) -> Operator
+
+
+   .. py:method:: __rshift__(other: Operator) -> Operator
+
+
+   .. py:method:: set_upstream(other: Operator) -> None
+
+
+   .. py:method:: set_downstream(other: Operator) -> None
+
+
+   .. py:method:: update_relative(other: Operator, upstream: bool = True, edge_modifier: Any = None) -> Systemd
+
+
+   .. py:property:: leaves
+
+
+   .. py:property:: roots
+
+

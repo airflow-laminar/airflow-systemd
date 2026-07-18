@@ -1,0 +1,53 @@
+test_local
+==========
+
+.. py:module:: test_local
+
+
+Attributes
+----------
+
+.. autoapisummary::
+
+   test_local.DAG
+
+
+Classes
+-------
+
+.. autoapisummary::
+
+   test_local.TestSystemd
+
+
+Module Contents
+---------------
+
+.. py:data:: DAG
+   :type:  Any
+
+.. py:class:: TestSystemd
+
+   .. py:method:: create_systemd(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration, dag_id: str = 'systemd-callbacks')
+      :staticmethod:
+
+
+
+   .. py:method:: test_task_graph(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+
+
+   .. py:method:: test_optional_cleanup(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration, stop_on_exit: bool, cleanup: bool)
+
+
+   .. py:method:: test_dict_configuration(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+
+
+   .. py:method:: test_lifecycle_callbacks(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+
+
+   .. py:method:: test_force_kill(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+
+
+   .. py:method:: test_chaining_helpers(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+
+

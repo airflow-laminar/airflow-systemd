@@ -1,0 +1,22 @@
+test_config
+===========
+
+.. py:module:: test_config
+
+
+Functions
+---------
+
+.. autoapisummary::
+
+   test_config.test_airflow_configuration_defaults
+   test_config.test_airflow_configuration_roundtrip
+
+
+Module Contents
+---------------
+
+.. py:function:: test_airflow_configuration_defaults(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+
+.. py:function:: test_airflow_configuration_roundtrip(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+

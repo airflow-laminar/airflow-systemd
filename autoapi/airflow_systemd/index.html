@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="prev" title="test_all" href="../test_all/index.html">
+<link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html"><link rel="next" title="airflow_systemd.airflow" href="airflow/index.html"><link rel="prev" title="test_config" href="../test_config/index.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
         <title>airflow_systemd - airflow-systemd v0.1.0</title>
@@ -198,8 +198,22 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../test_all/index.html">test_all</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">airflow_systemd</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../conftest/index.html">conftest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../test_task/index.html">test_task</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../test_local/index.html">test_local</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../test_config/index.html">test_config</a></li>
+<li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">airflow_systemd</a><input aria-label="Toggle navigation of airflow_systemd" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="airflow/index.html">airflow_systemd.airflow</a><input aria-label="Toggle navigation of airflow_systemd.airflow" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="airflow/local/index.html">airflow_systemd.airflow.local</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="config/index.html">airflow_systemd.config</a><input aria-label="Toggle navigation of airflow_systemd.config" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="config/systemd/index.html">airflow_systemd.config.systemd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="config/task/index.html">airflow_systemd.config.task</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -242,13 +256,52 @@
         <article role="main" id="furo-main-content">
           <section id="module-airflow_systemd">
 <span id="airflow-systemd"></span><h1>airflow_systemd<a class="headerlink" href="#module-airflow_systemd" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="airflow/index.html">airflow_systemd.airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config/index.html">airflow_systemd.config</a></li>
+</ul>
+</div>
+</section>
 <section id="attributes">
 <h2>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper autosummary longtable docutils container">
 <table class="autosummary longtable docutils align-default">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#airflow_systemd.__version__" title="airflow_systemd.__version__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__version__</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#airflow_systemd.load_airflow_config" title="airflow_systemd.load_airflow_config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_airflow_config</span></code></a></p></td>
 <td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#airflow_systemd.SystemdOperator" title="airflow_systemd.SystemdOperator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemdOperator</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#airflow_systemd.SystemdOperatorArgs" title="airflow_systemd.SystemdOperatorArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemdOperatorArgs</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#airflow_systemd.__version__" title="airflow_systemd.__version__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__version__</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper autosummary longtable docutils container">
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#airflow_systemd.Systemd" title="airflow_systemd.Systemd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Systemd</span></code></a></p></td>
+<td><p>Airflow task group for a locally managed systemd job.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration" title="airflow_systemd.SystemdAirflowConfiguration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration</span></code></a></p></td>
+<td><p>Systemd configuration for an Airflow-managed job.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#airflow_systemd.SystemdTask" title="airflow_systemd.SystemdTask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemdTask</span></code></a></p></td>
+<td><p>!!! abstract &quot;Usage Documentation&quot;</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs" title="airflow_systemd.SystemdTaskArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemdTaskArgs</span></code></a></p></td>
+<td><p>!!! abstract &quot;Usage Documentation&quot;</p></td>
 </tr>
 </tbody>
 </table>
@@ -256,6 +309,484 @@
 </section>
 <section id="package-contents">
 <h2>Package Contents<a class="headerlink" href="#package-contents" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">airflow_systemd.</span></span><span class="sig-name descname"><span class="pre">Systemd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="config/systemd/index.html#airflow_systemd.config.systemd.SystemdAirflowConfiguration" title="airflow_systemd.config.systemd.SystemdAirflowConfiguration"><span class="pre">airflow_systemd.config.systemd.SystemdAirflowConfiguration</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd" title="Link to this definition">¶</a></dt>
+<dd><p>Airflow task group for a locally managed systemd job.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd._cfg">
+<span class="sig-name descname"><span class="pre">_cfg</span></span><a class="headerlink" href="#airflow_systemd.Systemd._cfg" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd._pool">
+<span class="sig-name descname"><span class="pre">_pool</span></span><a class="headerlink" href="#airflow_systemd.Systemd._pool" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd._systemd_client">
+<span class="sig-name descname"><span class="pre">_systemd_client</span></span><a class="headerlink" href="#airflow_systemd.Systemd._systemd_client" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd._dag">
+<span class="sig-name descname"><span class="pre">_dag</span></span><a class="headerlink" href="#airflow_systemd.Systemd._dag" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd._force_kill">
+<span class="sig-name descname"><span class="pre">_force_kill</span></span><a class="headerlink" href="#airflow_systemd.Systemd._force_kill" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.setup_dag">
+<span class="sig-name descname"><span class="pre">setup_dag</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.setup_dag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.setup_dag" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.initialize_tasks">
+<span class="sig-name descname"><span class="pre">initialize_tasks</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.initialize_tasks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.initialize_tasks" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.configure_systemd">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">configure_systemd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Operator</span></em><a class="headerlink" href="#airflow_systemd.Systemd.configure_systemd" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.start_services">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">start_services</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Operator</span></em><a class="headerlink" href="#airflow_systemd.Systemd.start_services" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.check_services">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_services</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">airflow_ha.HighAvailabilityOperator</span></em><a class="headerlink" href="#airflow_systemd.Systemd.check_services" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.stop_services">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stop_services</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Operator</span></em><a class="headerlink" href="#airflow_systemd.Systemd.stop_services" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.restart_services">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">restart_services</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Operator</span></em><a class="headerlink" href="#airflow_systemd.Systemd.restart_services" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.unconfigure_systemd">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">unconfigure_systemd</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Operator</span></em><a class="headerlink" href="#airflow_systemd.Systemd.unconfigure_systemd" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.systemd_client">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">systemd_client</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">systemd_pydantic.SystemdClient</span></em><a class="headerlink" href="#airflow_systemd.Systemd.systemd_client" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.get_base_operator_kwargs">
+<span class="sig-name descname"><span class="pre">get_base_operator_kwargs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.get_base_operator_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.get_base_operator_kwargs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.get_step_kwargs">
+<span class="sig-name descname"><span class="pre">get_step_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Step</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.get_step_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.get_step_kwargs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.get_step_operator">
+<span class="sig-name descname"><span class="pre">get_step_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Step</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Operator</span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.get_step_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.get_step_operator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.__lshift__">
+<span class="sig-name descname"><span class="pre">__lshift__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Operator</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Operator</span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.__lshift__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.__lshift__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.__rshift__">
+<span class="sig-name descname"><span class="pre">__rshift__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Operator</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Operator</span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.__rshift__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.__rshift__" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.set_upstream">
+<span class="sig-name descname"><span class="pre">set_upstream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Operator</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.set_upstream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.set_upstream" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.set_downstream">
+<span class="sig-name descname"><span class="pre">set_downstream</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Operator</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.set_downstream"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.set_downstream" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.update_relative">
+<span class="sig-name descname"><span class="pre">update_relative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Operator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upstream</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_modifier</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#airflow_systemd.Systemd" title="airflow_systemd.Systemd"><span class="pre">Systemd</span></a></span></span><a class="reference internal" href="../../_modules/airflow_systemd/airflow/local.html#Systemd.update_relative"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.Systemd.update_relative" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.leaves">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">leaves</span></span><a class="headerlink" href="#airflow_systemd.Systemd.leaves" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="airflow_systemd.Systemd.roots">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">roots</span></span><a class="headerlink" href="#airflow_systemd.Systemd.roots" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">airflow_systemd.</span></span><span class="sig-name descname"><span class="pre">SystemdAirflowConfiguration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**data:</span> <span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/airflow_systemd/config/systemd.html#SystemdAirflowConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">systemd_pydantic.SystemdConvenienceConfiguration</span></code></p>
+<p>Systemd configuration for an Airflow-managed job.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<cite>ValidationError</cite>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><cite>self</cite> is explicitly positional-only to allow <cite>self</cite> as a field name.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.check_interval">
+<span class="sig-name descname"><span class="pre">check_interval</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.timedelta</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.check_interval" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.check_timeout">
+<span class="sig-name descname"><span class="pre">check_timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.timedelta</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.check_timeout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.runtime">
+<span class="sig-name descname"><span class="pre">runtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.timedelta</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.runtime" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.endtime">
+<span class="sig-name descname"><span class="pre">endtime</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime.time</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.endtime" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.maxretrigger">
+<span class="sig-name descname"><span class="pre">maxretrigger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.maxretrigger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.reference_date">
+<span class="sig-name descname"><span class="pre">reference_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'start_date'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'logical_date'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'data_interval_end'</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.reference_date" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.pool">
+<span class="sig-name descname"><span class="pre">pool</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">airflow_pydantic.Pool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.pool" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.stop_on_exit">
+<span class="sig-name descname"><span class="pre">stop_on_exit</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.stop_on_exit" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.cleanup" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.restart_on_initial">
+<span class="sig-name descname"><span class="pre">restart_on_initial</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.restart_on_initial" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdAirflowConfiguration.restart_on_retrigger">
+<span class="sig-name descname"><span class="pre">restart_on_retrigger</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdAirflowConfiguration.restart_on_retrigger" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="airflow_systemd.load_airflow_config">
+<span class="sig-prename descclassname"><span class="pre">airflow_systemd.</span></span><span class="sig-name descname"><span class="pre">load_airflow_config</span></span><a class="headerlink" href="#airflow_systemd.load_airflow_config" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdOperator">
+<span class="sig-prename descclassname"><span class="pre">airflow_systemd.</span></span><span class="sig-name descname"><span class="pre">SystemdOperator</span></span><a class="headerlink" href="#airflow_systemd.SystemdOperator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdOperatorArgs">
+<span class="sig-prename descclassname"><span class="pre">airflow_systemd.</span></span><span class="sig-name descname"><span class="pre">SystemdOperatorArgs</span></span><a class="headerlink" href="#airflow_systemd.SystemdOperatorArgs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">airflow_systemd.</span></span><span class="sig-name descname"><span class="pre">SystemdTask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**data:</span> <span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/airflow_systemd/config/task.html#SystemdTask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.SystemdTask" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">airflow_pydantic.Task</span></code>, <a class="reference internal" href="#airflow_systemd.SystemdTaskArgs" title="airflow_systemd.SystemdTaskArgs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemdTaskArgs</span></code></a></p>
+<dl class="simple">
+<dt>!!! abstract “Usage Documentation”</dt><dd><p>[Models](../concepts/models.md)</p>
+</dd>
+</dl>
+<p>A base class for creating Pydantic models.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__class_vars__">
+<span class="sig-name descname"><span class="pre">__class_vars__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__class_vars__" title="Link to this definition">¶</a></dt>
+<dd><p>The names of the class variables defined on the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__private_attributes__">
+<span class="sig-name descname"><span class="pre">__private_attributes__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__private_attributes__" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the private attributes of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__signature__">
+<span class="sig-name descname"><span class="pre">__signature__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__signature__" title="Link to this definition">¶</a></dt>
+<dd><p>The synthesized <cite>__init__</cite> [<cite>Signature</cite>][inspect.Signature] of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_complete__">
+<span class="sig-name descname"><span class="pre">__pydantic_complete__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_complete__" title="Link to this definition">¶</a></dt>
+<dd><p>Whether model building is completed, or if there are still undefined fields.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_core_schema__">
+<span class="sig-name descname"><span class="pre">__pydantic_core_schema__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_core_schema__" title="Link to this definition">¶</a></dt>
+<dd><p>The core schema of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_custom_init__">
+<span class="sig-name descname"><span class="pre">__pydantic_custom_init__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_custom_init__" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the model has a custom <cite>__init__</cite> function.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_decorators__">
+<span class="sig-name descname"><span class="pre">__pydantic_decorators__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_decorators__" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata containing the decorators defined on the model.
+This replaces <cite>Model.__validators__</cite> and <cite>Model.__root_validators__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_generic_metadata__">
+<span class="sig-name descname"><span class="pre">__pydantic_generic_metadata__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_generic_metadata__" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary containing metadata about generic Pydantic models.
+The <cite>origin</cite> and <cite>args</cite> items map to the [<cite>__origin__</cite>][genericalias.__origin__]
+and [<cite>__args__</cite>][genericalias.__args__] attributes of [generic aliases][types-genericalias],
+and the <cite>parameter</cite> item maps to the <cite>__parameter__</cite> attribute of generic classes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_parent_namespace__">
+<span class="sig-name descname"><span class="pre">__pydantic_parent_namespace__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_parent_namespace__" title="Link to this definition">¶</a></dt>
+<dd><p>Parent namespace of the model, used for automatic rebuilding of models.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_post_init__">
+<span class="sig-name descname"><span class="pre">__pydantic_post_init__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_post_init__" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the post-init method for the model, if defined.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_root_model__">
+<span class="sig-name descname"><span class="pre">__pydantic_root_model__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_root_model__" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the model is a [<cite>RootModel</cite>][pydantic.root_model.RootModel].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_serializer__">
+<span class="sig-name descname"><span class="pre">__pydantic_serializer__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_serializer__" title="Link to this definition">¶</a></dt>
+<dd><p>The <cite>pydantic-core</cite> <cite>SchemaSerializer</cite> used to dump instances of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_validator__">
+<span class="sig-name descname"><span class="pre">__pydantic_validator__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_validator__" title="Link to this definition">¶</a></dt>
+<dd><p>The <cite>pydantic-core</cite> <cite>SchemaValidator</cite> used to validate instances of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_fields__">
+<span class="sig-name descname"><span class="pre">__pydantic_fields__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_fields__" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of field names and their corresponding [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_computed_fields__">
+<span class="sig-name descname"><span class="pre">__pydantic_computed_fields__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_computed_fields__" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding [<cite>ComputedFieldInfo</cite>][pydantic.fields.ComputedFieldInfo] objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_extra__">
+<span class="sig-name descname"><span class="pre">__pydantic_extra__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_extra__" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary containing extra values, if [<cite>extra</cite>][pydantic.config.ConfigDict.extra]
+is set to <cite>‘allow’</cite>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_fields_set__">
+<span class="sig-name descname"><span class="pre">__pydantic_fields_set__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_fields_set__" title="Link to this definition">¶</a></dt>
+<dd><p>The names of fields explicitly set during instantiation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.__pydantic_private__">
+<span class="sig-name descname"><span class="pre">__pydantic_private__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTask.__pydantic_private__" title="Link to this definition">¶</a></dt>
+<dd><p>Values of private attributes set on the model instance.</p>
+</dd></dl>
+
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<cite>ValidationError</cite>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><cite>self</cite> is explicitly positional-only to allow <cite>self</cite> as a field name.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.operator">
+<span class="sig-name descname"><span class="pre">operator</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">airflow_pydantic.ImportPath</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.SystemdTask.operator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTask.validate_operator">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Type</span></span></span><a class="reference internal" href="../../_modules/airflow_systemd/config/task.html#SystemdTask.validate_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.SystemdTask.validate_operator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">airflow_systemd.</span></span><span class="sig-name descname"><span class="pre">SystemdTaskArgs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">/</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">**data:</span> <span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/airflow_systemd/config/task.html#SystemdTaskArgs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-obj docutils literal notranslate"><span class="pre">airflow_pydantic.TaskArgs</span></code></p>
+<dl class="simple">
+<dt>!!! abstract “Usage Documentation”</dt><dd><p>[Models](../concepts/models.md)</p>
+</dd>
+</dl>
+<p>A base class for creating Pydantic models.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__class_vars__">
+<span class="sig-name descname"><span class="pre">__class_vars__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__class_vars__" title="Link to this definition">¶</a></dt>
+<dd><p>The names of the class variables defined on the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__private_attributes__">
+<span class="sig-name descname"><span class="pre">__private_attributes__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__private_attributes__" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata about the private attributes of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__signature__">
+<span class="sig-name descname"><span class="pre">__signature__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__signature__" title="Link to this definition">¶</a></dt>
+<dd><p>The synthesized <cite>__init__</cite> [<cite>Signature</cite>][inspect.Signature] of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_complete__">
+<span class="sig-name descname"><span class="pre">__pydantic_complete__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_complete__" title="Link to this definition">¶</a></dt>
+<dd><p>Whether model building is completed, or if there are still undefined fields.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_core_schema__">
+<span class="sig-name descname"><span class="pre">__pydantic_core_schema__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_core_schema__" title="Link to this definition">¶</a></dt>
+<dd><p>The core schema of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_custom_init__">
+<span class="sig-name descname"><span class="pre">__pydantic_custom_init__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_custom_init__" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the model has a custom <cite>__init__</cite> function.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_decorators__">
+<span class="sig-name descname"><span class="pre">__pydantic_decorators__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_decorators__" title="Link to this definition">¶</a></dt>
+<dd><p>Metadata containing the decorators defined on the model.
+This replaces <cite>Model.__validators__</cite> and <cite>Model.__root_validators__</cite> from Pydantic V1.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_generic_metadata__">
+<span class="sig-name descname"><span class="pre">__pydantic_generic_metadata__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_generic_metadata__" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary containing metadata about generic Pydantic models.
+The <cite>origin</cite> and <cite>args</cite> items map to the [<cite>__origin__</cite>][genericalias.__origin__]
+and [<cite>__args__</cite>][genericalias.__args__] attributes of [generic aliases][types-genericalias],
+and the <cite>parameter</cite> item maps to the <cite>__parameter__</cite> attribute of generic classes.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_parent_namespace__">
+<span class="sig-name descname"><span class="pre">__pydantic_parent_namespace__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_parent_namespace__" title="Link to this definition">¶</a></dt>
+<dd><p>Parent namespace of the model, used for automatic rebuilding of models.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_post_init__">
+<span class="sig-name descname"><span class="pre">__pydantic_post_init__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_post_init__" title="Link to this definition">¶</a></dt>
+<dd><p>The name of the post-init method for the model, if defined.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_root_model__">
+<span class="sig-name descname"><span class="pre">__pydantic_root_model__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_root_model__" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the model is a [<cite>RootModel</cite>][pydantic.root_model.RootModel].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_serializer__">
+<span class="sig-name descname"><span class="pre">__pydantic_serializer__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_serializer__" title="Link to this definition">¶</a></dt>
+<dd><p>The <cite>pydantic-core</cite> <cite>SchemaSerializer</cite> used to dump instances of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_validator__">
+<span class="sig-name descname"><span class="pre">__pydantic_validator__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_validator__" title="Link to this definition">¶</a></dt>
+<dd><p>The <cite>pydantic-core</cite> <cite>SchemaValidator</cite> used to validate instances of the model.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_fields__">
+<span class="sig-name descname"><span class="pre">__pydantic_fields__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_fields__" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of field names and their corresponding [<cite>FieldInfo</cite>][pydantic.fields.FieldInfo] objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_computed_fields__">
+<span class="sig-name descname"><span class="pre">__pydantic_computed_fields__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_computed_fields__" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary of computed field names and their corresponding [<cite>ComputedFieldInfo</cite>][pydantic.fields.ComputedFieldInfo] objects.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_extra__">
+<span class="sig-name descname"><span class="pre">__pydantic_extra__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_extra__" title="Link to this definition">¶</a></dt>
+<dd><p>A dictionary containing extra values, if [<cite>extra</cite>][pydantic.config.ConfigDict.extra]
+is set to <cite>‘allow’</cite>.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_fields_set__">
+<span class="sig-name descname"><span class="pre">__pydantic_fields_set__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_fields_set__" title="Link to this definition">¶</a></dt>
+<dd><p>The names of fields explicitly set during instantiation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.__pydantic_private__">
+<span class="sig-name descname"><span class="pre">__pydantic_private__</span></span><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.__pydantic_private__" title="Link to this definition">¶</a></dt>
+<dd><p>Values of private attributes set on the model instance.</p>
+</dd></dl>
+
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises [<cite>ValidationError</cite>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><cite>self</cite> is explicitly positional-only to allow <cite>self</cite> as a field name.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.SystemdTaskArgs.cfg">
+<span class="sig-name descname"><span class="pre">cfg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="config/systemd/index.html#airflow_systemd.config.systemd.SystemdAirflowConfiguration" title="airflow_systemd.config.systemd.SystemdAirflowConfiguration"><span class="pre">airflow_systemd.config.systemd.SystemdAirflowConfiguration</span></a></em><a class="headerlink" href="#airflow_systemd.SystemdTaskArgs.cfg" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 <dl class="py data">
 <dt class="sig sig-object py" id="airflow_systemd.__version__">
 <span class="sig-prename descclassname"><span class="pre">airflow_systemd.</span></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0.1.0'</span></em><a class="headerlink" href="#airflow_systemd.__version__" title="Link to this definition">¶</a></dt>
@@ -269,15 +800,23 @@
       <footer>
         
         <div class="related-pages">
-          
-          <a class="prev-page" href="../test_all/index.html">
+          <a class="next-page" href="airflow/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">airflow_systemd.airflow</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../test_config/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">test_all</div>
+                <div class="title">test_config</div>
                 
               </div>
             </a>
@@ -312,8 +851,99 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">airflow_systemd</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#attributes">Attributes</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
 <li><a class="reference internal" href="#package-contents">Package Contents</a><ul>
+<li><a class="reference internal" href="#airflow_systemd.Systemd"><code class="docutils literal notranslate"><span class="pre">Systemd</span></code></a><ul>
+<li><a class="reference internal" href="#airflow_systemd.Systemd._cfg"><code class="docutils literal notranslate"><span class="pre">Systemd._cfg</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd._pool"><code class="docutils literal notranslate"><span class="pre">Systemd._pool</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd._systemd_client"><code class="docutils literal notranslate"><span class="pre">Systemd._systemd_client</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd._dag"><code class="docutils literal notranslate"><span class="pre">Systemd._dag</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd._force_kill"><code class="docutils literal notranslate"><span class="pre">Systemd._force_kill</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.setup_dag"><code class="docutils literal notranslate"><span class="pre">Systemd.setup_dag()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.initialize_tasks"><code class="docutils literal notranslate"><span class="pre">Systemd.initialize_tasks()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.configure_systemd"><code class="docutils literal notranslate"><span class="pre">Systemd.configure_systemd</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.start_services"><code class="docutils literal notranslate"><span class="pre">Systemd.start_services</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.check_services"><code class="docutils literal notranslate"><span class="pre">Systemd.check_services</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.stop_services"><code class="docutils literal notranslate"><span class="pre">Systemd.stop_services</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.restart_services"><code class="docutils literal notranslate"><span class="pre">Systemd.restart_services</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.unconfigure_systemd"><code class="docutils literal notranslate"><span class="pre">Systemd.unconfigure_systemd</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.systemd_client"><code class="docutils literal notranslate"><span class="pre">Systemd.systemd_client</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.get_base_operator_kwargs"><code class="docutils literal notranslate"><span class="pre">Systemd.get_base_operator_kwargs()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.get_step_kwargs"><code class="docutils literal notranslate"><span class="pre">Systemd.get_step_kwargs()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.get_step_operator"><code class="docutils literal notranslate"><span class="pre">Systemd.get_step_operator()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.__lshift__"><code class="docutils literal notranslate"><span class="pre">Systemd.__lshift__()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.__rshift__"><code class="docutils literal notranslate"><span class="pre">Systemd.__rshift__()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.set_upstream"><code class="docutils literal notranslate"><span class="pre">Systemd.set_upstream()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.set_downstream"><code class="docutils literal notranslate"><span class="pre">Systemd.set_downstream()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.update_relative"><code class="docutils literal notranslate"><span class="pre">Systemd.update_relative()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.leaves"><code class="docutils literal notranslate"><span class="pre">Systemd.leaves</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.Systemd.roots"><code class="docutils literal notranslate"><span class="pre">Systemd.roots</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration</span></code></a><ul>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.check_interval"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.check_interval</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.check_timeout"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.check_timeout</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.runtime"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.runtime</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.endtime"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.endtime</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.maxretrigger"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.maxretrigger</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.reference_date"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.reference_date</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.pool"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.pool</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.stop_on_exit"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.stop_on_exit</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.cleanup"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.cleanup</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.restart_on_initial"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.restart_on_initial</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdAirflowConfiguration.restart_on_retrigger"><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.restart_on_retrigger</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#airflow_systemd.load_airflow_config"><code class="docutils literal notranslate"><span class="pre">load_airflow_config</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdOperator"><code class="docutils literal notranslate"><span class="pre">SystemdOperator</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdOperatorArgs"><code class="docutils literal notranslate"><span class="pre">SystemdOperatorArgs</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask"><code class="docutils literal notranslate"><span class="pre">SystemdTask</span></code></a><ul>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__class_vars__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__class_vars__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__private_attributes__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__private_attributes__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__signature__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__signature__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_complete__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_complete__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_core_schema__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_core_schema__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_custom_init__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_custom_init__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_decorators__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_decorators__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_generic_metadata__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_generic_metadata__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_parent_namespace__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_parent_namespace__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_post_init__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_post_init__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_root_model__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_root_model__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_serializer__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_serializer__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_validator__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_validator__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_fields__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_fields__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_computed_fields__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_computed_fields__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_extra__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_extra__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_fields_set__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_fields_set__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.__pydantic_private__"><code class="docutils literal notranslate"><span class="pre">SystemdTask.__pydantic_private__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.operator"><code class="docutils literal notranslate"><span class="pre">SystemdTask.operator</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTask.validate_operator"><code class="docutils literal notranslate"><span class="pre">SystemdTask.validate_operator()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs</span></code></a><ul>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__class_vars__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__class_vars__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__private_attributes__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__private_attributes__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__signature__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__signature__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_complete__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_complete__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_core_schema__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_core_schema__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_custom_init__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_custom_init__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_decorators__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_decorators__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_generic_metadata__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_generic_metadata__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_parent_namespace__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_parent_namespace__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_post_init__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_post_init__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_root_model__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_root_model__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_serializer__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_serializer__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_validator__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_validator__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_fields__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_fields__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_computed_fields__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_computed_fields__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_extra__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_extra__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_fields_set__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_fields_set__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.__pydantic_private__"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.__pydantic_private__</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.SystemdTaskArgs.cfg"><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs.cfg</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#airflow_systemd.__version__"><code class="docutils literal notranslate"><span class="pre">__version__</span></code></a></li>
 </ul>
 </li>
