@@ -28,5 +28,10 @@ class SystemdAirflowConfiguration(SystemdConvenienceConfiguration):
     restart_on_initial: bool = Field(default=False, description="Restart services on an initial Airflow run")
     restart_on_retrigger: bool = Field(default=False, description="Restart services when airflow-ha retriggers the job")
 
+    def systemd_json(self) -> str:
+        """Serialize only fields understood by systemd-pydantic."""
+        data = self.model_dump(include=set(SystemdConvenienceConfiguration.model_fields))
+        return SystemdConvenienceConfiguration.model_validate(data).model_dump_json(exclude_unset=True)
+
 
 load_airflow_config = SystemdAirflowConfiguration.load

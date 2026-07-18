@@ -1,5 +1,7 @@
 from datetime import timedelta
 
+from systemd_pydantic import SystemdConvenienceConfiguration
+
 from airflow_systemd import SystemdAirflowConfiguration
 
 
@@ -15,3 +17,10 @@ def test_airflow_configuration_roundtrip(systemd_airflow_configuration: SystemdA
 
     assert value == systemd_airflow_configuration
     assert value._pydantic_path == systemd_airflow_configuration._pydantic_path
+
+
+def test_systemd_json_excludes_airflow_fields(systemd_airflow_configuration: SystemdAirflowConfiguration):
+    value = SystemdConvenienceConfiguration.model_validate_json(systemd_airflow_configuration.systemd_json())
+
+    assert value.service == systemd_airflow_configuration.service
+    assert "check_interval" not in systemd_airflow_configuration.systemd_json()
