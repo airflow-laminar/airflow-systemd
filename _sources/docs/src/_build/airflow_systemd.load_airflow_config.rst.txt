@@ -1,0 +1,6 @@
+﻿airflow\_systemd.load\_airflow\_config
+======================================
+
+.. currentmodule:: airflow_systemd
+
+.. autofunction:: load_airflow_config

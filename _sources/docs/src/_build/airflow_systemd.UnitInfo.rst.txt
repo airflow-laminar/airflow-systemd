@@ -1,0 +1,6 @@
+﻿airflow\_systemd.UnitInfo
+=========================
+
+.. currentmodule:: airflow_systemd
+
+.. autopydantic_model:: UnitInfo

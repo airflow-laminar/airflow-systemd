@@ -1,0 +1,6 @@
+﻿airflow\_systemd.SystemdSSHTask
+===============================
+
+.. currentmodule:: airflow_systemd
+
+.. autopydantic_model:: SystemdSSHTask

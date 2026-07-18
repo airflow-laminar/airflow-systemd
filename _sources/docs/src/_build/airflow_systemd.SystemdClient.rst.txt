@@ -1,0 +1,39 @@
+﻿airflow\_systemd.SystemdClient
+==============================
+
+.. currentmodule:: airflow_systemd
+
+.. autoclass:: SystemdClient
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SystemdClient.__init__
+      ~SystemdClient.daemon_reload
+      ~SystemdClient.disable_units
+      ~SystemdClient.enable_units
+      ~SystemdClient.get_all_service_info
+      ~SystemdClient.get_all_timer_info
+      ~SystemdClient.get_unit_info
+      ~SystemdClient.get_units_info
+      ~SystemdClient.kill_services
+      ~SystemdClient.kill_units
+      ~SystemdClient.restart_services
+      ~SystemdClient.restart_units
+      ~SystemdClient.start_services
+      ~SystemdClient.start_timers
+      ~SystemdClient.start_units
+      ~SystemdClient.stop_services
+      ~SystemdClient.stop_timers
+      ~SystemdClient.stop_units
+   
+   
+
+   
+   
+   

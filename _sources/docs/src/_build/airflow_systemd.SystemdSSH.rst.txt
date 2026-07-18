@@ -1,0 +1,44 @@
+﻿airflow\_systemd.SystemdSSH
+===========================
+
+.. currentmodule:: airflow_systemd
+
+.. autoclass:: SystemdSSH
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SystemdSSH.__init__
+      ~SystemdSSH.get_base_operator_kwargs
+      ~SystemdSSH.get_step_kwargs
+      ~SystemdSSH.get_step_operator
+      ~SystemdSSH.initialize_tasks
+      ~SystemdSSH.set_downstream
+      ~SystemdSSH.set_upstream
+      ~SystemdSSH.setup_dag
+      ~SystemdSSH.update_relative
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SystemdSSH.check_services
+      ~SystemdSSH.configure_systemd
+      ~SystemdSSH.leaves
+      ~SystemdSSH.restart_services
+      ~SystemdSSH.roots
+      ~SystemdSSH.start_services
+      ~SystemdSSH.stop_services
+      ~SystemdSSH.systemd_client
+      ~SystemdSSH.unconfigure_systemd
+   
+   

@@ -1,0 +1,6 @@
+﻿airflow\_systemd.SystemdConvenienceConfiguration
+================================================
+
+.. currentmodule:: airflow_systemd
+
+.. autopydantic_model:: SystemdConvenienceConfiguration

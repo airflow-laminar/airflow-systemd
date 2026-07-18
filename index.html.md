@@ -1,0 +1,50 @@
+# airflow-systemd
+
+Run and monitor systemd-managed jobs from Apache Airflow.
+
+[![Build Status](https://github.com/airflow-laminar/airflow-systemd/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/airflow-laminar/airflow-systemd/actions/workflows/build.yaml)
+[![codecov](https://codecov.io/gh/airflow-laminar/airflow-systemd/branch/main/graph/badge.svg)](https://codecov.io/gh/airflow-laminar/airflow-systemd)
+[![License](https://img.shields.io/github/license/airflow-laminar/airflow-systemd)](https://github.com/airflow-laminar/airflow-systemd)
+[![PyPI](https://img.shields.io/pypi/v/airflow-systemd.svg)](https://pypi.python.org/pypi/airflow-systemd)
+
+```python
+from airflow import DAG
+from airflow_systemd import ServiceConfiguration, ServiceUnitConfiguration, Systemd, SystemdAirflowConfiguration
+
+dag = DAG(dag_id="nightly-systemd", schedule="@daily")
+config = SystemdAirflowConfiguration(
+    scope="user",
+    service={
+        "nightly": ServiceUnitConfiguration(
+            service=ServiceConfiguration(type="exec", exec_start="/opt/jobs/nightly")
+        )
+    },
+)
+Systemd(dag=dag, cfg=config)
+```
+
+The generated task lifecycle writes unit files, starts services, monitors state
+with `airflow-ha`, handles retriggers, stops services, and optionally removes the
+generated configuration. `SystemdSSH` applies the same lifecycle remotely.
+
+## Documentation
+
+- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.md)
+- [How-to guides](docs/src/how-to.md)
+- [Why Airflow owns the schedule](docs/src/explanation.md)
+- [API reference](docs/src/api.md)
+
+Published documentation is available at
+[airflow-laminar.github.io/airflow-systemd](https://airflow-laminar.github.io/airflow-systemd/).
+
+## Ecosystem
+
+- [systemd-pydantic](https://github.com/airflow-laminar/systemd-pydantic) supplies unit models and the systemctl client.
+- [supervisor-pydantic](https://github.com/airflow-laminar/supervisor-pydantic) and [cron-pydantic](https://github.com/airflow-laminar/cron-pydantic) model alternative runtimes.
+- [airflow-supervisor](https://github.com/airflow-laminar/airflow-supervisor) provides the analogous supervisord lifecycle.
+- [airflow-cron](https://github.com/airflow-laminar/airflow-cron) converts cron jobs into ordinary Airflow tasks.
+- [airflow-pydantic](https://github.com/airflow-laminar/airflow-pydantic) supplies declarative task and connection models.
+- [airflow-config](https://github.com/airflow-laminar/airflow-config) produces YAML-driven DAGs.
+
+#### NOTE
+This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).

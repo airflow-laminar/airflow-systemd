@@ -1,0 +1,44 @@
+﻿airflow\_systemd.Systemd
+========================
+
+.. currentmodule:: airflow_systemd
+
+.. autoclass:: Systemd
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Systemd.__init__
+      ~Systemd.get_base_operator_kwargs
+      ~Systemd.get_step_kwargs
+      ~Systemd.get_step_operator
+      ~Systemd.initialize_tasks
+      ~Systemd.set_downstream
+      ~Systemd.set_upstream
+      ~Systemd.setup_dag
+      ~Systemd.update_relative
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Systemd.check_services
+      ~Systemd.configure_systemd
+      ~Systemd.leaves
+      ~Systemd.restart_services
+      ~Systemd.roots
+      ~Systemd.start_services
+      ~Systemd.stop_services
+      ~Systemd.systemd_client
+      ~Systemd.unconfigure_systemd
+   
+   

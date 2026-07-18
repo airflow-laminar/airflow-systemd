@@ -1,0 +1,6 @@
+﻿airflow\_systemd.TimerConfiguration
+===================================
+
+.. currentmodule:: airflow_systemd
+
+.. autopydantic_model:: TimerConfiguration

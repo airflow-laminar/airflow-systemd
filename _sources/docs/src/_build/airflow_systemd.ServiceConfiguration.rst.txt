@@ -1,0 +1,6 @@
+﻿airflow\_systemd.ServiceConfiguration
+=====================================
+
+.. currentmodule:: airflow_systemd
+
+.. autopydantic_model:: ServiceConfiguration
