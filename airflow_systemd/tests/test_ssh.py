@@ -61,6 +61,10 @@ def test_ssh_command_runner_builds_hook_lazily():
     )
     assert hook.banner_timeout == 15
 
+    default_hook = MagicMock()
+    with patch("airflow_pydantic.airflow.SSHHook", return_value=default_hook):
+        assert AirflowSSHCommandRunner(ssh_conn_id="systemd-host").get_hook() is default_hook
+
 
 def test_ssh_task_configuration(ssh_configuration: SystemdSSHAirflowConfiguration):
     host = Host(name="remote", pool="remote-pool")
