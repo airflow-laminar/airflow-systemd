@@ -1,3 +1,6 @@
+import pytest
+from pydantic import ValidationError
+
 from airflow_systemd import (
     Systemd,
     SystemdAirflowConfiguration,
@@ -20,3 +23,12 @@ def test_task_default_operator(systemd_airflow_configuration: SystemdAirflowConf
 
     assert task.operator is Systemd
     assert SystemdOperator is SystemdTask
+
+
+def test_task_rejects_another_operator(systemd_airflow_configuration: SystemdAirflowConfiguration):
+    with pytest.raises(ValidationError, match="operator must be"):
+        SystemdTask(
+            task_id="systemd-task",
+            cfg=systemd_airflow_configuration,
+            operator="airflow_systemd.SystemdTask",
+        )
