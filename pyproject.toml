@@ -158,5 +158,18 @@ section-order = [
 [tool.yardang]
 title = "airflow-systemd"
 root = "README.md"
-pages = []
-use-autoapi = true
+theme = "sphinxawesome_theme"
+pages = [
+    "docs/src/tutorial.md",
+    "docs/src/how-to.md",
+    "docs/src/explanation.md",
+    "docs/src/api.md",
+]
+use-autoapi = false
+
+[tool.yardang.llms]
+enabled = true
+description = "Apache Airflow integration for systemd-managed jobs"
+build-parallel = true
+suffix-mode = "auto"
+full-build = true
