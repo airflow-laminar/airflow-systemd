@@ -9,5 +9,39 @@ Systemd operators and configuration for long-running tasks
 
 ## Overview
 
+`airflow-systemd` mirrors `airflow-supervisor` for hosts managed by systemd. It turns a
+`SystemdAirflowConfiguration` into an Airflow task lifecycle:
+
+```text
+configure-systemd -> start-services -> check-services
+                                      |             |
+                                      v             v
+                               restart-services  stop-services -> unconfigure-systemd
+```
+
+Airflow owns scheduling, so this integration runs service units directly rather than
+starting systemd timer units. Timer models remain available through `systemd-pydantic`
+for non-Airflow consumers.
+
+```python
+from airflow import DAG
+from airflow_systemd import ServiceConfiguration, ServiceUnitConfiguration, Systemd, SystemdAirflowConfiguration
+
+dag = DAG(dag_id="long-running-job", schedule="@daily")
+config = SystemdAirflowConfiguration(
+    service={
+        "long-running-job": ServiceUnitConfiguration(
+            service=ServiceConfiguration(type="exec", exec_start="/opt/jobs/run"),
+        )
+    },
+    scope="user",
+)
+Systemd(dag=dag, cfg=config)
+```
+
+The local integration supports the same Airflow-specific controls as
+`airflow-supervisor`: status interval and timeout, runtime/end-time limits, retrigger
+limits, pools, optional restart behavior, stop-on-exit, and cleanup.
+
 > [!NOTE]
 > This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).
