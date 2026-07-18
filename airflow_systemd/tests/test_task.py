@@ -6,6 +6,7 @@ from airflow_systemd import (
     SystemdAirflowConfiguration,
     SystemdOperator,
     SystemdOperatorArgs,
+    SystemdSSHTask,
     SystemdTask,
     SystemdTaskArgs,
 )
@@ -30,5 +31,14 @@ def test_task_rejects_another_operator(systemd_airflow_configuration: SystemdAir
         SystemdTask(
             task_id="systemd-task",
             cfg=systemd_airflow_configuration,
+            operator="airflow_systemd.SystemdTask",
+        )
+
+
+def test_ssh_task_rejects_another_operator(systemd_airflow_configuration: SystemdAirflowConfiguration):
+    with pytest.raises(ValidationError, match="operator must be"):
+        SystemdSSHTask(
+            task_id="systemd-ssh-task",
+            cfg={**systemd_airflow_configuration.model_dump(), "ssh_operator_args": {}},
             operator="airflow_systemd.SystemdTask",
         )

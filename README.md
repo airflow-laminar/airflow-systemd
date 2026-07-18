@@ -43,5 +43,23 @@ The local integration supports the same Airflow-specific controls as
 `airflow-supervisor`: status interval and timeout, runtime/end-time limits, retrigger
 limits, pools, optional restart behavior, stop-on-exit, and cleanup.
 
+## Remote systemd
+
+`SystemdSSH` manages the same lifecycle on a remote host using Airflow's SSH connection
+and hook support. Configuration and cleanup run as SSH operators; status and lifecycle
+checks use the configured hook while retaining airflow-ha retrigger behavior.
+
+```python
+from airflow_pydantic import SSHOperatorArgs
+from airflow_systemd import SystemdSSH, SystemdSSHAirflowConfiguration
+
+config = SystemdSSHAirflowConfiguration(
+    service={...},
+    scope="user",
+    ssh_operator_args=SSHOperatorArgs(ssh_conn_id="systemd-host"),
+)
+SystemdSSH(dag=dag, cfg=config)
+```
+
 > [!NOTE]
 > This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).

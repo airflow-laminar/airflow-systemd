@@ -147,8 +147,7 @@ class Systemd:
         if step == "configure-systemd":
             return {
                 "python_callable": lambda **kwargs: (
-                    self.check_services.check_end_conditions(**kwargs) is None
-                    and write_systemd_config(cfg.model_dump_json(exclude_unset=True), _exit=False)
+                    self.check_services.check_end_conditions(**kwargs) is None and write_systemd_config(cfg.systemd_json(), _exit=False)
                 ),
                 "do_xcom_push": True,
             }
