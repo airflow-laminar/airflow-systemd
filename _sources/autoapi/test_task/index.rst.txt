@@ -12,6 +12,7 @@ Functions
    test_task.test_task_args
    test_task.test_task_default_operator
    test_task.test_task_rejects_another_operator
+   test_task.test_ssh_task_rejects_another_operator
 
 
 Module Contents
@@ -22,4 +23,6 @@ Module Contents
 .. py:function:: test_task_default_operator(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
 
 .. py:function:: test_task_rejects_another_operator(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+
+.. py:function:: test_ssh_task_rejects_another_operator(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
 

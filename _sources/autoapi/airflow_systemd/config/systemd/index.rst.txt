@@ -104,5 +104,11 @@ Module Contents
 
 
 
+   .. py:method:: systemd_json() -> str
+
+      Serialize only fields understood by systemd-pydantic.
+
+
+
 .. py:data:: load_airflow_config
 

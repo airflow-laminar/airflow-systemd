@@ -11,6 +11,7 @@ Functions
 
    test_config.test_airflow_configuration_defaults
    test_config.test_airflow_configuration_roundtrip
+   test_config.test_systemd_json_excludes_airflow_fields
 
 
 Module Contents
@@ -19,4 +20,6 @@ Module Contents
 .. py:function:: test_airflow_configuration_defaults(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
 
 .. py:function:: test_airflow_configuration_roundtrip(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
+
+.. py:function:: test_systemd_json_excludes_airflow_fields(systemd_airflow_configuration: airflow_systemd.SystemdAirflowConfiguration)
 

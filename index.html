@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="next" title="API Reference" href="autoapi/index.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>airflow-systemd v0.1.0</title>
+        <title>airflow-systemd v0.2.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.1.0</code></div></a>
+      <a href="#"><div class="brand">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.2.0</code></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,7 +188,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
   
-  <span class="sidebar-brand-text">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.1.0</code></span>
+  <span class="sidebar-brand-text">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.2.0</code></span>
   
 </a><form class="sidebar-search-container" method="get" action="search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,17 +199,21 @@
   <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="autoapi/index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/conftest/index.html">conftest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="autoapi/test_ssh/index.html">test_ssh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/test_task/index.html">test_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/test_local/index.html">test_local</a></li>
 <li class="toctree-l2"><a class="reference internal" href="autoapi/test_config/index.html">test_config</a></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="autoapi/airflow_systemd/index.html">airflow_systemd</a><input aria-label="Toggle navigation of airflow_systemd" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/airflow_systemd/airflow/index.html">airflow_systemd.airflow</a><input aria-label="Toggle navigation of airflow_systemd.airflow" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/airflow/local/index.html">airflow_systemd.airflow.local</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/airflow/ssh/index.html">airflow_systemd.airflow.ssh</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="autoapi/airflow_systemd/config/index.html">airflow_systemd.config</a><input aria-label="Toggle navigation of airflow_systemd.config" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/config/systemd/index.html">airflow_systemd.config.systemd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/config/systemd_ssh/index.html">airflow_systemd.config.systemd_ssh</a></li>
 <li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/config/task/index.html">airflow_systemd.config.task</a></li>
+<li class="toctree-l4"><a class="reference internal" href="autoapi/airflow_systemd/config/task_ssh/index.html">airflow_systemd.config.task_ssh</a></li>
 </ul>
 </li>
 </ul>
@@ -294,6 +298,23 @@ for non-Airflow consumers.</p>
 <p>The local integration supports the same Airflow-specific controls as
 <code class="docutils literal notranslate"><span class="pre">airflow-supervisor</span></code>: status interval and timeout, runtime/end-time limits, retrigger
 limits, pools, optional restart behavior, stop-on-exit, and cleanup.</p>
+</section>
+<section id="remote-systemd">
+<h2>Remote systemd<a class="headerlink" href="#remote-systemd" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SystemdSSH</span></code> manages the same lifecycle on a remote host using Airflow’s SSH connection
+and hook support. Configuration and cleanup run as SSH operators; status and lifecycle
+checks use the configured hook while retaining airflow-ha retrigger behavior.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">SSHOperatorArgs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">airflow_systemd</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemdSSH</span><span class="p">,</span> <span class="n">SystemdSSHAirflowConfiguration</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">SystemdSSHAirflowConfiguration</span><span class="p">(</span>
+    <span class="n">service</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">},</span>
+    <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;user&quot;</span><span class="p">,</span>
+    <span class="n">ssh_operator_args</span><span class="o">=</span><span class="n">SSHOperatorArgs</span><span class="p">(</span><span class="n">ssh_conn_id</span><span class="o">=</span><span class="s2">&quot;systemd-host&quot;</span><span class="p">),</span>
+<span class="p">)</span>
+<span class="n">SystemdSSH</span><span class="p">(</span><span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This library was generated using <a class="reference external" href="https://copier.readthedocs.io/en/stable/">copier</a> from the <a class="reference external" href="https://github.com/python-project-templates/base">Base Python Project Template repository</a>.</p>
@@ -340,7 +361,7 @@ limits, pools, optional restart behavior, stop-on-exit, and cleanup.</p>
       
     </aside>
   </div>
-</div><script src="_static/documentation_options.js?v=01f34227"></script>
+</div><script src="_static/documentation_options.js?v=938c9ccc"></script>
     <script src="_static/doctools.js?v=9bcbadda"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/scripts/furo.js?v=46bd48cc"></script>

@@ -7,6 +7,7 @@ This page contains auto-generated API reference documentation [#f1]_.
    :titlesonly:
 
    /autoapi/conftest/index
+   /autoapi/test_ssh/index
    /autoapi/test_task/index
    /autoapi/test_local/index
    /autoapi/test_config/index

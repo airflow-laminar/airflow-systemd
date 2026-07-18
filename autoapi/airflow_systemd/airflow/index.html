@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../../../genindex.html"><link rel="search" title="Search" href="../../../search.html"><link rel="next" title="airflow_systemd.airflow.local" href="local/index.html"><link rel="prev" title="airflow_systemd" href="../index.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>airflow_systemd.airflow - airflow-systemd v0.1.0</title>
+        <title>airflow_systemd.airflow - airflow-systemd v0.2.0</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../index.html"><div class="brand">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.1.0</code></div></a>
+      <a href="../../../index.html"><div class="brand">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.2.0</code></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,7 +188,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../index.html">
   
-  <span class="sidebar-brand-text">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.1.0</code></span>
+  <span class="sidebar-brand-text">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.2.0</code></span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,17 +199,21 @@
   <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../conftest/index.html">conftest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../test_ssh/index.html">test_ssh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../test_task/index.html">test_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../test_local/index.html">test_local</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../test_config/index.html">test_config</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../index.html">airflow_systemd</a><input aria-label="Toggle navigation of airflow_systemd" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3 current has-children current-page"><a class="current reference internal" href="#">airflow_systemd.airflow</a><input aria-label="Toggle navigation of airflow_systemd.airflow" checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="local/index.html">airflow_systemd.airflow.local</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ssh/index.html">airflow_systemd.airflow.ssh</a></li>
 </ul>
 </li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="../config/index.html">airflow_systemd.config</a><input aria-label="Toggle navigation of airflow_systemd.config" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../config/systemd/index.html">airflow_systemd.config.systemd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../config/systemd_ssh/index.html">airflow_systemd.config.systemd_ssh</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../config/task/index.html">airflow_systemd.config.task</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../config/task_ssh/index.html">airflow_systemd.config.task_ssh</a></li>
 </ul>
 </li>
 </ul>
@@ -261,6 +265,7 @@
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="local/index.html">airflow_systemd.airflow.local</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ssh/index.html">airflow_systemd.airflow.ssh</a></li>
 </ul>
 </div>
 </section>
@@ -271,6 +276,12 @@
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#airflow_systemd.airflow.Systemd" title="airflow_systemd.airflow.Systemd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Systemd</span></code></a></p></td>
 <td><p>Airflow task group for a locally managed systemd job.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner" title="airflow_systemd.airflow.AirflowSSHCommandRunner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner</span></code></a></p></td>
+<td><p>Run SystemdClient commands through an Airflow SSHHook.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#airflow_systemd.airflow.SystemdSSH" title="airflow_systemd.airflow.SystemdSSH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SystemdSSH</span></code></a></p></td>
+<td><p>Airflow task group for a systemd job managed over SSH.</p></td>
 </tr>
 </tbody>
 </table>
@@ -404,6 +415,99 @@
 
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">airflow_systemd.airflow.</span></span><span class="sig-name descname"><span class="pre">AirflowSSHCommandRunner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hook</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">command_prefix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">environment</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">get_pty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssh_conn_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">remote_host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conn_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmd_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">banner_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/airflow_systemd/airflow/ssh.html#AirflowSSHCommandRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner" title="Link to this definition">¶</a></dt>
+<dd><p>Run SystemdClient commands through an Airflow SSHHook.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.hook">
+<span class="sig-name descname"><span class="pre">hook</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.hook" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.command_prefix">
+<span class="sig-name descname"><span class="pre">command_prefix</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.command_prefix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.environment">
+<span class="sig-name descname"><span class="pre">environment</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.environment" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.get_pty">
+<span class="sig-name descname"><span class="pre">get_pty</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.get_pty" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.ssh_conn_id">
+<span class="sig-name descname"><span class="pre">ssh_conn_id</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.ssh_conn_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.remote_host">
+<span class="sig-name descname"><span class="pre">remote_host</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.remote_host" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.conn_timeout">
+<span class="sig-name descname"><span class="pre">conn_timeout</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.conn_timeout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.cmd_timeout">
+<span class="sig-name descname"><span class="pre">cmd_timeout</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.cmd_timeout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.banner_timeout">
+<span class="sig-name descname"><span class="pre">banner_timeout</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.banner_timeout" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.get_hook">
+<span class="sig-name descname"><span class="pre">get_hook</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="reference internal" href="../../../_modules/airflow_systemd/airflow/ssh.html#AirflowSSHCommandRunner.get_hook"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.get_hook" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.AirflowSSHCommandRunner.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">systemd_pydantic.CommandResult</span></span></span><a class="reference internal" href="../../../_modules/airflow_systemd/airflow/ssh.html#AirflowSSHCommandRunner.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.run" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.SystemdSSH">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">airflow_systemd.airflow.</span></span><span class="sig-name descname"><span class="pre">SystemdSSH</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DAG</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../config/systemd_ssh/index.html#airflow_systemd.config.systemd_ssh.SystemdSSHAirflowConfiguration" title="airflow_systemd.config.systemd_ssh.SystemdSSHAirflowConfiguration"><span class="pre">airflow_systemd.config.systemd_ssh.SystemdSSHAirflowConfiguration</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">airflow_pydantic.Host</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/airflow_systemd/airflow/ssh.html#SystemdSSH"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.airflow.SystemdSSH" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="local/index.html#airflow_systemd.airflow.local.Systemd" title="airflow_systemd.airflow.local.Systemd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">airflow_systemd.airflow.local.Systemd</span></code></a></p>
+<p>Airflow task group for a systemd job managed over SSH.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.SystemdSSH._cfg">
+<span class="sig-name descname"><span class="pre">_cfg</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="../config/systemd_ssh/index.html#airflow_systemd.config.systemd_ssh.SystemdSSHAirflowConfiguration" title="airflow_systemd.config.systemd_ssh.SystemdSSHAirflowConfiguration"><span class="pre">airflow_systemd.config.systemd_ssh.SystemdSSHAirflowConfiguration</span></a></em><a class="headerlink" href="#airflow_systemd.airflow.SystemdSSH._cfg" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.SystemdSSH._command_prefix">
+<span class="sig-name descname"><span class="pre">_command_prefix</span></span><a class="headerlink" href="#airflow_systemd.airflow.SystemdSSH._command_prefix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.SystemdSSH._ssh_operator_kwargs">
+<span class="sig-name descname"><span class="pre">_ssh_operator_kwargs</span></span><a class="headerlink" href="#airflow_systemd.airflow.SystemdSSH._ssh_operator_kwargs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.SystemdSSH.get_step_kwargs">
+<span class="sig-name descname"><span class="pre">get_step_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">airflow_systemd.airflow.local.Step</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/airflow_systemd/airflow/ssh.html#SystemdSSH.get_step_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.airflow.SystemdSSH.get_step_kwargs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="airflow_systemd.airflow.SystemdSSH.get_step_operator">
+<span class="sig-name descname"><span class="pre">get_step_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">airflow_systemd.airflow.local.Step</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Operator</span></span></span><a class="reference internal" href="../../../_modules/airflow_systemd/airflow/ssh.html#SystemdSSH.get_step_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#airflow_systemd.airflow.SystemdSSH.get_step_operator" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -493,6 +597,28 @@
 <li><a class="reference internal" href="#airflow_systemd.airflow.Systemd.roots"><code class="docutils literal notranslate"><span class="pre">Systemd.roots</span></code></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner</span></code></a><ul>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.hook"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.hook</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.command_prefix"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.command_prefix</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.environment"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.environment</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.get_pty"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.get_pty</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.ssh_conn_id"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.ssh_conn_id</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.remote_host"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.remote_host</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.conn_timeout"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.conn_timeout</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.cmd_timeout"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.cmd_timeout</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.banner_timeout"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.banner_timeout</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.get_hook"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.get_hook()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.AirflowSSHCommandRunner.run"><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.SystemdSSH"><code class="docutils literal notranslate"><span class="pre">SystemdSSH</span></code></a><ul>
+<li><a class="reference internal" href="#airflow_systemd.airflow.SystemdSSH._cfg"><code class="docutils literal notranslate"><span class="pre">SystemdSSH._cfg</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.SystemdSSH._command_prefix"><code class="docutils literal notranslate"><span class="pre">SystemdSSH._command_prefix</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.SystemdSSH._ssh_operator_kwargs"><code class="docutils literal notranslate"><span class="pre">SystemdSSH._ssh_operator_kwargs</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.SystemdSSH.get_step_kwargs"><code class="docutils literal notranslate"><span class="pre">SystemdSSH.get_step_kwargs()</span></code></a></li>
+<li><a class="reference internal" href="#airflow_systemd.airflow.SystemdSSH.get_step_operator"><code class="docutils literal notranslate"><span class="pre">SystemdSSH.get_step_operator()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -506,7 +632,7 @@
       
     </aside>
   </div>
-</div><script src="../../../_static/documentation_options.js?v=01f34227"></script>
+</div><script src="../../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=46bd48cc"></script>

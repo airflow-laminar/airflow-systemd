@@ -3,10 +3,10 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="prev" title="airflow_systemd.config.systemd" href="../systemd/index.html">
+<link rel="index" title="Index" href="../../../../genindex.html"><link rel="search" title="Search" href="../../../../search.html"><link rel="next" title="airflow_systemd.config.task_ssh" href="../task_ssh/index.html"><link rel="prev" title="airflow_systemd.config.systemd_ssh" href="../systemd_ssh/index.html">
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
-        <title>airflow_systemd.config.task - airflow-systemd v0.1.0</title>
+        <title>airflow_systemd.config.task - airflow-systemd v0.2.0</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../../../index.html"><div class="brand">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.1.0</code></div></a>
+      <a href="../../../../index.html"><div class="brand">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.2.0</code></div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,7 +188,7 @@
       
       <div class="sidebar-sticky"><a class="sidebar-brand" href="../../../../index.html">
   
-  <span class="sidebar-brand-text">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.1.0</code></span>
+  <span class="sidebar-brand-text">airflow-systemd <code style='font-size: var(--font-size--small--4);color: var(--sd-color-primary);'>v0.2.0</code></span>
   
 </a><form class="sidebar-search-container" method="get" action="../../../../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -199,17 +199,21 @@
   <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../../index.html">API Reference</a><input aria-label="Toggle navigation of API Reference" checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../../conftest/index.html">conftest</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../test_ssh/index.html">test_ssh</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../test_task/index.html">test_task</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../test_local/index.html">test_local</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../test_config/index.html">test_config</a></li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../../index.html">airflow_systemd</a><input aria-label="Toggle navigation of airflow_systemd" checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l3 has-children"><a class="reference internal" href="../../airflow/index.html">airflow_systemd.airflow</a><input aria-label="Toggle navigation of airflow_systemd.airflow" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul>
 <li class="toctree-l4"><a class="reference internal" href="../../airflow/local/index.html">airflow_systemd.airflow.local</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../airflow/ssh/index.html">airflow_systemd.airflow.ssh</a></li>
 </ul>
 </li>
 <li class="toctree-l3 current has-children"><a class="reference internal" href="../index.html">airflow_systemd.config</a><input aria-label="Toggle navigation of airflow_systemd.config" checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><span class="icon"><svg><use href="#svg-arrow-right"></use></svg></span></label><ul class="current">
 <li class="toctree-l4"><a class="reference internal" href="../systemd/index.html">airflow_systemd.config.systemd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../systemd_ssh/index.html">airflow_systemd.config.systemd_ssh</a></li>
 <li class="toctree-l4 current current-page"><a class="current reference internal" href="#">airflow_systemd.config.task</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../task_ssh/index.html">airflow_systemd.config.task_ssh</a></li>
 </ul>
 </li>
 </ul>
@@ -577,15 +581,23 @@ validated to form a valid model.</p>
       <footer>
         
         <div class="related-pages">
-          
-          <a class="prev-page" href="../systemd/index.html">
+          <a class="next-page" href="../task_ssh/index.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">airflow_systemd.config.task_ssh</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="../systemd_ssh/index.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">airflow_systemd.config.systemd</div>
+                <div class="title">airflow_systemd.config.systemd_ssh</div>
                 
               </div>
             </a>
@@ -683,7 +695,7 @@ validated to form a valid model.</p>
       
     </aside>
   </div>
-</div><script src="../../../../_static/documentation_options.js?v=01f34227"></script>
+</div><script src="../../../../_static/documentation_options.js?v=938c9ccc"></script>
     <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=46bd48cc"></script>
