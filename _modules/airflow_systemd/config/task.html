@@ -178,43 +178,41 @@
 
     <div id="content" role="main">
       <h1>Source code for airflow_systemd.config.task</h1><div class="highlight"><pre>
-<span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Type</span>
-</span><span id="line-2">
-</span><span id="line-3"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportPath</span><span class="p">,</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskArgs</span>
-</span><span id="line-4"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">field_validator</span>
+<span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportPath</span><span class="p">,</span> <span class="n">Task</span><span class="p">,</span> <span class="n">TaskArgs</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">field_validator</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="kn">from</span><span class="w"> </span><span class="nn">.systemd</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemdAirflowConfiguration</span>
 </span><span id="line-5">
-</span><span id="line-6"><span class="kn">from</span><span class="w"> </span><span class="nn">.systemd</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemdAirflowConfiguration</span>
+</span><span id="line-6"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SystemdOperator&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdOperatorArgs&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdTask&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdTaskArgs&quot;</span><span class="p">)</span>
 </span><span id="line-7">
-</span><span id="line-8"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SystemdOperator&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdOperatorArgs&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdTask&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdTaskArgs&quot;</span><span class="p">)</span>
-</span><span id="line-9">
-</span><span id="line-10">
+</span><span id="line-8">
 <div class="viewcode-block" id="SystemdTaskArgs">
 <a class="viewcode-back" href="../../../docs/src/_build/airflow_systemd.SystemdTaskArgs.html#airflow_systemd.SystemdTaskArgs">[docs]</a>
-</span><span id="line-11"><span class="k">class</span><span class="w"> </span><span class="nc">SystemdTaskArgs</span><span class="p">(</span><span class="n">TaskArgs</span><span class="p">):</span>
-</span><span id="line-12">    <span class="n">cfg</span><span class="p">:</span> <span class="n">SystemdAirflowConfiguration</span></div>
+</span><span id="line-9"><span class="k">class</span><span class="w"> </span><span class="nc">SystemdTaskArgs</span><span class="p">(</span><span class="n">TaskArgs</span><span class="p">):</span>
+</span><span id="line-10">    <span class="n">cfg</span><span class="p">:</span> <span class="n">SystemdAirflowConfiguration</span></div>
 
-</span><span id="line-13">
+</span><span id="line-11">
+</span><span id="line-12">
+</span><span id="line-13"><span class="n">SystemdOperatorArgs</span> <span class="o">=</span> <span class="n">SystemdTaskArgs</span>
 </span><span id="line-14">
-</span><span id="line-15"><span class="n">SystemdOperatorArgs</span> <span class="o">=</span> <span class="n">SystemdTaskArgs</span>
-</span><span id="line-16">
-</span><span id="line-17">
+</span><span id="line-15">
 <div class="viewcode-block" id="SystemdTask">
 <a class="viewcode-back" href="../../../docs/src/_build/airflow_systemd.SystemdTask.html#airflow_systemd.SystemdTask">[docs]</a>
-</span><span id="line-18"><span class="k">class</span><span class="w"> </span><span class="nc">SystemdTask</span><span class="p">(</span><span class="n">Task</span><span class="p">,</span> <span class="n">SystemdTaskArgs</span><span class="p">):</span>
-</span><span id="line-19">    <span class="n">operator</span><span class="p">:</span> <span class="n">ImportPath</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;airflow_systemd.Systemd&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</span><span id="line-20">
-</span><span id="line-21">    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;operator&quot;</span><span class="p">)</span>
-</span><span id="line-22">    <span class="nd">@classmethod</span>
-</span><span id="line-23">    <span class="k">def</span><span class="w"> </span><span class="nf">validate_operator</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">:</span>
-</span><span id="line-24">        <span class="kn">from</span><span class="w"> </span><span class="nn">airflow_systemd.airflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">Systemd</span>
-</span><span id="line-25">
-</span><span id="line-26">        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Systemd</span><span class="p">:</span>
-</span><span id="line-27">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;operator must be &#39;airflow_systemd.Systemd&#39;, got: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="line-28">        <span class="k">return</span> <span class="n">value</span></div>
+</span><span id="line-16"><span class="k">class</span><span class="w"> </span><span class="nc">SystemdTask</span><span class="p">(</span><span class="n">Task</span><span class="p">,</span> <span class="n">SystemdTaskArgs</span><span class="p">):</span>
+</span><span id="line-17">    <span class="n">operator</span><span class="p">:</span> <span class="n">ImportPath</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;airflow_systemd.Systemd&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-18">
+</span><span id="line-19">    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;operator&quot;</span><span class="p">)</span>
+</span><span id="line-20">    <span class="nd">@classmethod</span>
+</span><span id="line-21">    <span class="k">def</span><span class="w"> </span><span class="nf">validate_operator</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
+</span><span id="line-22">        <span class="kn">from</span><span class="w"> </span><span class="nn">airflow_systemd.airflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">Systemd</span>
+</span><span id="line-23">
+</span><span id="line-24">        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Systemd</span><span class="p">:</span>
+</span><span id="line-25">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;operator must be &#39;airflow_systemd.Systemd&#39;, got: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="line-26">        <span class="k">return</span> <span class="n">value</span></div>
 
-</span><span id="line-29">
-</span><span id="line-30">
-</span><span id="line-31"><span class="n">SystemdOperator</span> <span class="o">=</span> <span class="n">SystemdTask</span>
+</span><span id="line-27">
+</span><span id="line-28">
+</span><span id="line-29"><span class="n">SystemdOperator</span> <span class="o">=</span> <span class="n">SystemdTask</span>
 </span></code></pre></div>
     </div></div>
           </main>
