@@ -1,5 +1,3 @@
-from typing import Type
-
 from airflow_pydantic import Host, ImportPath, Task, TaskArgs
 from pydantic import Field, field_validator
 
@@ -21,7 +19,7 @@ class SystemdSSHTask(Task, SystemdSSHTaskArgs):
 
     @field_validator("operator")
     @classmethod
-    def validate_operator(cls, value: Type) -> Type:
+    def validate_operator(cls, value: type) -> type:
         from airflow_systemd.airflow import SystemdSSH
 
         if value is not SystemdSSH:

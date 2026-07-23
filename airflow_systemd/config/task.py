@@ -1,5 +1,3 @@
-from typing import Type
-
 from airflow_pydantic import ImportPath, Task, TaskArgs
 from pydantic import Field, field_validator
 
@@ -20,7 +18,7 @@ class SystemdTask(Task, SystemdTaskArgs):
 
     @field_validator("operator")
     @classmethod
-    def validate_operator(cls, value: Type) -> Type:
+    def validate_operator(cls, value: type) -> type:
         from airflow_systemd.airflow import Systemd
 
         if value is not Systemd:
