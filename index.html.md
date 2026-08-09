@@ -29,10 +29,10 @@ generated configuration. `SystemdSSH` applies the same lifecycle remotely.
 
 ## Documentation
 
-- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.md)
-- [How-to guides](docs/src/how-to.md)
-- [Why Airflow owns the schedule](docs/src/explanation.md)
-- [API reference](docs/src/api.md)
+- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.html.md)
+- [How-to guides](docs/src/how-to.html.md)
+- [Why Airflow owns the schedule](docs/src/explanation.html.md)
+- [API reference](docs/src/api.html.md)
 
 Published documentation is available at
 [airflow-laminar.github.io/airflow-systemd](https://airflow-laminar.github.io/airflow-systemd/).

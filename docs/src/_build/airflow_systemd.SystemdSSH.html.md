@@ -1,12 +1,12 @@
 # airflow_systemd.SystemdSSH
 
-### *class* airflow_systemd.SystemdSSH(dag: DAG, cfg: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.md#airflow_systemd.SystemdSSHAirflowConfiguration) | dict, host: Host | dict | None = None, \*\*kwargs: Any)
+### *class* airflow_systemd.SystemdSSH(dag: DAG, cfg: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.html.md#airflow_systemd.SystemdSSHAirflowConfiguration) | dict, host: Host | dict | None = None, \*\*kwargs: Any)[[source]](../../../_modules/airflow_systemd/airflow/ssh.html.md#SystemdSSH)
 
-Bases: [`Systemd`](airflow_systemd.Systemd.md#airflow_systemd.Systemd)
+Bases: [`Systemd`](airflow_systemd.Systemd.html.md#airflow_systemd.Systemd)
 
 Airflow task group for a systemd job managed over SSH.
 
-#### \_\_init_\_(dag: DAG, cfg: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.md#airflow_systemd.SystemdSSHAirflowConfiguration) | dict, host: Host | dict | None = None, \*\*kwargs: Any)
+#### \_\_init_\_(dag: DAG, cfg: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.html.md#airflow_systemd.SystemdSSHAirflowConfiguration) | dict, host: Host | dict | None = None, \*\*kwargs: Any)[[source]](../../../_modules/airflow_systemd/airflow/ssh.html.md#SystemdSSH.__init__)
 
 ### Methods
 

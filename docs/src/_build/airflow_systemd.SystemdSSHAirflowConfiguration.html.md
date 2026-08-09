@@ -1,8 +1,8 @@
 # airflow_systemd.SystemdSSHAirflowConfiguration
 
-### *pydantic model* airflow_systemd.SystemdSSHAirflowConfiguration
+### *pydantic model* airflow_systemd.SystemdSSHAirflowConfiguration[[source]](../../../_modules/airflow_systemd/config/systemd_ssh.html.md#SystemdSSHAirflowConfiguration)
 
-Bases: [`SystemdAirflowConfiguration`](airflow_systemd.SystemdAirflowConfiguration.md#airflow_systemd.SystemdAirflowConfiguration)
+Bases: [`SystemdAirflowConfiguration`](airflow_systemd.SystemdAirflowConfiguration.html.md#airflow_systemd.SystemdAirflowConfiguration)
 
 Systemd configuration for a job managed over SSH.
 

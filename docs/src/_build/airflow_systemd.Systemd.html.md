@@ -1,12 +1,12 @@
 # airflow_systemd.Systemd
 
-### *class* airflow_systemd.Systemd(dag: DAG, cfg: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.md#airflow_systemd.SystemdAirflowConfiguration) | dict, \*\*kwargs: Any)
+### *class* airflow_systemd.Systemd(dag: DAG, cfg: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.html.md#airflow_systemd.SystemdAirflowConfiguration) | dict, \*\*kwargs: Any)[[source]](../../../_modules/airflow_systemd/airflow/local.html.md#Systemd)
 
 Bases: `object`
 
 Airflow task group for a locally managed systemd job.
 
-#### \_\_init_\_(dag: DAG, cfg: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.md#airflow_systemd.SystemdAirflowConfiguration) | dict, \*\*kwargs: Any)
+#### \_\_init_\_(dag: DAG, cfg: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.html.md#airflow_systemd.SystemdAirflowConfiguration) | dict, \*\*kwargs: Any)[[source]](../../../_modules/airflow_systemd/airflow/local.html.md#Systemd.__init__)
 
 ### Methods
 

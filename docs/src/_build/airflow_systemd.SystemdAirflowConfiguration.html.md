@@ -1,8 +1,8 @@
 # airflow_systemd.SystemdAirflowConfiguration
 
-### *pydantic model* airflow_systemd.SystemdAirflowConfiguration
+### *pydantic model* airflow_systemd.SystemdAirflowConfiguration[[source]](../../../_modules/airflow_systemd/config/systemd.html.md#SystemdAirflowConfiguration)
 
-Bases: [`SystemdConvenienceConfiguration`](airflow_systemd.SystemdConvenienceConfiguration.md#airflow_systemd.SystemdConvenienceConfiguration)
+Bases: [`SystemdConvenienceConfiguration`](airflow_systemd.SystemdConvenienceConfiguration.html.md#airflow_systemd.SystemdConvenienceConfiguration)
 
 Systemd configuration for an Airflow-managed job.
 
@@ -50,6 +50,6 @@ Restart services on an initial Airflow run
 
 Restart services when airflow-ha retriggers the job
 
-#### systemd_json() → str
+#### systemd_json() → str[[source]](../../../_modules/airflow_systemd/config/systemd.html.md#SystemdAirflowConfiguration.systemd_json)
 
 Serialize only fields understood by systemd-pydantic.

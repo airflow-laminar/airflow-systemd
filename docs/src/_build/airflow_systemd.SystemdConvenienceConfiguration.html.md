@@ -1,8 +1,8 @@
 # airflow_systemd.SystemdConvenienceConfiguration
 
-### *pydantic model* airflow_systemd.SystemdConvenienceConfiguration
+### *pydantic model* airflow_systemd.SystemdConvenienceConfiguration[[source]](../../../_modules/systemd_pydantic/config/convenience.html.md#SystemdConvenienceConfiguration)
 
-Bases: [`SystemdConfiguration`](airflow_systemd.SystemdConfiguration.md#airflow_systemd.SystemdConfiguration)
+Bases: [`SystemdConfiguration`](airflow_systemd.SystemdConfiguration.html.md#airflow_systemd.SystemdConfiguration)
 
 Systemd defaults and persisted state used by convenience commands.
 
@@ -18,4 +18,4 @@ Systemd defaults and persisted state used by convenience commands.
 
 #### *field* command_timeout *: int* *= 60*
 
-#### rmdir() → None
+#### rmdir() → None[[source]](../../../_modules/systemd_pydantic/config/convenience.html.md#SystemdConvenienceConfiguration.rmdir)

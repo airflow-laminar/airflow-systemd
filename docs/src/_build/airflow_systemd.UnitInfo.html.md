@@ -1,6 +1,6 @@
 # airflow_systemd.UnitInfo
 
-### *pydantic model* airflow_systemd.UnitInfo
+### *pydantic model* airflow_systemd.UnitInfo[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo)
 
 Bases: `BaseModel`
 
@@ -18,12 +18,12 @@ Bases: `BaseModel`
 
 #### *field* exec_main_status *: int | None* *= None*
 
-#### running() → bool
+#### running() → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.running)
 
-#### stopped() → bool
+#### stopped() → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.stopped)
 
-#### done(ok_exitstatuses: list[int | str] | None = None) → bool
+#### done(ok_exitstatuses: list[int | str] | None = None) → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.done)
 
-#### ok(ok_exitstatuses: list[int | str] | None = None) → bool
+#### ok(ok_exitstatuses: list[int | str] | None = None) → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.ok)
 
-#### bad(ok_exitstatuses: list[int | str] | None = None) → bool
+#### bad(ok_exitstatuses: list[int | str] | None = None) → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.bad)

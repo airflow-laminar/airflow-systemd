@@ -2,36 +2,33 @@
 
 > Apache Airflow integration for systemd-managed jobs
 
-
-the airflow-systemd authors
-
 ## Pages
 
 - [airflow-systemd](index.html.md): Run and monitor systemd-managed jobs from Apache Airflow.
-- [airflow_systemd.AirflowSSHCommandRunner](docs/src/_build/airflow_systemd.AirflowSSHCommandRunner.html.md): Bases: `object`
-- [airflow_systemd.ServiceConfiguration](docs/src/_build/airflow_systemd.ServiceConfiguration.html.md): Bases: `_Section`
-- [airflow_systemd.ServiceUnitConfiguration](docs/src/_build/airflow_systemd.ServiceUnitConfiguration.html.md): Bases: `_SystemdConfiguration`
-- [airflow_systemd.Systemd](docs/src/_build/airflow_systemd.Systemd.html.md): Bases: `object`
-- [airflow_systemd.SystemdAirflowConfiguration](docs/src/_build/airflow_systemd.SystemdAirflowConfiguration.html.md): Bases: [`SystemdConvenienceConfiguration`](airflow_systemd.SystemdConvenienceConfiguration.md#airflo...
-- [airflow_systemd.SystemdClient](docs/src/_build/airflow_systemd.SystemdClient.html.md): Bases: `object`
-- [airflow_systemd.SystemdConfiguration](docs/src/_build/airflow_systemd.SystemdConfiguration.html.md): Bases: `BaseModel`
-- [airflow_systemd.SystemdConvenienceConfiguration](docs/src/_build/airflow_systemd.SystemdConvenienceConfiguration.html.md): Bases: [`SystemdConfiguration`](airflow_systemd.SystemdConfiguration.md#airflow_systemd.SystemdConfi...
-- [airflow_systemd.SystemdSSH](docs/src/_build/airflow_systemd.SystemdSSH.html.md): Bases: [`Systemd`](airflow_systemd.Systemd.md#airflow_systemd.Systemd)
-- [airflow_systemd.SystemdSSHAirflowConfiguration](docs/src/_build/airflow_systemd.SystemdSSHAirflowConfiguration.html.md): Bases: [`SystemdAirflowConfiguration`](airflow_systemd.SystemdAirflowConfiguration.md#airflow_system...
-- [airflow_systemd.SystemdSSHTask](docs/src/_build/airflow_systemd.SystemdSSHTask.html.md): Bases: `Task`, [`SystemdSSHTaskArgs`](airflow_systemd.SystemdSSHTaskArgs.md#airflow_systemd.SystemdS...
-- [airflow_systemd.SystemdSSHTaskArgs](docs/src/_build/airflow_systemd.SystemdSSHTaskArgs.html.md): Bases: `TaskArgs`
-- [airflow_systemd.SystemdTask](docs/src/_build/airflow_systemd.SystemdTask.html.md): Bases: `Task`, [`SystemdTaskArgs`](airflow_systemd.SystemdTaskArgs.md#airflow_systemd.SystemdTaskArg...
-- [airflow_systemd.SystemdTaskArgs](docs/src/_build/airflow_systemd.SystemdTaskArgs.html.md): Bases: `TaskArgs`
-- [airflow_systemd.TimerConfiguration](docs/src/_build/airflow_systemd.TimerConfiguration.html.md): Bases: `_Section`
-- [airflow_systemd.TimerUnitConfiguration](docs/src/_build/airflow_systemd.TimerUnitConfiguration.html.md): Bases: `_SystemdConfiguration`
-- [airflow_systemd.UnitInfo](docs/src/_build/airflow_systemd.UnitInfo.html.md): Bases: `BaseModel`
-- [airflow_systemd.load_airflow_config](docs/src/_build/airflow_systemd.load_airflow_config.html.md): Page content
-- [airflow_systemd.load_airflow_ssh_config](docs/src/_build/airflow_systemd.load_airflow_ssh_config.html.md): Page content
-- [API reference](docs/src/api.html.md): | [`Systemd`](_build/airflow_systemd.Systemd.md#airflow_systemd.Systemd)(dag, cfg, \*\*kwargs)      ...
-- [Why Airflow owns the schedule](docs/src/explanation.html.md): Airflow and systemd can both schedule work: Airflow through DAG schedules and
+- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.html.md): In this tutorial, we will define a user-scoped systemd job in airflow-config YAML and load it as an Airflow DAG.
 - [How-to guides](docs/src/how-to.html.md): These guides cover common local, remote, and lifecycle configurations.
-- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.html.md): In this tutorial, we will define a user-scoped systemd job in `airflow-config`
+- [Why Airflow owns the schedule](docs/src/explanation.html.md): Airflow and systemd can both schedule work: Airflow through DAG schedules and systemd through timer units. airflow-systemd deliberately uses Airflow as the o...
+- [API reference](docs/src/api.html.md): Systemd(dag, cfg, **kwargs)
+- [airflow_systemd.Systemd](docs/src/_build/airflow_systemd.Systemd.html.md): Bases: object
+- [airflow_systemd.SystemdSSH](docs/src/_build/airflow_systemd.SystemdSSH.html.md): Bases: Systemd
+- [airflow_systemd.AirflowSSHCommandRunner](docs/src/_build/airflow_systemd.AirflowSSHCommandRunner.html.md): Bases: object
+- [airflow_systemd.SystemdAirflowConfiguration](docs/src/_build/airflow_systemd.SystemdAirflowConfiguration.html.md): Bases: SystemdConvenienceConfiguration
+- [airflow_systemd.SystemdSSHAirflowConfiguration](docs/src/_build/airflow_systemd.SystemdSSHAirflowConfiguration.html.md): Bases: SystemdAirflowConfiguration
+- [airflow_systemd.SystemdTask](docs/src/_build/airflow_systemd.SystemdTask.html.md): Bases: Task, SystemdTaskArgs
+- [airflow_systemd.SystemdTaskArgs](docs/src/_build/airflow_systemd.SystemdTaskArgs.html.md): Bases: TaskArgs
+- [airflow_systemd.SystemdSSHTask](docs/src/_build/airflow_systemd.SystemdSSHTask.html.md): Bases: Task, SystemdSSHTaskArgs
+- [airflow_systemd.SystemdSSHTaskArgs](docs/src/_build/airflow_systemd.SystemdSSHTaskArgs.html.md): Bases: TaskArgs
+- [airflow_systemd.load_airflow_config](docs/src/_build/airflow_systemd.load_airflow_config.html.md): Documentation page.
+- [airflow_systemd.load_airflow_ssh_config](docs/src/_build/airflow_systemd.load_airflow_ssh_config.html.md): Documentation page.
+- [airflow_systemd.ServiceConfiguration](docs/src/_build/airflow_systemd.ServiceConfiguration.html.md): Bases: _Section
+- [airflow_systemd.ServiceUnitConfiguration](docs/src/_build/airflow_systemd.ServiceUnitConfiguration.html.md): Bases: _SystemdConfiguration
+- [airflow_systemd.TimerConfiguration](docs/src/_build/airflow_systemd.TimerConfiguration.html.md): Bases: _Section
+- [airflow_systemd.TimerUnitConfiguration](docs/src/_build/airflow_systemd.TimerUnitConfiguration.html.md): Bases: _SystemdConfiguration
+- [airflow_systemd.SystemdConfiguration](docs/src/_build/airflow_systemd.SystemdConfiguration.html.md): Bases: BaseModel
+- [airflow_systemd.SystemdConvenienceConfiguration](docs/src/_build/airflow_systemd.SystemdConvenienceConfiguration.html.md): Bases: SystemdConfiguration
+- [airflow_systemd.SystemdClient](docs/src/_build/airflow_systemd.SystemdClient.html.md): Bases: object
+- [airflow_systemd.UnitInfo](docs/src/_build/airflow_systemd.UnitInfo.html.md): Bases: BaseModel
 
----
+## Full documentation
 
-For more comprehensive documentation, see [llms-full.txt](llms-full.txt)
+- [llms-full.txt](llms-full.txt): All pages in one document.

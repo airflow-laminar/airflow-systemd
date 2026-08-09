@@ -1,6 +1,6 @@
 # airflow_systemd.TimerConfiguration
 
-### *pydantic model* airflow_systemd.TimerConfiguration
+### *pydantic model* airflow_systemd.TimerConfiguration[[source]](../../../_modules/systemd_pydantic/models.html.md#TimerConfiguration)
 
 Bases: `_Section`
 

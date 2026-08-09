@@ -1,6 +1,6 @@
 # airflow_systemd.ServiceUnitConfiguration
 
-### *pydantic model* airflow_systemd.ServiceUnitConfiguration
+### *pydantic model* airflow_systemd.ServiceUnitConfiguration[[source]](../../../_modules/systemd_pydantic/models.html.md#ServiceUnitConfiguration)
 
 Bases: `_SystemdConfiguration`
 
@@ -8,6 +8,6 @@ Bases: `_SystemdConfiguration`
 
 #### *field* unit *: UnitConfiguration | None* *= None*
 
-#### *field* service *: [ServiceConfiguration](airflow_systemd.ServiceConfiguration.md#airflow_systemd.ServiceConfiguration)* *[Required]*
+#### *field* service *: [ServiceConfiguration](airflow_systemd.ServiceConfiguration.html.md#airflow_systemd.ServiceConfiguration)* *[Required]*
 
 #### *field* install *: InstallConfiguration | None* *= None*

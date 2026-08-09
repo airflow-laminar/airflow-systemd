@@ -1,6 +1,6 @@
 # airflow_systemd.ServiceConfiguration
 
-### *pydantic model* airflow_systemd.ServiceConfiguration
+### *pydantic model* airflow_systemd.ServiceConfiguration[[source]](../../../_modules/systemd_pydantic/models.html.md#ServiceConfiguration)
 
 Bases: `_Section`
 

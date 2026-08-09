@@ -1,4 +1,4 @@
-# index.html.md
+<!-- index.html.md -->
 
 # airflow-systemd
 
@@ -31,10 +31,10 @@ generated configuration. `SystemdSSH` applies the same lifecycle remotely.
 
 ## Documentation
 
-- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.md)
-- [How-to guides](docs/src/how-to.md)
-- [Why Airflow owns the schedule](docs/src/explanation.md)
-- [API reference](docs/src/api.md)
+- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.html.md)
+- [How-to guides](docs/src/how-to.html.md)
+- [Why Airflow owns the schedule](docs/src/explanation.html.md)
+- [API reference](docs/src/api.html.md)
 
 Published documentation is available at
 [airflow-laminar.github.io/airflow-systemd](https://airflow-laminar.github.io/airflow-systemd/).
@@ -51,18 +51,322 @@ Published documentation is available at
 #### NOTE
 This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).
 
+<!-- docs/src/tutorial.html.md -->
 
-# airflow_systemd.AirflowSSHCommandRunner.html.md
+# Tutorial: run a systemd job from Airflow
+
+In this tutorial, we will define a user-scoped systemd job in `airflow-config`
+YAML and load it as an Airflow DAG.
+
+## Install the packages
+
+For Airflow 3, run:
+
+```bash
+pip install 'airflow-systemd[airflow3]' airflow-config
+```
+
+Use the `airflow` extra instead when running Airflow 2. The worker must have a
+user systemd manager and permission to write its user unit directory.
+
+## Define the DAG
+
+Create `config/systemd.yaml`:
+
+```yaml
+dags:
+  nightly-systemd:
+    schedule: "@daily"
+    start_date: "2024-01-01"
+    catchup: false
+    tasks:
+      run-nightly:
+        _target_: airflow_systemd.SystemdTask
+        cfg:
+          scope: user
+          stop_on_exit: true
+          cleanup: true
+          service:
+            nightly:
+              unit:
+                description: Nightly batch job
+              service:
+                type: exec
+                exec_start: /opt/jobs/nightly
+```
+
+## Load the configuration
+
+Create `nightly_systemd.py` in the DAG folder:
+
+```python
+from airflow_config import load_config
+
+config = load_config("config", "systemd")
+config.generate_in_mem()
+```
+
+## Inspect the lifecycle
+
+Parse the DAG folder:
+
+```bash
+airflow dags list | grep nightly-systemd
+airflow tasks list nightly-systemd
+```
+
+The task list includes the configure, start, check, restart, stop, and
+unconfigure steps created by `Systemd`.
+
+Trigger the DAG in a test environment containing `/opt/jobs/nightly`. The check
+step remains active while the service runs and completes after systemd reports a
+successful stopped unit.
+
+You have now connected a declarative Airflow DAG to a systemd-managed process.
+
+<!-- docs/src/how-to.html.md -->
+
+# How-to guides
+
+These guides cover common local, remote, and lifecycle configurations.
+
+## How to keep a service running after the DAG finishes
+
+Disable stop and cleanup, then choose when to restart the persistent service:
+
+```yaml
+cfg:
+  scope: user
+  stop_on_exit: false
+  cleanup: false
+  restart_on_initial: true
+  restart_on_retrigger: true
+  service:
+    api:
+      service:
+        type: exec
+        exec_start: /opt/services/api
+        restart: on-failure
+```
+
+Use this for services whose ownership remains with systemd between Airflow runs.
+
+## How to limit monitoring
+
+Set Airflow-specific timing fields on `SystemdAirflowConfiguration`:
+
+```yaml
+cfg:
+  check_interval: 00:00:10
+  check_timeout: 08:00:00
+  runtime: 04:00:00
+  maxretrigger: 3
+  service:
+    batch:
+      service:
+        type: exec
+        exec_start: /opt/jobs/batch
+```
+
+`check_interval` controls polling, `check_timeout` controls the sensor timeout,
+and `runtime` controls the allowed external job duration.
+
+## How to manage a remote host
+
+Use the SSH task model in `airflow-config`:
+
+```yaml
+dags:
+  remote-systemd:
+    schedule: "@daily"
+    tasks:
+      run-remote:
+        _target_: airflow_systemd.SystemdSSHTask
+        cfg:
+          scope: user
+          command_prefix: source /etc/profile &&
+          ssh_operator_args:
+            ssh_conn_id: systemd-host
+          service:
+            report:
+              service:
+                type: exec
+                exec_start: /opt/jobs/report
+```
+
+Configuration and cleanup use Airflow’s SSH operator. Status and lifecycle calls
+use a `SystemdClient` command runner backed by the same SSH connection.
+
+## How to chain the lifecycle with other tasks
+
+The `Systemd` object behaves like a task group boundary:
+
+```python
+prepare >> systemd >> publish
+```
+
+Upstream dependencies attach to `configure_systemd`. Downstream dependencies
+attach to `unconfigure_systemd`, including when cleanup is represented by a skip
+task.
+
+<!-- docs/src/explanation.html.md -->
+
+# Why Airflow owns the schedule
+
+Airflow and systemd can both schedule work: Airflow through DAG schedules and
+systemd through timer units. `airflow-systemd` deliberately uses Airflow as the
+only scheduler and starts service units directly.
+
+Two active schedulers would create ambiguous ownership. A timer could start the
+service outside a DAG run, while Airflow would still monitor, restart, or stop it
+according to a different execution interval. Direct service activation keeps
+each external process lifecycle attached to one DAG run. Timer models remain in
+[systemd-pydantic](https://github.com/airflow-laminar/systemd-pydantic) for
+deployments where systemd owns scheduling.
+
+## Lifecycle mapping
+
+The integration maps external process states to `airflow-ha` results. A finished
+service with an accepted exit status stops monitoring successfully. A running or
+otherwise healthy service continues. A failed service retriggers through the
+restart path. This separates lightweight Airflow polling from process ownership:
+systemd launches, signals, and records the process; Airflow coordinates the
+larger workflow.
+
+## Local and SSH execution
+
+Local mode calls `systemd-pydantic` convenience functions on the worker.
+`SystemdSSH` sends configuration commands through Airflow’s SSH provider and
+uses an SSH-backed `SystemdClient` for status and lifecycle operations. Both
+modes expose the same task graph and Airflow-specific controls.
+
+## Comparison with supervisord
+
+[airflow-supervisor](https://github.com/airflow-laminar/airflow-supervisor)
+creates a dedicated supervisord instance for the job. `airflow-systemd` uses the
+host’s existing service manager instead. Systemd is a natural fit when unit
+files, journald, cgroups, and host boot relationships are already operational
+standards; supervisord is useful when a self-contained process manager is easier
+to provision.
+
+<!-- docs/src/api.html.md -->
+
+# API reference
+
+## Airflow lifecycle
+
+| [`Systemd`](_build/airflow_systemd.Systemd.html.md#airflow_systemd.Systemd)(dag, cfg, \*\*kwargs)                                                | Airflow task group for a locally managed systemd job.   |
+|--------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------|
+| [`SystemdSSH`](_build/airflow_systemd.SystemdSSH.html.md#airflow_systemd.SystemdSSH)(dag, cfg[, host])                                           | Airflow task group for a systemd job managed over SSH.  |
+| [`AirflowSSHCommandRunner`](_build/airflow_systemd.AirflowSSHCommandRunner.html.md#airflow_systemd.AirflowSSHCommandRunner)([hook, ...])         | Run SystemdClient commands through an Airflow SSHHook.  |
+| [`SystemdAirflowConfiguration`](_build/airflow_systemd.SystemdAirflowConfiguration.html.md#airflow_systemd.SystemdAirflowConfiguration)          | Systemd configuration for an Airflow-managed job.       |
+| [`SystemdSSHAirflowConfiguration`](_build/airflow_systemd.SystemdSSHAirflowConfiguration.html.md#airflow_systemd.SystemdSSHAirflowConfiguration) | Systemd configuration for a job managed over SSH.       |
+| [`SystemdTask`](_build/airflow_systemd.SystemdTask.html.md#airflow_systemd.SystemdTask)                                                          |                                                         |
+| [`SystemdTaskArgs`](_build/airflow_systemd.SystemdTaskArgs.html.md#airflow_systemd.SystemdTaskArgs)                                              |                                                         |
+| [`SystemdSSHTask`](_build/airflow_systemd.SystemdSSHTask.html.md#airflow_systemd.SystemdSSHTask)                                                 |                                                         |
+| [`SystemdSSHTaskArgs`](_build/airflow_systemd.SystemdSSHTaskArgs.html.md#airflow_systemd.SystemdSSHTaskArgs)                                     |                                                         |
+| [`load_airflow_config`](_build/airflow_systemd.load_airflow_config.html.md#airflow_systemd.load_airflow_config)([config_dir, ...])               |                                                         |
+| [`load_airflow_ssh_config`](_build/airflow_systemd.load_airflow_ssh_config.html.md#airflow_systemd.load_airflow_ssh_config)([config_dir, ...])   |                                                         |
+
+## Re-exported systemd models
+
+| [`ServiceConfiguration`](_build/airflow_systemd.ServiceConfiguration.html.md#airflow_systemd.ServiceConfiguration)                                  | Process supervision settings from a systemd `[Service]` section.   |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
+| [`ServiceUnitConfiguration`](_build/airflow_systemd.ServiceUnitConfiguration.html.md#airflow_systemd.ServiceUnitConfiguration)                      |                                                                    |
+| [`TimerConfiguration`](_build/airflow_systemd.TimerConfiguration.html.md#airflow_systemd.TimerConfiguration)                                        | Activation settings from a systemd `[Timer]` section.              |
+| [`TimerUnitConfiguration`](_build/airflow_systemd.TimerUnitConfiguration.html.md#airflow_systemd.TimerUnitConfiguration)                            |                                                                    |
+| [`SystemdConfiguration`](_build/airflow_systemd.SystemdConfiguration.html.md#airflow_systemd.SystemdConfiguration)                                  | Named collection of systemd service and timer unit files.          |
+| [`SystemdConvenienceConfiguration`](_build/airflow_systemd.SystemdConvenienceConfiguration.html.md#airflow_systemd.SystemdConvenienceConfiguration) | Systemd defaults and persisted state used by convenience commands. |
+| [`SystemdClient`](_build/airflow_systemd.SystemdClient.html.md#airflow_systemd.SystemdClient)(cfg[, runner])                                        |                                                                    |
+| [`UnitInfo`](_build/airflow_systemd.UnitInfo.html.md#airflow_systemd.UnitInfo)                                                                      |                                                                    |
+
+<!-- docs/src/_build/airflow_systemd.Systemd.html.md -->
+
+# airflow_systemd.Systemd
+
+### *class* airflow_systemd.Systemd(dag: DAG, cfg: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.html.md#airflow_systemd.SystemdAirflowConfiguration) | dict, \*\*kwargs: Any)[[source]](../../../_modules/airflow_systemd/airflow/local.html.md#Systemd)
+
+Bases: `object`
+
+Airflow task group for a locally managed systemd job.
+
+#### \_\_init_\_(dag: DAG, cfg: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.html.md#airflow_systemd.SystemdAirflowConfiguration) | dict, \*\*kwargs: Any)[[source]](../../../_modules/airflow_systemd/airflow/local.html.md#Systemd.__init__)
+
+### Methods
+
+| [`__init__`](#airflow_systemd.Systemd.__init__)(dag, cfg, \*\*kwargs)   |    |
+|-------------------------------------------------------------------------|----|
+| `get_base_operator_kwargs`()                                            |    |
+| `get_step_kwargs`(step)                                                 |    |
+| `get_step_operator`(step)                                               |    |
+| `initialize_tasks`()                                                    |    |
+| `set_downstream`(other)                                                 |    |
+| `set_upstream`(other)                                                   |    |
+| `setup_dag`()                                                           |    |
+| `update_relative`(other[, upstream, edge_modifier])                     |    |
+
+### Attributes
+
+| `check_services`      |    |
+|-----------------------|----|
+| `configure_systemd`   |    |
+| `leaves`              |    |
+| `restart_services`    |    |
+| `roots`               |    |
+| `start_services`      |    |
+| `stop_services`       |    |
+| `systemd_client`      |    |
+| `unconfigure_systemd` |    |
+
+<!-- docs/src/_build/airflow_systemd.SystemdSSH.html.md -->
+
+# airflow_systemd.SystemdSSH
+
+### *class* airflow_systemd.SystemdSSH(dag: DAG, cfg: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.html.md#airflow_systemd.SystemdSSHAirflowConfiguration) | dict, host: Host | dict | None = None, \*\*kwargs: Any)[[source]](../../../_modules/airflow_systemd/airflow/ssh.html.md#SystemdSSH)
+
+Bases: [`Systemd`](airflow_systemd.Systemd.html.md#airflow_systemd.Systemd)
+
+Airflow task group for a systemd job managed over SSH.
+
+#### \_\_init_\_(dag: DAG, cfg: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.html.md#airflow_systemd.SystemdSSHAirflowConfiguration) | dict, host: Host | dict | None = None, \*\*kwargs: Any)[[source]](../../../_modules/airflow_systemd/airflow/ssh.html.md#SystemdSSH.__init__)
+
+### Methods
+
+| [`__init__`](#airflow_systemd.SystemdSSH.__init__)(dag, cfg[, host])   |    |
+|------------------------------------------------------------------------|----|
+| `get_base_operator_kwargs`()                                           |    |
+| `get_step_kwargs`(step)                                                |    |
+| `get_step_operator`(step)                                              |    |
+| `initialize_tasks`()                                                   |    |
+| `set_downstream`(other)                                                |    |
+| `set_upstream`(other)                                                  |    |
+| `setup_dag`()                                                          |    |
+| `update_relative`(other[, upstream, edge_modifier])                    |    |
+
+### Attributes
+
+| `check_services`      |    |
+|-----------------------|----|
+| `configure_systemd`   |    |
+| `leaves`              |    |
+| `restart_services`    |    |
+| `roots`               |    |
+| `start_services`      |    |
+| `stop_services`       |    |
+| `systemd_client`      |    |
+| `unconfigure_systemd` |    |
+
+<!-- docs/src/_build/airflow_systemd.AirflowSSHCommandRunner.html.md -->
 
 # airflow_systemd.AirflowSSHCommandRunner
 
-### *class* airflow_systemd.AirflowSSHCommandRunner(hook: Any = None, command_prefix: str = '', environment: dict[str, str] | None = None, get_pty: bool = False, ssh_conn_id: str | None = None, remote_host: str = '', conn_timeout: int | None = None, cmd_timeout: int | None = None, banner_timeout: int | None = None)
+### *class* airflow_systemd.AirflowSSHCommandRunner(hook: Any = None, command_prefix: str = '', environment: dict[str, str] | None = None, get_pty: bool = False, ssh_conn_id: str | None = None, remote_host: str = '', conn_timeout: int | None = None, cmd_timeout: int | None = None, banner_timeout: int | None = None)[[source]](../../../_modules/airflow_systemd/airflow/ssh.html.md#AirflowSSHCommandRunner)
 
 Bases: `object`
 
 Run SystemdClient commands through an Airflow SSHHook.
 
-#### \_\_init_\_(hook: Any = None, command_prefix: str = '', environment: dict[str, str] | None = None, get_pty: bool = False, ssh_conn_id: str | None = None, remote_host: str = '', conn_timeout: int | None = None, cmd_timeout: int | None = None, banner_timeout: int | None = None)
+#### \_\_init_\_(hook: Any = None, command_prefix: str = '', environment: dict[str, str] | None = None, get_pty: bool = False, ssh_conn_id: str | None = None, remote_host: str = '', conn_timeout: int | None = None, cmd_timeout: int | None = None, banner_timeout: int | None = None)[[source]](../../../_modules/airflow_systemd/airflow/ssh.html.md#AirflowSSHCommandRunner.__init__)
 
 ### Methods
 
@@ -71,12 +375,143 @@ Run SystemdClient commands through an Airflow SSHHook.
 | `get_hook`()                                                                                   |    |
 | `run`(command, timeout)                                                                        |    |
 
+<!-- docs/src/_build/airflow_systemd.SystemdAirflowConfiguration.html.md -->
 
-# airflow_systemd.ServiceConfiguration.html.md
+# airflow_systemd.SystemdAirflowConfiguration
+
+### *pydantic model* airflow_systemd.SystemdAirflowConfiguration[[source]](../../../_modules/airflow_systemd/config/systemd.html.md#SystemdAirflowConfiguration)
+
+Bases: [`SystemdConvenienceConfiguration`](airflow_systemd.SystemdConvenienceConfiguration.html.md#airflow_systemd.SystemdConvenienceConfiguration)
+
+Systemd configuration for an Airflow-managed job.
+
+#### *field* check_interval *: timedelta* *= datetime.timedelta(seconds=5)*
+
+Interval between service status checks
+
+#### *field* check_timeout *: timedelta* *= datetime.timedelta(seconds=28800)*
+
+Timeout for service status checks
+
+#### *field* runtime *: timedelta | None* *= None*
+
+Maximum runtime of the systemd job
+
+#### *field* endtime *: time | None* *= None*
+
+End time of the systemd job
+
+#### *field* maxretrigger *: int | None* *= None*
+
+Maximum number of service check retriggers
+
+#### *field* reference_date *: Literal['start_date', 'logical_date', 'data_interval_end']* *= 'data_interval_end'*
+
+Date used to evaluate runtime and endtime
+
+#### *field* pool *: str | Pool | None* *= None*
+
+Airflow pool for systemd tasks
+
+#### *field* stop_on_exit *: bool* *= True*
+
+Stop services when the DAG finishes
+
+#### *field* cleanup *: bool* *= True*
+
+Remove generated unit files when the DAG finishes
+
+#### *field* restart_on_initial *: bool* *= False*
+
+Restart services on an initial Airflow run
+
+#### *field* restart_on_retrigger *: bool* *= False*
+
+Restart services when airflow-ha retriggers the job
+
+#### systemd_json() → str[[source]](../../../_modules/airflow_systemd/config/systemd.html.md#SystemdAirflowConfiguration.systemd_json)
+
+Serialize only fields understood by systemd-pydantic.
+
+<!-- docs/src/_build/airflow_systemd.SystemdSSHAirflowConfiguration.html.md -->
+
+# airflow_systemd.SystemdSSHAirflowConfiguration
+
+### *pydantic model* airflow_systemd.SystemdSSHAirflowConfiguration[[source]](../../../_modules/airflow_systemd/config/systemd_ssh.html.md#SystemdSSHAirflowConfiguration)
+
+Bases: [`SystemdAirflowConfiguration`](airflow_systemd.SystemdAirflowConfiguration.html.md#airflow_systemd.SystemdAirflowConfiguration)
+
+Systemd configuration for a job managed over SSH.
+
+#### *field* command_prefix *: str* *= ''*
+
+Shell prefix applied before remote commands
+
+#### *field* ssh_operator_args *: SSHTaskArgs* *[Optional]*
+
+Airflow SSH connection and operator arguments
+
+<!-- docs/src/_build/airflow_systemd.SystemdTask.html.md -->
+
+# airflow_systemd.SystemdTask
+
+### *pydantic model* airflow_systemd.SystemdTask[[source]](../../../_modules/airflow_systemd/config/task.html.md#SystemdTask)
+
+Bases: `Task`, [`SystemdTaskArgs`](airflow_systemd.SystemdTaskArgs.html.md#airflow_systemd.SystemdTaskArgs)
+
+#### *field* operator *: Annotated[type, BeforeValidator(func=get_import_path, json_schema_input_type=PydanticUndefined), PlainSerializer(func=serialize_path_as_string, return_type=str, when_used=json)]* *= 'airflow_systemd.Systemd'*
+
+<!-- docs/src/_build/airflow_systemd.SystemdTaskArgs.html.md -->
+
+# airflow_systemd.SystemdTaskArgs
+
+### *pydantic model* airflow_systemd.SystemdTaskArgs[[source]](../../../_modules/airflow_systemd/config/task.html.md#SystemdTaskArgs)
+
+Bases: `TaskArgs`
+
+#### *field* cfg *: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.html.md#airflow_systemd.SystemdAirflowConfiguration)* *[Required]*
+
+<!-- docs/src/_build/airflow_systemd.SystemdSSHTask.html.md -->
+
+# airflow_systemd.SystemdSSHTask
+
+### *pydantic model* airflow_systemd.SystemdSSHTask[[source]](../../../_modules/airflow_systemd/config/task_ssh.html.md#SystemdSSHTask)
+
+Bases: `Task`, [`SystemdSSHTaskArgs`](airflow_systemd.SystemdSSHTaskArgs.html.md#airflow_systemd.SystemdSSHTaskArgs)
+
+#### *field* operator *: Annotated[type, BeforeValidator(func=get_import_path, json_schema_input_type=PydanticUndefined), PlainSerializer(func=serialize_path_as_string, return_type=str, when_used=json)]* *= 'airflow_systemd.SystemdSSH'*
+
+<!-- docs/src/_build/airflow_systemd.SystemdSSHTaskArgs.html.md -->
+
+# airflow_systemd.SystemdSSHTaskArgs
+
+### *pydantic model* airflow_systemd.SystemdSSHTaskArgs[[source]](../../../_modules/airflow_systemd/config/task_ssh.html.md#SystemdSSHTaskArgs)
+
+Bases: `TaskArgs`
+
+#### *field* cfg *: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.html.md#airflow_systemd.SystemdSSHAirflowConfiguration)* *[Required]*
+
+#### *field* host *: Host | None* *= None*
+
+Host used to override the configured SSH connection
+
+<!-- docs/src/_build/airflow_systemd.load_airflow_config.html.md -->
+
+# airflow_systemd.load_airflow_config
+
+### airflow_systemd.load_airflow_config(config_dir: str = 'config', config_name: str = '', overrides: list[str] | None = None, , basepath: str = '', \_offset: int = 3) → Self
+
+<!-- docs/src/_build/airflow_systemd.load_airflow_ssh_config.html.md -->
+
+# airflow_systemd.load_airflow_ssh_config
+
+### airflow_systemd.load_airflow_ssh_config(config_dir: str = 'config', config_name: str = '', overrides: list[str] | None = None, , basepath: str = '', \_offset: int = 3) → Self
+
+<!-- docs/src/_build/airflow_systemd.ServiceConfiguration.html.md -->
 
 # airflow_systemd.ServiceConfiguration
 
-### *pydantic model* airflow_systemd.ServiceConfiguration
+### *pydantic model* airflow_systemd.ServiceConfiguration[[source]](../../../_modules/systemd_pydantic/models.html.md#ServiceConfiguration)
 
 Bases: `_Section`
 
@@ -162,12 +597,11 @@ Process supervision settings from a systemd `[Service]` section.
 
 #### *field* restart_force_exit_status *: list[int | str]* *[Optional]*
 
-
-# airflow_systemd.ServiceUnitConfiguration.html.md
+<!-- docs/src/_build/airflow_systemd.ServiceUnitConfiguration.html.md -->
 
 # airflow_systemd.ServiceUnitConfiguration
 
-### *pydantic model* airflow_systemd.ServiceUnitConfiguration
+### *pydantic model* airflow_systemd.ServiceUnitConfiguration[[source]](../../../_modules/systemd_pydantic/models.html.md#ServiceUnitConfiguration)
 
 Bases: `_SystemdConfiguration`
 
@@ -175,321 +609,15 @@ Bases: `_SystemdConfiguration`
 
 #### *field* unit *: UnitConfiguration | None* *= None*
 
-#### *field* service *: [ServiceConfiguration](airflow_systemd.ServiceConfiguration.md#airflow_systemd.ServiceConfiguration)* *[Required]*
+#### *field* service *: [ServiceConfiguration](airflow_systemd.ServiceConfiguration.html.md#airflow_systemd.ServiceConfiguration)* *[Required]*
 
 #### *field* install *: InstallConfiguration | None* *= None*
 
-
-# airflow_systemd.Systemd.html.md
-
-# airflow_systemd.Systemd
-
-### *class* airflow_systemd.Systemd(dag: DAG, cfg: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.md#airflow_systemd.SystemdAirflowConfiguration) | dict, \*\*kwargs: Any)
-
-Bases: `object`
-
-Airflow task group for a locally managed systemd job.
-
-#### \_\_init_\_(dag: DAG, cfg: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.md#airflow_systemd.SystemdAirflowConfiguration) | dict, \*\*kwargs: Any)
-
-### Methods
-
-| [`__init__`](#airflow_systemd.Systemd.__init__)(dag, cfg, \*\*kwargs)   |    |
-|-------------------------------------------------------------------------|----|
-| `get_base_operator_kwargs`()                                            |    |
-| `get_step_kwargs`(step)                                                 |    |
-| `get_step_operator`(step)                                               |    |
-| `initialize_tasks`()                                                    |    |
-| `set_downstream`(other)                                                 |    |
-| `set_upstream`(other)                                                   |    |
-| `setup_dag`()                                                           |    |
-| `update_relative`(other[, upstream, edge_modifier])                     |    |
-
-### Attributes
-
-| `check_services`      |    |
-|-----------------------|----|
-| `configure_systemd`   |    |
-| `leaves`              |    |
-| `restart_services`    |    |
-| `roots`               |    |
-| `start_services`      |    |
-| `stop_services`       |    |
-| `systemd_client`      |    |
-| `unconfigure_systemd` |    |
-
-
-# airflow_systemd.SystemdAirflowConfiguration.html.md
-
-# airflow_systemd.SystemdAirflowConfiguration
-
-### *pydantic model* airflow_systemd.SystemdAirflowConfiguration
-
-Bases: [`SystemdConvenienceConfiguration`](airflow_systemd.SystemdConvenienceConfiguration.md#airflow_systemd.SystemdConvenienceConfiguration)
-
-Systemd configuration for an Airflow-managed job.
-
-#### *field* check_interval *: timedelta* *= datetime.timedelta(seconds=5)*
-
-Interval between service status checks
-
-#### *field* check_timeout *: timedelta* *= datetime.timedelta(seconds=28800)*
-
-Timeout for service status checks
-
-#### *field* runtime *: timedelta | None* *= None*
-
-Maximum runtime of the systemd job
-
-#### *field* endtime *: time | None* *= None*
-
-End time of the systemd job
-
-#### *field* maxretrigger *: int | None* *= None*
-
-Maximum number of service check retriggers
-
-#### *field* reference_date *: Literal['start_date', 'logical_date', 'data_interval_end']* *= 'data_interval_end'*
-
-Date used to evaluate runtime and endtime
-
-#### *field* pool *: str | Pool | None* *= None*
-
-Airflow pool for systemd tasks
-
-#### *field* stop_on_exit *: bool* *= True*
-
-Stop services when the DAG finishes
-
-#### *field* cleanup *: bool* *= True*
-
-Remove generated unit files when the DAG finishes
-
-#### *field* restart_on_initial *: bool* *= False*
-
-Restart services on an initial Airflow run
-
-#### *field* restart_on_retrigger *: bool* *= False*
-
-Restart services when airflow-ha retriggers the job
-
-#### systemd_json() → str
-
-Serialize only fields understood by systemd-pydantic.
-
-
-# airflow_systemd.SystemdClient.html.md
-
-# airflow_systemd.SystemdClient
-
-### *class* airflow_systemd.SystemdClient(cfg: [SystemdConfiguration](airflow_systemd.SystemdConfiguration.md#airflow_systemd.SystemdConfiguration), runner: CommandRunner | None = None)
-
-Bases: `object`
-
-#### \_\_init_\_(cfg: [SystemdConfiguration](airflow_systemd.SystemdConfiguration.md#airflow_systemd.SystemdConfiguration), runner: CommandRunner | None = None)
-
-### Methods
-
-| [`__init__`](#airflow_systemd.SystemdClient.__init__)(cfg[, runner])   |    |
-|------------------------------------------------------------------------|----|
-| `daemon_reload`()                                                      |    |
-| `disable_units`([names])                                               |    |
-| `enable_units`([names])                                                |    |
-| `get_all_service_info`()                                               |    |
-| `get_all_timer_info`()                                                 |    |
-| `get_unit_info`(name)                                                  |    |
-| `get_units_info`(names)                                                |    |
-| `kill_services`()                                                      |    |
-| `kill_units`(names)                                                    |    |
-| `restart_services`()                                                   |    |
-| `restart_units`(names)                                                 |    |
-| `start_services`()                                                     |    |
-| `start_timers`()                                                       |    |
-| `start_units`(names)                                                   |    |
-| `stop_services`()                                                      |    |
-| `stop_timers`()                                                        |    |
-| `stop_units`(names)                                                    |    |
-
-
-# airflow_systemd.SystemdConfiguration.html.md
-
-# airflow_systemd.SystemdConfiguration
-
-### *pydantic model* airflow_systemd.SystemdConfiguration
-
-Bases: `BaseModel`
-
-Named collection of systemd service and timer unit files.
-
-#### *field* service *: dict[str, [ServiceUnitConfiguration](airflow_systemd.ServiceUnitConfiguration.md#airflow_systemd.ServiceUnitConfiguration)]* *[Required]*
-
-#### *field* timer *: dict[str, [TimerUnitConfiguration](airflow_systemd.TimerUnitConfiguration.md#airflow_systemd.TimerUnitConfiguration)]* *[Optional]*
-
-#### *field* unit_dir *: Path | None* *= None*
-
-#### *field* working_dir *: Path | None* *= None*
-
-#### *field* scope *: SystemdScope* *= 'system'*
-
-#### to_cfg() → dict[str, str]
-
-#### *property* service_names *: list[str]*
-
-#### *property* timer_names *: list[str]*
-
-#### *property* unit_paths *: list[Path]*
-
-#### write() → list[Path]
-
-#### rmdir() → None
-
-#### *classmethod* load(config_dir: str = 'config', config_name: str = '', overrides: list[str] | None = None, , basepath: str = '', \_offset: int = 3) → Self
-
-#### start() → dict[str, [UnitInfo](airflow_systemd.UnitInfo.md#airflow_systemd.UnitInfo)]
-
-#### running() → bool
-
-#### stop() → dict[str, [UnitInfo](airflow_systemd.UnitInfo.md#airflow_systemd.UnitInfo)]
-
-#### kill() → dict[str, [UnitInfo](airflow_systemd.UnitInfo.md#airflow_systemd.UnitInfo)]
-
-
-# airflow_systemd.SystemdConvenienceConfiguration.html.md
-
-# airflow_systemd.SystemdConvenienceConfiguration
-
-### *pydantic model* airflow_systemd.SystemdConvenienceConfiguration
-
-Bases: [`SystemdConfiguration`](airflow_systemd.SystemdConfiguration.md#airflow_systemd.SystemdConfiguration)
-
-Systemd defaults and persisted state used by convenience commands.
-
-#### *field* restart *: Literal['no', 'on-success', 'on-failure', 'on-abnormal', 'on-watchdog', 'on-abort', 'always']* *= 'no'*
-
-#### *field* timeout_stop_sec *: str | timedelta* *= '30s'*
-
-#### *field* kill_mode *: Literal['control-group', 'mixed', 'process', 'none']* *= 'control-group'*
-
-#### *field* kill_signal *: str* *= 'SIGTERM'*
-
-#### *field* success_exit_status *: list[int | str]* *= [0]*
-
-#### *field* command_timeout *: int* *= 60*
-
-#### rmdir() → None
-
-
-# airflow_systemd.SystemdSSH.html.md
-
-# airflow_systemd.SystemdSSH
-
-### *class* airflow_systemd.SystemdSSH(dag: DAG, cfg: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.md#airflow_systemd.SystemdSSHAirflowConfiguration) | dict, host: Host | dict | None = None, \*\*kwargs: Any)
-
-Bases: [`Systemd`](airflow_systemd.Systemd.md#airflow_systemd.Systemd)
-
-Airflow task group for a systemd job managed over SSH.
-
-#### \_\_init_\_(dag: DAG, cfg: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.md#airflow_systemd.SystemdSSHAirflowConfiguration) | dict, host: Host | dict | None = None, \*\*kwargs: Any)
-
-### Methods
-
-| [`__init__`](#airflow_systemd.SystemdSSH.__init__)(dag, cfg[, host])   |    |
-|------------------------------------------------------------------------|----|
-| `get_base_operator_kwargs`()                                           |    |
-| `get_step_kwargs`(step)                                                |    |
-| `get_step_operator`(step)                                              |    |
-| `initialize_tasks`()                                                   |    |
-| `set_downstream`(other)                                                |    |
-| `set_upstream`(other)                                                  |    |
-| `setup_dag`()                                                          |    |
-| `update_relative`(other[, upstream, edge_modifier])                    |    |
-
-### Attributes
-
-| `check_services`      |    |
-|-----------------------|----|
-| `configure_systemd`   |    |
-| `leaves`              |    |
-| `restart_services`    |    |
-| `roots`               |    |
-| `start_services`      |    |
-| `stop_services`       |    |
-| `systemd_client`      |    |
-| `unconfigure_systemd` |    |
-
-
-# airflow_systemd.SystemdSSHAirflowConfiguration.html.md
-
-# airflow_systemd.SystemdSSHAirflowConfiguration
-
-### *pydantic model* airflow_systemd.SystemdSSHAirflowConfiguration
-
-Bases: [`SystemdAirflowConfiguration`](airflow_systemd.SystemdAirflowConfiguration.md#airflow_systemd.SystemdAirflowConfiguration)
-
-Systemd configuration for a job managed over SSH.
-
-#### *field* command_prefix *: str* *= ''*
-
-Shell prefix applied before remote commands
-
-#### *field* ssh_operator_args *: SSHTaskArgs* *[Optional]*
-
-Airflow SSH connection and operator arguments
-
-
-# airflow_systemd.SystemdSSHTask.html.md
-
-# airflow_systemd.SystemdSSHTask
-
-### *pydantic model* airflow_systemd.SystemdSSHTask
-
-Bases: `Task`, [`SystemdSSHTaskArgs`](airflow_systemd.SystemdSSHTaskArgs.md#airflow_systemd.SystemdSSHTaskArgs)
-
-#### *field* operator *: Annotated[type, BeforeValidator(func=get_import_path, json_schema_input_type=PydanticUndefined), PlainSerializer(func=serialize_path_as_string, return_type=str, when_used=json)]* *= 'airflow_systemd.SystemdSSH'*
-
-
-# airflow_systemd.SystemdSSHTaskArgs.html.md
-
-# airflow_systemd.SystemdSSHTaskArgs
-
-### *pydantic model* airflow_systemd.SystemdSSHTaskArgs
-
-Bases: `TaskArgs`
-
-#### *field* cfg *: [SystemdSSHAirflowConfiguration](airflow_systemd.SystemdSSHAirflowConfiguration.md#airflow_systemd.SystemdSSHAirflowConfiguration)* *[Required]*
-
-#### *field* host *: Host | None* *= None*
-
-Host used to override the configured SSH connection
-
-
-# airflow_systemd.SystemdTask.html.md
-
-# airflow_systemd.SystemdTask
-
-### *pydantic model* airflow_systemd.SystemdTask
-
-Bases: `Task`, [`SystemdTaskArgs`](airflow_systemd.SystemdTaskArgs.md#airflow_systemd.SystemdTaskArgs)
-
-#### *field* operator *: Annotated[type, BeforeValidator(func=get_import_path, json_schema_input_type=PydanticUndefined), PlainSerializer(func=serialize_path_as_string, return_type=str, when_used=json)]* *= 'airflow_systemd.Systemd'*
-
-
-# airflow_systemd.SystemdTaskArgs.html.md
-
-# airflow_systemd.SystemdTaskArgs
-
-### *pydantic model* airflow_systemd.SystemdTaskArgs
-
-Bases: `TaskArgs`
-
-#### *field* cfg *: [SystemdAirflowConfiguration](airflow_systemd.SystemdAirflowConfiguration.md#airflow_systemd.SystemdAirflowConfiguration)* *[Required]*
-
-
-# airflow_systemd.TimerConfiguration.html.md
+<!-- docs/src/_build/airflow_systemd.TimerConfiguration.html.md -->
 
 # airflow_systemd.TimerConfiguration
 
-### *pydantic model* airflow_systemd.TimerConfiguration
+### *pydantic model* airflow_systemd.TimerConfiguration[[source]](../../../_modules/systemd_pydantic/models.html.md#TimerConfiguration)
 
 Bases: `_Section`
 
@@ -535,12 +663,11 @@ Activation settings from a systemd `[Timer]` section.
 
 #### *field* remain_after_elapse *: bool | None* *= None*
 
-
-# airflow_systemd.TimerUnitConfiguration.html.md
+<!-- docs/src/_build/airflow_systemd.TimerUnitConfiguration.html.md -->
 
 # airflow_systemd.TimerUnitConfiguration
 
-### *pydantic model* airflow_systemd.TimerUnitConfiguration
+### *pydantic model* airflow_systemd.TimerUnitConfiguration[[source]](../../../_modules/systemd_pydantic/models.html.md#TimerUnitConfiguration)
 
 Bases: `_SystemdConfiguration`
 
@@ -548,16 +675,113 @@ Bases: `_SystemdConfiguration`
 
 #### *field* unit *: UnitConfiguration | None* *= None*
 
-#### *field* timer *: [TimerConfiguration](airflow_systemd.TimerConfiguration.md#airflow_systemd.TimerConfiguration)* *[Required]*
+#### *field* timer *: [TimerConfiguration](airflow_systemd.TimerConfiguration.html.md#airflow_systemd.TimerConfiguration)* *[Required]*
 
 #### *field* install *: InstallConfiguration | None* *= None*
 
+<!-- docs/src/_build/airflow_systemd.SystemdConfiguration.html.md -->
 
-# airflow_systemd.UnitInfo.html.md
+# airflow_systemd.SystemdConfiguration
+
+### *pydantic model* airflow_systemd.SystemdConfiguration[[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration)
+
+Bases: `BaseModel`
+
+Named collection of systemd service and timer unit files.
+
+#### *field* service *: dict[str, [ServiceUnitConfiguration](airflow_systemd.ServiceUnitConfiguration.html.md#airflow_systemd.ServiceUnitConfiguration)]* *[Required]*
+
+#### *field* timer *: dict[str, [TimerUnitConfiguration](airflow_systemd.TimerUnitConfiguration.html.md#airflow_systemd.TimerUnitConfiguration)]* *[Optional]*
+
+#### *field* unit_dir *: Path | None* *= None*
+
+#### *field* working_dir *: Path | None* *= None*
+
+#### *field* scope *: SystemdScope* *= 'system'*
+
+#### to_cfg() → dict[str, str][[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration.to_cfg)
+
+#### *property* service_names *: list[str]*
+
+#### *property* timer_names *: list[str]*
+
+#### *property* unit_paths *: list[Path]*
+
+#### write() → list[Path][[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration.write)
+
+#### rmdir() → None[[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration.rmdir)
+
+#### *classmethod* load(config_dir: str = 'config', config_name: str = '', overrides: list[str] | None = None, , basepath: str = '', \_offset: int = 3) → Self[[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration.load)
+
+#### start() → dict[str, [UnitInfo](airflow_systemd.UnitInfo.html.md#airflow_systemd.UnitInfo)][[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration.start)
+
+#### running() → bool[[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration.running)
+
+#### stop() → dict[str, [UnitInfo](airflow_systemd.UnitInfo.html.md#airflow_systemd.UnitInfo)][[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration.stop)
+
+#### kill() → dict[str, [UnitInfo](airflow_systemd.UnitInfo.html.md#airflow_systemd.UnitInfo)][[source]](../../../_modules/systemd_pydantic/config/systemd.html.md#SystemdConfiguration.kill)
+
+<!-- docs/src/_build/airflow_systemd.SystemdConvenienceConfiguration.html.md -->
+
+# airflow_systemd.SystemdConvenienceConfiguration
+
+### *pydantic model* airflow_systemd.SystemdConvenienceConfiguration[[source]](../../../_modules/systemd_pydantic/config/convenience.html.md#SystemdConvenienceConfiguration)
+
+Bases: [`SystemdConfiguration`](airflow_systemd.SystemdConfiguration.html.md#airflow_systemd.SystemdConfiguration)
+
+Systemd defaults and persisted state used by convenience commands.
+
+#### *field* restart *: Literal['no', 'on-success', 'on-failure', 'on-abnormal', 'on-watchdog', 'on-abort', 'always']* *= 'no'*
+
+#### *field* timeout_stop_sec *: str | timedelta* *= '30s'*
+
+#### *field* kill_mode *: Literal['control-group', 'mixed', 'process', 'none']* *= 'control-group'*
+
+#### *field* kill_signal *: str* *= 'SIGTERM'*
+
+#### *field* success_exit_status *: list[int | str]* *= [0]*
+
+#### *field* command_timeout *: int* *= 60*
+
+#### rmdir() → None[[source]](../../../_modules/systemd_pydantic/config/convenience.html.md#SystemdConvenienceConfiguration.rmdir)
+
+<!-- docs/src/_build/airflow_systemd.SystemdClient.html.md -->
+
+# airflow_systemd.SystemdClient
+
+### *class* airflow_systemd.SystemdClient(cfg: [SystemdConfiguration](airflow_systemd.SystemdConfiguration.html.md#airflow_systemd.SystemdConfiguration), runner: CommandRunner | None = None)[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#SystemdClient)
+
+Bases: `object`
+
+#### \_\_init_\_(cfg: [SystemdConfiguration](airflow_systemd.SystemdConfiguration.html.md#airflow_systemd.SystemdConfiguration), runner: CommandRunner | None = None)[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#SystemdClient.__init__)
+
+### Methods
+
+| [`__init__`](#airflow_systemd.SystemdClient.__init__)(cfg[, runner])   |    |
+|------------------------------------------------------------------------|----|
+| `daemon_reload`()                                                      |    |
+| `disable_units`([names])                                               |    |
+| `enable_units`([names])                                                |    |
+| `get_all_service_info`()                                               |    |
+| `get_all_timer_info`()                                                 |    |
+| `get_unit_info`(name)                                                  |    |
+| `get_units_info`(names)                                                |    |
+| `kill_services`()                                                      |    |
+| `kill_units`(names)                                                    |    |
+| `restart_services`()                                                   |    |
+| `restart_units`(names)                                                 |    |
+| `start_services`()                                                     |    |
+| `start_timers`()                                                       |    |
+| `start_units`(names)                                                   |    |
+| `stop_services`()                                                      |    |
+| `stop_timers`()                                                        |    |
+| `stop_units`(names)                                                    |    |
+
+<!-- docs/src/_build/airflow_systemd.UnitInfo.html.md -->
 
 # airflow_systemd.UnitInfo
 
-### *pydantic model* airflow_systemd.UnitInfo
+### *pydantic model* airflow_systemd.UnitInfo[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo)
 
 Bases: `BaseModel`
 
@@ -575,261 +799,12 @@ Bases: `BaseModel`
 
 #### *field* exec_main_status *: int | None* *= None*
 
-#### running() → bool
+#### running() → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.running)
 
-#### stopped() → bool
+#### stopped() → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.stopped)
 
-#### done(ok_exitstatuses: list[int | str] | None = None) → bool
+#### done(ok_exitstatuses: list[int | str] | None = None) → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.done)
 
-#### ok(ok_exitstatuses: list[int | str] | None = None) → bool
+#### ok(ok_exitstatuses: list[int | str] | None = None) → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.ok)
 
-#### bad(ok_exitstatuses: list[int | str] | None = None) → bool
-
-
-# airflow_systemd.load_airflow_config.html.md
-
-# airflow_systemd.load_airflow_config
-
-### airflow_systemd.load_airflow_config(config_dir: str = 'config', config_name: str = '', overrides: list[str] | None = None, , basepath: str = '', \_offset: int = 3) → Self
-
-
-# airflow_systemd.load_airflow_ssh_config.html.md
-
-# airflow_systemd.load_airflow_ssh_config
-
-### airflow_systemd.load_airflow_ssh_config(config_dir: str = 'config', config_name: str = '', overrides: list[str] | None = None, , basepath: str = '', \_offset: int = 3) → Self
-
-
-# api.html.md
-
-# API reference
-
-## Airflow lifecycle
-
-| [`Systemd`](_build/airflow_systemd.Systemd.md#airflow_systemd.Systemd)(dag, cfg, \*\*kwargs)                                                | Airflow task group for a locally managed systemd job.   |
-|---------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------|
-| [`SystemdSSH`](_build/airflow_systemd.SystemdSSH.md#airflow_systemd.SystemdSSH)(dag, cfg[, host])                                           | Airflow task group for a systemd job managed over SSH.  |
-| [`AirflowSSHCommandRunner`](_build/airflow_systemd.AirflowSSHCommandRunner.md#airflow_systemd.AirflowSSHCommandRunner)([hook, ...])         | Run SystemdClient commands through an Airflow SSHHook.  |
-| [`SystemdAirflowConfiguration`](_build/airflow_systemd.SystemdAirflowConfiguration.md#airflow_systemd.SystemdAirflowConfiguration)          | Systemd configuration for an Airflow-managed job.       |
-| [`SystemdSSHAirflowConfiguration`](_build/airflow_systemd.SystemdSSHAirflowConfiguration.md#airflow_systemd.SystemdSSHAirflowConfiguration) | Systemd configuration for a job managed over SSH.       |
-| [`SystemdTask`](_build/airflow_systemd.SystemdTask.md#airflow_systemd.SystemdTask)                                                          |                                                         |
-| [`SystemdTaskArgs`](_build/airflow_systemd.SystemdTaskArgs.md#airflow_systemd.SystemdTaskArgs)                                              |                                                         |
-| [`SystemdSSHTask`](_build/airflow_systemd.SystemdSSHTask.md#airflow_systemd.SystemdSSHTask)                                                 |                                                         |
-| [`SystemdSSHTaskArgs`](_build/airflow_systemd.SystemdSSHTaskArgs.md#airflow_systemd.SystemdSSHTaskArgs)                                     |                                                         |
-| [`load_airflow_config`](_build/airflow_systemd.load_airflow_config.md#airflow_systemd.load_airflow_config)([config_dir, ...])               |                                                         |
-| [`load_airflow_ssh_config`](_build/airflow_systemd.load_airflow_ssh_config.md#airflow_systemd.load_airflow_ssh_config)([config_dir, ...])   |                                                         |
-
-## Re-exported systemd models
-
-| [`ServiceConfiguration`](_build/airflow_systemd.ServiceConfiguration.md#airflow_systemd.ServiceConfiguration)                                  | Process supervision settings from a systemd `[Service]` section.   |
-|------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
-| [`ServiceUnitConfiguration`](_build/airflow_systemd.ServiceUnitConfiguration.md#airflow_systemd.ServiceUnitConfiguration)                      |                                                                    |
-| [`TimerConfiguration`](_build/airflow_systemd.TimerConfiguration.md#airflow_systemd.TimerConfiguration)                                        | Activation settings from a systemd `[Timer]` section.              |
-| [`TimerUnitConfiguration`](_build/airflow_systemd.TimerUnitConfiguration.md#airflow_systemd.TimerUnitConfiguration)                            |                                                                    |
-| [`SystemdConfiguration`](_build/airflow_systemd.SystemdConfiguration.md#airflow_systemd.SystemdConfiguration)                                  | Named collection of systemd service and timer unit files.          |
-| [`SystemdConvenienceConfiguration`](_build/airflow_systemd.SystemdConvenienceConfiguration.md#airflow_systemd.SystemdConvenienceConfiguration) | Systemd defaults and persisted state used by convenience commands. |
-| [`SystemdClient`](_build/airflow_systemd.SystemdClient.md#airflow_systemd.SystemdClient)(cfg[, runner])                                        |                                                                    |
-| [`UnitInfo`](_build/airflow_systemd.UnitInfo.md#airflow_systemd.UnitInfo)                                                                      |                                                                    |
-
-
-# explanation.html.md
-
-# Why Airflow owns the schedule
-
-Airflow and systemd can both schedule work: Airflow through DAG schedules and
-systemd through timer units. `airflow-systemd` deliberately uses Airflow as the
-only scheduler and starts service units directly.
-
-Two active schedulers would create ambiguous ownership. A timer could start the
-service outside a DAG run, while Airflow would still monitor, restart, or stop it
-according to a different execution interval. Direct service activation keeps
-each external process lifecycle attached to one DAG run. Timer models remain in
-[systemd-pydantic](https://github.com/airflow-laminar/systemd-pydantic) for
-deployments where systemd owns scheduling.
-
-## Lifecycle mapping
-
-The integration maps external process states to `airflow-ha` results. A finished
-service with an accepted exit status stops monitoring successfully. A running or
-otherwise healthy service continues. A failed service retriggers through the
-restart path. This separates lightweight Airflow polling from process ownership:
-systemd launches, signals, and records the process; Airflow coordinates the
-larger workflow.
-
-## Local and SSH execution
-
-Local mode calls `systemd-pydantic` convenience functions on the worker.
-`SystemdSSH` sends configuration commands through Airflow’s SSH provider and
-uses an SSH-backed `SystemdClient` for status and lifecycle operations. Both
-modes expose the same task graph and Airflow-specific controls.
-
-## Comparison with supervisord
-
-[airflow-supervisor](https://github.com/airflow-laminar/airflow-supervisor)
-creates a dedicated supervisord instance for the job. `airflow-systemd` uses the
-host’s existing service manager instead. Systemd is a natural fit when unit
-files, journald, cgroups, and host boot relationships are already operational
-standards; supervisord is useful when a self-contained process manager is easier
-to provision.
-
-
-# how-to.html.md
-
-# How-to guides
-
-These guides cover common local, remote, and lifecycle configurations.
-
-## How to keep a service running after the DAG finishes
-
-Disable stop and cleanup, then choose when to restart the persistent service:
-
-```yaml
-cfg:
-  scope: user
-  stop_on_exit: false
-  cleanup: false
-  restart_on_initial: true
-  restart_on_retrigger: true
-  service:
-    api:
-      service:
-        type: exec
-        exec_start: /opt/services/api
-        restart: on-failure
-```
-
-Use this for services whose ownership remains with systemd between Airflow runs.
-
-## How to limit monitoring
-
-Set Airflow-specific timing fields on `SystemdAirflowConfiguration`:
-
-```yaml
-cfg:
-  check_interval: 00:00:10
-  check_timeout: 08:00:00
-  runtime: 04:00:00
-  maxretrigger: 3
-  service:
-    batch:
-      service:
-        type: exec
-        exec_start: /opt/jobs/batch
-```
-
-`check_interval` controls polling, `check_timeout` controls the sensor timeout,
-and `runtime` controls the allowed external job duration.
-
-## How to manage a remote host
-
-Use the SSH task model in `airflow-config`:
-
-```yaml
-dags:
-  remote-systemd:
-    schedule: "@daily"
-    tasks:
-      run-remote:
-        _target_: airflow_systemd.SystemdSSHTask
-        cfg:
-          scope: user
-          command_prefix: source /etc/profile &&
-          ssh_operator_args:
-            ssh_conn_id: systemd-host
-          service:
-            report:
-              service:
-                type: exec
-                exec_start: /opt/jobs/report
-```
-
-Configuration and cleanup use Airflow’s SSH operator. Status and lifecycle calls
-use a `SystemdClient` command runner backed by the same SSH connection.
-
-## How to chain the lifecycle with other tasks
-
-The `Systemd` object behaves like a task group boundary:
-
-```python
-prepare >> systemd >> publish
-```
-
-Upstream dependencies attach to `configure_systemd`. Downstream dependencies
-attach to `unconfigure_systemd`, including when cleanup is represented by a skip
-task.
-
-
-# tutorial.html.md
-
-# Tutorial: run a systemd job from Airflow
-
-In this tutorial, we will define a user-scoped systemd job in `airflow-config`
-YAML and load it as an Airflow DAG.
-
-## Install the packages
-
-For Airflow 3, run:
-
-```bash
-pip install 'airflow-systemd[airflow3]' airflow-config
-```
-
-Use the `airflow` extra instead when running Airflow 2. The worker must have a
-user systemd manager and permission to write its user unit directory.
-
-## Define the DAG
-
-Create `config/systemd.yaml`:
-
-```yaml
-dags:
-  nightly-systemd:
-    schedule: "@daily"
-    start_date: "2024-01-01"
-    catchup: false
-    tasks:
-      run-nightly:
-        _target_: airflow_systemd.SystemdTask
-        cfg:
-          scope: user
-          stop_on_exit: true
-          cleanup: true
-          service:
-            nightly:
-              unit:
-                description: Nightly batch job
-              service:
-                type: exec
-                exec_start: /opt/jobs/nightly
-```
-
-## Load the configuration
-
-Create `nightly_systemd.py` in the DAG folder:
-
-```python
-from airflow_config import load_config
-
-config = load_config("config", "systemd")
-config.generate_in_mem()
-```
-
-## Inspect the lifecycle
-
-Parse the DAG folder:
-
-```bash
-airflow dags list | grep nightly-systemd
-airflow tasks list nightly-systemd
-```
-
-The task list includes the configure, start, check, restart, stop, and
-unconfigure steps created by `Systemd`.
-
-Trigger the DAG in a test environment containing `/opt/jobs/nightly`. The check
-step remains active while the service runs and completes after systemd reports a
-successful stopped unit.
-
-You have now connected a declarative Airflow DAG to a systemd-managed process.
-
-
+#### bad(ok_exitstatuses: list[int | str] | None = None) → bool[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#UnitInfo.bad)

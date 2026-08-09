@@ -1,10 +1,10 @@
 # airflow_systemd.SystemdClient
 
-### *class* airflow_systemd.SystemdClient(cfg: [SystemdConfiguration](airflow_systemd.SystemdConfiguration.md#airflow_systemd.SystemdConfiguration), runner: CommandRunner | None = None)
+### *class* airflow_systemd.SystemdClient(cfg: [SystemdConfiguration](airflow_systemd.SystemdConfiguration.html.md#airflow_systemd.SystemdConfiguration), runner: CommandRunner | None = None)[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#SystemdClient)
 
 Bases: `object`
 
-#### \_\_init_\_(cfg: [SystemdConfiguration](airflow_systemd.SystemdConfiguration.md#airflow_systemd.SystemdConfiguration), runner: CommandRunner | None = None)
+#### \_\_init_\_(cfg: [SystemdConfiguration](airflow_systemd.SystemdConfiguration.html.md#airflow_systemd.SystemdConfiguration), runner: CommandRunner | None = None)[[source]](../../../_modules/systemd_pydantic/client/systemctl.html.md#SystemdClient.__init__)
 
 ### Methods
 
