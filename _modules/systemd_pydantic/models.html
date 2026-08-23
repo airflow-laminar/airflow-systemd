@@ -186,25 +186,25 @@
 </span><span id="line-6">
 </span><span id="line-7"><span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">model_validator</span>
 </span><span id="line-8">
-</span><span id="line-9"><span class="n">ServiceType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;simple&quot;</span><span class="p">,</span> <span class="s2">&quot;exec&quot;</span><span class="p">,</span> <span class="s2">&quot;forking&quot;</span><span class="p">,</span> <span class="s2">&quot;oneshot&quot;</span><span class="p">,</span> <span class="s2">&quot;dbus&quot;</span><span class="p">,</span> <span class="s2">&quot;notify&quot;</span><span class="p">,</span> <span class="s2">&quot;notify-reload&quot;</span><span class="p">,</span> <span class="s2">&quot;idle&quot;</span><span class="p">]</span>
-</span><span id="line-10"><span class="n">RestartPolicy</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;no&quot;</span><span class="p">,</span> <span class="s2">&quot;on-success&quot;</span><span class="p">,</span> <span class="s2">&quot;on-failure&quot;</span><span class="p">,</span> <span class="s2">&quot;on-abnormal&quot;</span><span class="p">,</span> <span class="s2">&quot;on-watchdog&quot;</span><span class="p">,</span> <span class="s2">&quot;on-abort&quot;</span><span class="p">,</span> <span class="s2">&quot;always&quot;</span><span class="p">]</span>
-</span><span id="line-11"><span class="n">KillMode</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;control-group&quot;</span><span class="p">,</span> <span class="s2">&quot;mixed&quot;</span><span class="p">,</span> <span class="s2">&quot;process&quot;</span><span class="p">,</span> <span class="s2">&quot;none&quot;</span><span class="p">]</span>
+</span><span id="line-9"><span class="n">ServiceType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"simple"</span><span class="p">,</span> <span class="s2">"exec"</span><span class="p">,</span> <span class="s2">"forking"</span><span class="p">,</span> <span class="s2">"oneshot"</span><span class="p">,</span> <span class="s2">"dbus"</span><span class="p">,</span> <span class="s2">"notify"</span><span class="p">,</span> <span class="s2">"notify-reload"</span><span class="p">,</span> <span class="s2">"idle"</span><span class="p">]</span>
+</span><span id="line-10"><span class="n">RestartPolicy</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"no"</span><span class="p">,</span> <span class="s2">"on-success"</span><span class="p">,</span> <span class="s2">"on-failure"</span><span class="p">,</span> <span class="s2">"on-abnormal"</span><span class="p">,</span> <span class="s2">"on-watchdog"</span><span class="p">,</span> <span class="s2">"on-abort"</span><span class="p">,</span> <span class="s2">"always"</span><span class="p">]</span>
+</span><span id="line-11"><span class="n">KillMode</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"control-group"</span><span class="p">,</span> <span class="s2">"mixed"</span><span class="p">,</span> <span class="s2">"process"</span><span class="p">,</span> <span class="s2">"none"</span><span class="p">]</span>
 </span><span id="line-12"><span class="n">TimeSpan</span> <span class="o">=</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">timedelta</span>
 </span><span id="line-13">
 </span><span id="line-14">
 </span><span id="line-15"><span class="k">def</span><span class="w"> </span><span class="nf">_quote</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-16">    <span class="k">return</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\\\</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\\</span><span class="s1">&quot;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
+</span><span id="line-16">    <span class="k">return</span> <span class="s1">'"'</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"</span><span class="se">\\</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"</span><span class="se">\\\\</span><span class="s2">"</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'"'</span><span class="p">,</span> <span class="s1">'</span><span class="se">\\</span><span class="s1">"'</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'"'</span>
 </span><span id="line-17">
 </span><span id="line-18">
 </span><span id="line-19"><span class="k">def</span><span class="w"> </span><span class="nf">_format_time_span</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">timedelta</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-20">    <span class="n">microseconds</span> <span class="o">=</span> <span class="p">((</span><span class="n">value</span><span class="o">.</span><span class="n">days</span> <span class="o">*</span> <span class="mi">86_400</span><span class="p">)</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">seconds</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1_000_000</span> <span class="o">+</span> <span class="n">value</span><span class="o">.</span><span class="n">microseconds</span>
 </span><span id="line-21">    <span class="k">if</span> <span class="n">microseconds</span> <span class="o">%</span> <span class="mi">1_000_000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="line-22">        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">microseconds</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">1_000_000</span><span class="si">}</span><span class="s2">s&quot;</span>
-</span><span id="line-23">    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">microseconds</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1_000_000</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;0&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;s&quot;</span>
+</span><span id="line-22">        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">microseconds</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="mi">1_000_000</span><span class="si">}</span><span class="s2">s"</span>
+</span><span id="line-23">    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">microseconds</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">1_000_000</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">"</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">"0"</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"s"</span>
 </span><span id="line-24">
 </span><span id="line-25">
 </span><span id="line-26"><span class="k">class</span><span class="w"> </span><span class="nc">_Section</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="line-27">    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-27">    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">"forbid"</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="line-28">
 </span><span id="line-29">    <span class="n">section_name</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span><span id="line-30">    <span class="n">directives</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span>
@@ -212,50 +212,50 @@
 </span><span id="line-32">    <span class="n">space_separated</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">frozenset</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">()</span>
 </span><span id="line-33">
 </span><span id="line-34">    <span class="k">def</span><span class="w"> </span><span class="nf">to_unit_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-35">        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">section_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">]</span>
+</span><span id="line-35">        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">section_name</span><span class="si">}</span><span class="s2">]"</span><span class="p">]</span>
 </span><span id="line-36">        <span class="k">for</span> <span class="n">field_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
 </span><span id="line-37">            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="p">[]</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">==</span> <span class="p">{}:</span>
 </span><span id="line-38">                <span class="k">continue</span>
 </span><span id="line-39">            <span class="n">directive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">directives</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
-</span><span id="line-40">            <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s2">&quot;environment&quot;</span><span class="p">:</span>
-</span><span id="line-41">                <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directive</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">_quote</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+</span><span id="line-40">            <span class="k">if</span> <span class="n">field_name</span> <span class="o">==</span> <span class="s2">"environment"</span><span class="p">:</span>
+</span><span id="line-41">                <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">directive</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">_quote</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">=</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
 </span><span id="line-42">            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
 </span><span id="line-43">                <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">repeated</span><span class="p">:</span>
-</span><span id="line-44">                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directive</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
+</span><span id="line-44">                    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">directive</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">)</span>
 </span><span id="line-45">                <span class="k">elif</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_separated</span><span class="p">:</span>
-</span><span id="line-46">                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directive</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">item</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="line-46">                    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">directive</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="s1">' '</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">item</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span><span id="line-47">            <span class="k">else</span><span class="p">:</span>
-</span><span id="line-48">                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">directive</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="line-49">        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+</span><span id="line-48">                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">directive</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_format</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="line-49">        <span class="k">return</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 </span><span id="line-50">
 </span><span id="line-51">    <span class="nd">@staticmethod</span>
 </span><span id="line-52">    <span class="k">def</span><span class="w"> </span><span class="nf">_format</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-53">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-</span><span id="line-54">            <span class="k">return</span> <span class="s2">&quot;yes&quot;</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s2">&quot;no&quot;</span>
+</span><span id="line-54">            <span class="k">return</span> <span class="s2">"yes"</span> <span class="k">if</span> <span class="n">value</span> <span class="k">else</span> <span class="s2">"no"</span>
 </span><span id="line-55">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">):</span>
 </span><span id="line-56">            <span class="k">return</span> <span class="n">_format_time_span</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span><span id="line-57">        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span><span id="line-58">
 </span><span id="line-59">
 </span><span id="line-60"><span class="k">class</span><span class="w"> </span><span class="nc">UnitConfiguration</span><span class="p">(</span><span class="n">_Section</span><span class="p">):</span>
-</span><span id="line-61"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Common settings from a systemd unit&#39;s ``[Unit]`` section.&quot;&quot;&quot;</span>
+</span><span id="line-61"><span class="w">    </span><span class="sd">"""Common settings from a systemd unit's ``[Unit]`` section."""</span>
 </span><span id="line-62">
-</span><span id="line-63">    <span class="n">section_name</span> <span class="o">=</span> <span class="s2">&quot;Unit&quot;</span>
+</span><span id="line-63">    <span class="n">section_name</span> <span class="o">=</span> <span class="s2">"Unit"</span>
 </span><span id="line-64">    <span class="n">directives</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-65">        <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Description&quot;</span><span class="p">,</span>
-</span><span id="line-66">        <span class="s2">&quot;documentation&quot;</span><span class="p">:</span> <span class="s2">&quot;Documentation&quot;</span><span class="p">,</span>
-</span><span id="line-67">        <span class="s2">&quot;wants&quot;</span><span class="p">:</span> <span class="s2">&quot;Wants&quot;</span><span class="p">,</span>
-</span><span id="line-68">        <span class="s2">&quot;requires&quot;</span><span class="p">:</span> <span class="s2">&quot;Requires&quot;</span><span class="p">,</span>
-</span><span id="line-69">        <span class="s2">&quot;requisite&quot;</span><span class="p">:</span> <span class="s2">&quot;Requisite&quot;</span><span class="p">,</span>
-</span><span id="line-70">        <span class="s2">&quot;binds_to&quot;</span><span class="p">:</span> <span class="s2">&quot;BindsTo&quot;</span><span class="p">,</span>
-</span><span id="line-71">        <span class="s2">&quot;part_of&quot;</span><span class="p">:</span> <span class="s2">&quot;PartOf&quot;</span><span class="p">,</span>
-</span><span id="line-72">        <span class="s2">&quot;upholds&quot;</span><span class="p">:</span> <span class="s2">&quot;Upholds&quot;</span><span class="p">,</span>
-</span><span id="line-73">        <span class="s2">&quot;conflicts&quot;</span><span class="p">:</span> <span class="s2">&quot;Conflicts&quot;</span><span class="p">,</span>
-</span><span id="line-74">        <span class="s2">&quot;before&quot;</span><span class="p">:</span> <span class="s2">&quot;Before&quot;</span><span class="p">,</span>
-</span><span id="line-75">        <span class="s2">&quot;after&quot;</span><span class="p">:</span> <span class="s2">&quot;After&quot;</span><span class="p">,</span>
-</span><span id="line-76">        <span class="s2">&quot;on_failure&quot;</span><span class="p">:</span> <span class="s2">&quot;OnFailure&quot;</span><span class="p">,</span>
+</span><span id="line-65">        <span class="s2">"description"</span><span class="p">:</span> <span class="s2">"Description"</span><span class="p">,</span>
+</span><span id="line-66">        <span class="s2">"documentation"</span><span class="p">:</span> <span class="s2">"Documentation"</span><span class="p">,</span>
+</span><span id="line-67">        <span class="s2">"wants"</span><span class="p">:</span> <span class="s2">"Wants"</span><span class="p">,</span>
+</span><span id="line-68">        <span class="s2">"requires"</span><span class="p">:</span> <span class="s2">"Requires"</span><span class="p">,</span>
+</span><span id="line-69">        <span class="s2">"requisite"</span><span class="p">:</span> <span class="s2">"Requisite"</span><span class="p">,</span>
+</span><span id="line-70">        <span class="s2">"binds_to"</span><span class="p">:</span> <span class="s2">"BindsTo"</span><span class="p">,</span>
+</span><span id="line-71">        <span class="s2">"part_of"</span><span class="p">:</span> <span class="s2">"PartOf"</span><span class="p">,</span>
+</span><span id="line-72">        <span class="s2">"upholds"</span><span class="p">:</span> <span class="s2">"Upholds"</span><span class="p">,</span>
+</span><span id="line-73">        <span class="s2">"conflicts"</span><span class="p">:</span> <span class="s2">"Conflicts"</span><span class="p">,</span>
+</span><span id="line-74">        <span class="s2">"before"</span><span class="p">:</span> <span class="s2">"Before"</span><span class="p">,</span>
+</span><span id="line-75">        <span class="s2">"after"</span><span class="p">:</span> <span class="s2">"After"</span><span class="p">,</span>
+</span><span id="line-76">        <span class="s2">"on_failure"</span><span class="p">:</span> <span class="s2">"OnFailure"</span><span class="p">,</span>
 </span><span id="line-77">    <span class="p">}</span>
-</span><span id="line-78">    <span class="n">space_separated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">directives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="p">{</span><span class="s2">&quot;description&quot;</span><span class="p">})</span>
+</span><span id="line-78">    <span class="n">space_separated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span><span class="n">directives</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">-</span> <span class="p">{</span><span class="s2">"description"</span><span class="p">})</span>
 </span><span id="line-79">
 </span><span id="line-80">    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-81">    <span class="n">documentation</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -274,60 +274,60 @@
 <div class="viewcode-block" id="ServiceConfiguration">
 <a class="viewcode-back" href="../../docs/src/_build/airflow_systemd.ServiceConfiguration.html#airflow_systemd.ServiceConfiguration">[docs]</a>
 </span><span id="line-94"><span class="k">class</span><span class="w"> </span><span class="nc">ServiceConfiguration</span><span class="p">(</span><span class="n">_Section</span><span class="p">):</span>
-</span><span id="line-95"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Process supervision settings from a systemd ``[Service]`` section.&quot;&quot;&quot;</span>
+</span><span id="line-95"><span class="w">    </span><span class="sd">"""Process supervision settings from a systemd ``[Service]`` section."""</span>
 </span><span id="line-96">
-</span><span id="line-97">    <span class="n">section_name</span> <span class="o">=</span> <span class="s2">&quot;Service&quot;</span>
+</span><span id="line-97">    <span class="n">section_name</span> <span class="o">=</span> <span class="s2">"Service"</span>
 </span><span id="line-98">    <span class="n">directives</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-99">        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;Type&quot;</span><span class="p">,</span>
-</span><span id="line-100">        <span class="s2">&quot;exec_condition&quot;</span><span class="p">:</span> <span class="s2">&quot;ExecCondition&quot;</span><span class="p">,</span>
-</span><span id="line-101">        <span class="s2">&quot;exec_start_pre&quot;</span><span class="p">:</span> <span class="s2">&quot;ExecStartPre&quot;</span><span class="p">,</span>
-</span><span id="line-102">        <span class="s2">&quot;exec_start&quot;</span><span class="p">:</span> <span class="s2">&quot;ExecStart&quot;</span><span class="p">,</span>
-</span><span id="line-103">        <span class="s2">&quot;exec_start_post&quot;</span><span class="p">:</span> <span class="s2">&quot;ExecStartPost&quot;</span><span class="p">,</span>
-</span><span id="line-104">        <span class="s2">&quot;exec_reload&quot;</span><span class="p">:</span> <span class="s2">&quot;ExecReload&quot;</span><span class="p">,</span>
-</span><span id="line-105">        <span class="s2">&quot;exec_stop&quot;</span><span class="p">:</span> <span class="s2">&quot;ExecStop&quot;</span><span class="p">,</span>
-</span><span id="line-106">        <span class="s2">&quot;exec_stop_post&quot;</span><span class="p">:</span> <span class="s2">&quot;ExecStopPost&quot;</span><span class="p">,</span>
-</span><span id="line-107">        <span class="s2">&quot;restart&quot;</span><span class="p">:</span> <span class="s2">&quot;Restart&quot;</span><span class="p">,</span>
-</span><span id="line-108">        <span class="s2">&quot;restart_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;RestartSec&quot;</span><span class="p">,</span>
-</span><span id="line-109">        <span class="s2">&quot;restart_steps&quot;</span><span class="p">:</span> <span class="s2">&quot;RestartSteps&quot;</span><span class="p">,</span>
-</span><span id="line-110">        <span class="s2">&quot;restart_max_delay_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;RestartMaxDelaySec&quot;</span><span class="p">,</span>
-</span><span id="line-111">        <span class="s2">&quot;restart_randomized_delay_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;RestartRandomizedDelaySec&quot;</span><span class="p">,</span>
-</span><span id="line-112">        <span class="s2">&quot;timeout_start_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;TimeoutStartSec&quot;</span><span class="p">,</span>
-</span><span id="line-113">        <span class="s2">&quot;timeout_stop_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;TimeoutStopSec&quot;</span><span class="p">,</span>
-</span><span id="line-114">        <span class="s2">&quot;runtime_max_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;RuntimeMaxSec&quot;</span><span class="p">,</span>
-</span><span id="line-115">        <span class="s2">&quot;watchdog_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;WatchdogSec&quot;</span><span class="p">,</span>
-</span><span id="line-116">        <span class="s2">&quot;remain_after_exit&quot;</span><span class="p">:</span> <span class="s2">&quot;RemainAfterExit&quot;</span><span class="p">,</span>
-</span><span id="line-117">        <span class="s2">&quot;guess_main_pid&quot;</span><span class="p">:</span> <span class="s2">&quot;GuessMainPID&quot;</span><span class="p">,</span>
-</span><span id="line-118">        <span class="s2">&quot;pid_file&quot;</span><span class="p">:</span> <span class="s2">&quot;PIDFile&quot;</span><span class="p">,</span>
-</span><span id="line-119">        <span class="s2">&quot;bus_name&quot;</span><span class="p">:</span> <span class="s2">&quot;BusName&quot;</span><span class="p">,</span>
-</span><span id="line-120">        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">,</span>
-</span><span id="line-121">        <span class="s2">&quot;group&quot;</span><span class="p">:</span> <span class="s2">&quot;Group&quot;</span><span class="p">,</span>
-</span><span id="line-122">        <span class="s2">&quot;supplementary_groups&quot;</span><span class="p">:</span> <span class="s2">&quot;SupplementaryGroups&quot;</span><span class="p">,</span>
-</span><span id="line-123">        <span class="s2">&quot;working_directory&quot;</span><span class="p">:</span> <span class="s2">&quot;WorkingDirectory&quot;</span><span class="p">,</span>
-</span><span id="line-124">        <span class="s2">&quot;environment&quot;</span><span class="p">:</span> <span class="s2">&quot;Environment&quot;</span><span class="p">,</span>
-</span><span id="line-125">        <span class="s2">&quot;environment_file&quot;</span><span class="p">:</span> <span class="s2">&quot;EnvironmentFile&quot;</span><span class="p">,</span>
-</span><span id="line-126">        <span class="s2">&quot;umask&quot;</span><span class="p">:</span> <span class="s2">&quot;UMask&quot;</span><span class="p">,</span>
-</span><span id="line-127">        <span class="s2">&quot;standard_output&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardOutput&quot;</span><span class="p">,</span>
-</span><span id="line-128">        <span class="s2">&quot;standard_error&quot;</span><span class="p">:</span> <span class="s2">&quot;StandardError&quot;</span><span class="p">,</span>
-</span><span id="line-129">        <span class="s2">&quot;kill_mode&quot;</span><span class="p">:</span> <span class="s2">&quot;KillMode&quot;</span><span class="p">,</span>
-</span><span id="line-130">        <span class="s2">&quot;kill_signal&quot;</span><span class="p">:</span> <span class="s2">&quot;KillSignal&quot;</span><span class="p">,</span>
-</span><span id="line-131">        <span class="s2">&quot;send_sigkill&quot;</span><span class="p">:</span> <span class="s2">&quot;SendSIGKILL&quot;</span><span class="p">,</span>
-</span><span id="line-132">        <span class="s2">&quot;success_exit_status&quot;</span><span class="p">:</span> <span class="s2">&quot;SuccessExitStatus&quot;</span><span class="p">,</span>
-</span><span id="line-133">        <span class="s2">&quot;restart_prevent_exit_status&quot;</span><span class="p">:</span> <span class="s2">&quot;RestartPreventExitStatus&quot;</span><span class="p">,</span>
-</span><span id="line-134">        <span class="s2">&quot;restart_force_exit_status&quot;</span><span class="p">:</span> <span class="s2">&quot;RestartForceExitStatus&quot;</span><span class="p">,</span>
+</span><span id="line-99">        <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Type"</span><span class="p">,</span>
+</span><span id="line-100">        <span class="s2">"exec_condition"</span><span class="p">:</span> <span class="s2">"ExecCondition"</span><span class="p">,</span>
+</span><span id="line-101">        <span class="s2">"exec_start_pre"</span><span class="p">:</span> <span class="s2">"ExecStartPre"</span><span class="p">,</span>
+</span><span id="line-102">        <span class="s2">"exec_start"</span><span class="p">:</span> <span class="s2">"ExecStart"</span><span class="p">,</span>
+</span><span id="line-103">        <span class="s2">"exec_start_post"</span><span class="p">:</span> <span class="s2">"ExecStartPost"</span><span class="p">,</span>
+</span><span id="line-104">        <span class="s2">"exec_reload"</span><span class="p">:</span> <span class="s2">"ExecReload"</span><span class="p">,</span>
+</span><span id="line-105">        <span class="s2">"exec_stop"</span><span class="p">:</span> <span class="s2">"ExecStop"</span><span class="p">,</span>
+</span><span id="line-106">        <span class="s2">"exec_stop_post"</span><span class="p">:</span> <span class="s2">"ExecStopPost"</span><span class="p">,</span>
+</span><span id="line-107">        <span class="s2">"restart"</span><span class="p">:</span> <span class="s2">"Restart"</span><span class="p">,</span>
+</span><span id="line-108">        <span class="s2">"restart_sec"</span><span class="p">:</span> <span class="s2">"RestartSec"</span><span class="p">,</span>
+</span><span id="line-109">        <span class="s2">"restart_steps"</span><span class="p">:</span> <span class="s2">"RestartSteps"</span><span class="p">,</span>
+</span><span id="line-110">        <span class="s2">"restart_max_delay_sec"</span><span class="p">:</span> <span class="s2">"RestartMaxDelaySec"</span><span class="p">,</span>
+</span><span id="line-111">        <span class="s2">"restart_randomized_delay_sec"</span><span class="p">:</span> <span class="s2">"RestartRandomizedDelaySec"</span><span class="p">,</span>
+</span><span id="line-112">        <span class="s2">"timeout_start_sec"</span><span class="p">:</span> <span class="s2">"TimeoutStartSec"</span><span class="p">,</span>
+</span><span id="line-113">        <span class="s2">"timeout_stop_sec"</span><span class="p">:</span> <span class="s2">"TimeoutStopSec"</span><span class="p">,</span>
+</span><span id="line-114">        <span class="s2">"runtime_max_sec"</span><span class="p">:</span> <span class="s2">"RuntimeMaxSec"</span><span class="p">,</span>
+</span><span id="line-115">        <span class="s2">"watchdog_sec"</span><span class="p">:</span> <span class="s2">"WatchdogSec"</span><span class="p">,</span>
+</span><span id="line-116">        <span class="s2">"remain_after_exit"</span><span class="p">:</span> <span class="s2">"RemainAfterExit"</span><span class="p">,</span>
+</span><span id="line-117">        <span class="s2">"guess_main_pid"</span><span class="p">:</span> <span class="s2">"GuessMainPID"</span><span class="p">,</span>
+</span><span id="line-118">        <span class="s2">"pid_file"</span><span class="p">:</span> <span class="s2">"PIDFile"</span><span class="p">,</span>
+</span><span id="line-119">        <span class="s2">"bus_name"</span><span class="p">:</span> <span class="s2">"BusName"</span><span class="p">,</span>
+</span><span id="line-120">        <span class="s2">"user"</span><span class="p">:</span> <span class="s2">"User"</span><span class="p">,</span>
+</span><span id="line-121">        <span class="s2">"group"</span><span class="p">:</span> <span class="s2">"Group"</span><span class="p">,</span>
+</span><span id="line-122">        <span class="s2">"supplementary_groups"</span><span class="p">:</span> <span class="s2">"SupplementaryGroups"</span><span class="p">,</span>
+</span><span id="line-123">        <span class="s2">"working_directory"</span><span class="p">:</span> <span class="s2">"WorkingDirectory"</span><span class="p">,</span>
+</span><span id="line-124">        <span class="s2">"environment"</span><span class="p">:</span> <span class="s2">"Environment"</span><span class="p">,</span>
+</span><span id="line-125">        <span class="s2">"environment_file"</span><span class="p">:</span> <span class="s2">"EnvironmentFile"</span><span class="p">,</span>
+</span><span id="line-126">        <span class="s2">"umask"</span><span class="p">:</span> <span class="s2">"UMask"</span><span class="p">,</span>
+</span><span id="line-127">        <span class="s2">"standard_output"</span><span class="p">:</span> <span class="s2">"StandardOutput"</span><span class="p">,</span>
+</span><span id="line-128">        <span class="s2">"standard_error"</span><span class="p">:</span> <span class="s2">"StandardError"</span><span class="p">,</span>
+</span><span id="line-129">        <span class="s2">"kill_mode"</span><span class="p">:</span> <span class="s2">"KillMode"</span><span class="p">,</span>
+</span><span id="line-130">        <span class="s2">"kill_signal"</span><span class="p">:</span> <span class="s2">"KillSignal"</span><span class="p">,</span>
+</span><span id="line-131">        <span class="s2">"send_sigkill"</span><span class="p">:</span> <span class="s2">"SendSIGKILL"</span><span class="p">,</span>
+</span><span id="line-132">        <span class="s2">"success_exit_status"</span><span class="p">:</span> <span class="s2">"SuccessExitStatus"</span><span class="p">,</span>
+</span><span id="line-133">        <span class="s2">"restart_prevent_exit_status"</span><span class="p">:</span> <span class="s2">"RestartPreventExitStatus"</span><span class="p">,</span>
+</span><span id="line-134">        <span class="s2">"restart_force_exit_status"</span><span class="p">:</span> <span class="s2">"RestartForceExitStatus"</span><span class="p">,</span>
 </span><span id="line-135">    <span class="p">}</span>
 </span><span id="line-136">    <span class="n">repeated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">(</span>
 </span><span id="line-137">        <span class="p">{</span>
-</span><span id="line-138">            <span class="s2">&quot;exec_condition&quot;</span><span class="p">,</span>
-</span><span id="line-139">            <span class="s2">&quot;exec_start_pre&quot;</span><span class="p">,</span>
-</span><span id="line-140">            <span class="s2">&quot;exec_start&quot;</span><span class="p">,</span>
-</span><span id="line-141">            <span class="s2">&quot;exec_start_post&quot;</span><span class="p">,</span>
-</span><span id="line-142">            <span class="s2">&quot;exec_reload&quot;</span><span class="p">,</span>
-</span><span id="line-143">            <span class="s2">&quot;exec_stop&quot;</span><span class="p">,</span>
-</span><span id="line-144">            <span class="s2">&quot;exec_stop_post&quot;</span><span class="p">,</span>
-</span><span id="line-145">            <span class="s2">&quot;environment_file&quot;</span><span class="p">,</span>
+</span><span id="line-138">            <span class="s2">"exec_condition"</span><span class="p">,</span>
+</span><span id="line-139">            <span class="s2">"exec_start_pre"</span><span class="p">,</span>
+</span><span id="line-140">            <span class="s2">"exec_start"</span><span class="p">,</span>
+</span><span id="line-141">            <span class="s2">"exec_start_post"</span><span class="p">,</span>
+</span><span id="line-142">            <span class="s2">"exec_reload"</span><span class="p">,</span>
+</span><span id="line-143">            <span class="s2">"exec_stop"</span><span class="p">,</span>
+</span><span id="line-144">            <span class="s2">"exec_stop_post"</span><span class="p">,</span>
+</span><span id="line-145">            <span class="s2">"environment_file"</span><span class="p">,</span>
 </span><span id="line-146">        <span class="p">}</span>
 </span><span id="line-147">    <span class="p">)</span>
-</span><span id="line-148">    <span class="n">space_separated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;supplementary_groups&quot;</span><span class="p">,</span> <span class="s2">&quot;success_exit_status&quot;</span><span class="p">,</span> <span class="s2">&quot;restart_prevent_exit_status&quot;</span><span class="p">,</span> <span class="s2">&quot;restart_force_exit_status&quot;</span><span class="p">})</span>
+</span><span id="line-148">    <span class="n">space_separated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"supplementary_groups"</span><span class="p">,</span> <span class="s2">"success_exit_status"</span><span class="p">,</span> <span class="s2">"restart_prevent_exit_status"</span><span class="p">,</span> <span class="s2">"restart_force_exit_status"</span><span class="p">})</span>
 </span><span id="line-149">
 </span><span id="line-150">    <span class="nb">type</span><span class="p">:</span> <span class="n">ServiceType</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-151">    <span class="n">exec_condition</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -342,9 +342,9 @@
 </span><span id="line-160">    <span class="n">restart_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </span><span id="line-161">    <span class="n">restart_max_delay_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-162">    <span class="n">restart_randomized_delay_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-163">    <span class="n">timeout_start_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;infinity&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-164">    <span class="n">timeout_stop_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;infinity&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
-</span><span id="line-165">    <span class="n">runtime_max_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;infinity&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-163">    <span class="n">timeout_start_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"infinity"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-164">    <span class="n">timeout_stop_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"infinity"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="line-165">    <span class="n">runtime_max_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">"infinity"</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-166">    <span class="n">watchdog_sec</span><span class="p">:</span> <span class="n">TimeSpan</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-167">    <span class="n">remain_after_exit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-168">    <span class="n">guess_main_pid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -367,14 +367,14 @@
 </span><span id="line-185">    <span class="n">restart_force_exit_status</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="line-186">
 </span><span id="line-187">    <span class="nd">@field_validator</span><span class="p">(</span>
-</span><span id="line-188">        <span class="s2">&quot;restart_sec&quot;</span><span class="p">,</span>
-</span><span id="line-189">        <span class="s2">&quot;restart_max_delay_sec&quot;</span><span class="p">,</span>
-</span><span id="line-190">        <span class="s2">&quot;restart_randomized_delay_sec&quot;</span><span class="p">,</span>
-</span><span id="line-191">        <span class="s2">&quot;timeout_start_sec&quot;</span><span class="p">,</span>
-</span><span id="line-192">        <span class="s2">&quot;timeout_stop_sec&quot;</span><span class="p">,</span>
-</span><span id="line-193">        <span class="s2">&quot;runtime_max_sec&quot;</span><span class="p">,</span>
-</span><span id="line-194">        <span class="s2">&quot;watchdog_sec&quot;</span><span class="p">,</span>
-</span><span id="line-195">        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">,</span>
+</span><span id="line-188">        <span class="s2">"restart_sec"</span><span class="p">,</span>
+</span><span id="line-189">        <span class="s2">"restart_max_delay_sec"</span><span class="p">,</span>
+</span><span id="line-190">        <span class="s2">"restart_randomized_delay_sec"</span><span class="p">,</span>
+</span><span id="line-191">        <span class="s2">"timeout_start_sec"</span><span class="p">,</span>
+</span><span id="line-192">        <span class="s2">"timeout_stop_sec"</span><span class="p">,</span>
+</span><span id="line-193">        <span class="s2">"runtime_max_sec"</span><span class="p">,</span>
+</span><span id="line-194">        <span class="s2">"watchdog_sec"</span><span class="p">,</span>
+</span><span id="line-195">        <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">,</span>
 </span><span id="line-196">    <span class="p">)</span>
 </span><span id="line-197">    <span class="nd">@classmethod</span>
 </span><span id="line-198">    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_time_span</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
@@ -383,15 +383,15 @@
 </span><span id="line-201">        <span class="k">return</span> <span class="n">value</span>
 </span><span id="line-202">
 </span><span id="line-203">    <span class="nd">@field_validator</span><span class="p">(</span>
-</span><span id="line-204">        <span class="s2">&quot;exec_condition&quot;</span><span class="p">,</span>
-</span><span id="line-205">        <span class="s2">&quot;exec_start_pre&quot;</span><span class="p">,</span>
-</span><span id="line-206">        <span class="s2">&quot;exec_start&quot;</span><span class="p">,</span>
-</span><span id="line-207">        <span class="s2">&quot;exec_start_post&quot;</span><span class="p">,</span>
-</span><span id="line-208">        <span class="s2">&quot;exec_reload&quot;</span><span class="p">,</span>
-</span><span id="line-209">        <span class="s2">&quot;exec_stop&quot;</span><span class="p">,</span>
-</span><span id="line-210">        <span class="s2">&quot;exec_stop_post&quot;</span><span class="p">,</span>
-</span><span id="line-211">        <span class="s2">&quot;environment_file&quot;</span><span class="p">,</span>
-</span><span id="line-212">        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">,</span>
+</span><span id="line-204">        <span class="s2">"exec_condition"</span><span class="p">,</span>
+</span><span id="line-205">        <span class="s2">"exec_start_pre"</span><span class="p">,</span>
+</span><span id="line-206">        <span class="s2">"exec_start"</span><span class="p">,</span>
+</span><span id="line-207">        <span class="s2">"exec_start_post"</span><span class="p">,</span>
+</span><span id="line-208">        <span class="s2">"exec_reload"</span><span class="p">,</span>
+</span><span id="line-209">        <span class="s2">"exec_stop"</span><span class="p">,</span>
+</span><span id="line-210">        <span class="s2">"exec_stop_post"</span><span class="p">,</span>
+</span><span id="line-211">        <span class="s2">"environment_file"</span><span class="p">,</span>
+</span><span id="line-212">        <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">,</span>
 </span><span id="line-213">    <span class="p">)</span>
 </span><span id="line-214">    <span class="nd">@classmethod</span>
 </span><span id="line-215">    <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_repeated_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
@@ -399,14 +399,14 @@
 </span><span id="line-217">            <span class="k">return</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
 </span><span id="line-218">        <span class="k">return</span> <span class="n">value</span>
 </span><span id="line-219">
-</span><span id="line-220">    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="line-220">    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
 </span><span id="line-221">    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_commands</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ServiceConfiguration</span><span class="p">:</span>
 </span><span id="line-222">        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_start</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">remain_after_exit</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">exec_stop</span><span class="p">):</span>
-</span><span id="line-223">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;a service requires ExecStart, or RemainAfterExit=yes with ExecStop&quot;</span><span class="p">)</span>
-</span><span id="line-224">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;oneshot&quot;</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_start</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="line-225">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;multiple ExecStart commands require Type=oneshot&quot;</span><span class="p">)</span>
-</span><span id="line-226">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;dbus&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_name</span><span class="p">:</span>
-</span><span id="line-227">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Type=dbus requires BusName&quot;</span><span class="p">)</span>
+</span><span id="line-223">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"a service requires ExecStart, or RemainAfterExit=yes with ExecStop"</span><span class="p">)</span>
+</span><span id="line-224">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">"oneshot"</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exec_start</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="line-225">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"multiple ExecStart commands require Type=oneshot"</span><span class="p">)</span>
+</span><span id="line-226">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">"dbus"</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">bus_name</span><span class="p">:</span>
+</span><span id="line-227">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Type=dbus requires BusName"</span><span class="p">)</span>
 </span><span id="line-228">        <span class="k">return</span> <span class="bp">self</span></div>
 
 </span><span id="line-229">
@@ -414,29 +414,29 @@
 <div class="viewcode-block" id="TimerConfiguration">
 <a class="viewcode-back" href="../../docs/src/_build/airflow_systemd.TimerConfiguration.html#airflow_systemd.TimerConfiguration">[docs]</a>
 </span><span id="line-231"><span class="k">class</span><span class="w"> </span><span class="nc">TimerConfiguration</span><span class="p">(</span><span class="n">_Section</span><span class="p">):</span>
-</span><span id="line-232"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Activation settings from a systemd ``[Timer]`` section.&quot;&quot;&quot;</span>
+</span><span id="line-232"><span class="w">    </span><span class="sd">"""Activation settings from a systemd ``[Timer]`` section."""</span>
 </span><span id="line-233">
-</span><span id="line-234">    <span class="n">section_name</span> <span class="o">=</span> <span class="s2">&quot;Timer&quot;</span>
+</span><span id="line-234">    <span class="n">section_name</span> <span class="o">=</span> <span class="s2">"Timer"</span>
 </span><span id="line-235">    <span class="n">directives</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-236">        <span class="s2">&quot;on_active_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;OnActiveSec&quot;</span><span class="p">,</span>
-</span><span id="line-237">        <span class="s2">&quot;on_boot_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;OnBootSec&quot;</span><span class="p">,</span>
-</span><span id="line-238">        <span class="s2">&quot;on_startup_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;OnStartupSec&quot;</span><span class="p">,</span>
-</span><span id="line-239">        <span class="s2">&quot;on_unit_active_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;OnUnitActiveSec&quot;</span><span class="p">,</span>
-</span><span id="line-240">        <span class="s2">&quot;on_unit_inactive_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;OnUnitInactiveSec&quot;</span><span class="p">,</span>
-</span><span id="line-241">        <span class="s2">&quot;on_calendar&quot;</span><span class="p">:</span> <span class="s2">&quot;OnCalendar&quot;</span><span class="p">,</span>
-</span><span id="line-242">        <span class="s2">&quot;accuracy_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;AccuracySec&quot;</span><span class="p">,</span>
-</span><span id="line-243">        <span class="s2">&quot;randomized_delay_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;RandomizedDelaySec&quot;</span><span class="p">,</span>
-</span><span id="line-244">        <span class="s2">&quot;fixed_random_delay&quot;</span><span class="p">:</span> <span class="s2">&quot;FixedRandomDelay&quot;</span><span class="p">,</span>
-</span><span id="line-245">        <span class="s2">&quot;randomized_offset_sec&quot;</span><span class="p">:</span> <span class="s2">&quot;RandomizedOffsetSec&quot;</span><span class="p">,</span>
-</span><span id="line-246">        <span class="s2">&quot;defer_reactivation&quot;</span><span class="p">:</span> <span class="s2">&quot;DeferReactivation&quot;</span><span class="p">,</span>
-</span><span id="line-247">        <span class="s2">&quot;on_clock_change&quot;</span><span class="p">:</span> <span class="s2">&quot;OnClockChange&quot;</span><span class="p">,</span>
-</span><span id="line-248">        <span class="s2">&quot;on_timezone_change&quot;</span><span class="p">:</span> <span class="s2">&quot;OnTimezoneChange&quot;</span><span class="p">,</span>
-</span><span id="line-249">        <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="s2">&quot;Unit&quot;</span><span class="p">,</span>
-</span><span id="line-250">        <span class="s2">&quot;persistent&quot;</span><span class="p">:</span> <span class="s2">&quot;Persistent&quot;</span><span class="p">,</span>
-</span><span id="line-251">        <span class="s2">&quot;wake_system&quot;</span><span class="p">:</span> <span class="s2">&quot;WakeSystem&quot;</span><span class="p">,</span>
-</span><span id="line-252">        <span class="s2">&quot;remain_after_elapse&quot;</span><span class="p">:</span> <span class="s2">&quot;RemainAfterElapse&quot;</span><span class="p">,</span>
+</span><span id="line-236">        <span class="s2">"on_active_sec"</span><span class="p">:</span> <span class="s2">"OnActiveSec"</span><span class="p">,</span>
+</span><span id="line-237">        <span class="s2">"on_boot_sec"</span><span class="p">:</span> <span class="s2">"OnBootSec"</span><span class="p">,</span>
+</span><span id="line-238">        <span class="s2">"on_startup_sec"</span><span class="p">:</span> <span class="s2">"OnStartupSec"</span><span class="p">,</span>
+</span><span id="line-239">        <span class="s2">"on_unit_active_sec"</span><span class="p">:</span> <span class="s2">"OnUnitActiveSec"</span><span class="p">,</span>
+</span><span id="line-240">        <span class="s2">"on_unit_inactive_sec"</span><span class="p">:</span> <span class="s2">"OnUnitInactiveSec"</span><span class="p">,</span>
+</span><span id="line-241">        <span class="s2">"on_calendar"</span><span class="p">:</span> <span class="s2">"OnCalendar"</span><span class="p">,</span>
+</span><span id="line-242">        <span class="s2">"accuracy_sec"</span><span class="p">:</span> <span class="s2">"AccuracySec"</span><span class="p">,</span>
+</span><span id="line-243">        <span class="s2">"randomized_delay_sec"</span><span class="p">:</span> <span class="s2">"RandomizedDelaySec"</span><span class="p">,</span>
+</span><span id="line-244">        <span class="s2">"fixed_random_delay"</span><span class="p">:</span> <span class="s2">"FixedRandomDelay"</span><span class="p">,</span>
+</span><span id="line-245">        <span class="s2">"randomized_offset_sec"</span><span class="p">:</span> <span class="s2">"RandomizedOffsetSec"</span><span class="p">,</span>
+</span><span id="line-246">        <span class="s2">"defer_reactivation"</span><span class="p">:</span> <span class="s2">"DeferReactivation"</span><span class="p">,</span>
+</span><span id="line-247">        <span class="s2">"on_clock_change"</span><span class="p">:</span> <span class="s2">"OnClockChange"</span><span class="p">,</span>
+</span><span id="line-248">        <span class="s2">"on_timezone_change"</span><span class="p">:</span> <span class="s2">"OnTimezoneChange"</span><span class="p">,</span>
+</span><span id="line-249">        <span class="s2">"unit"</span><span class="p">:</span> <span class="s2">"Unit"</span><span class="p">,</span>
+</span><span id="line-250">        <span class="s2">"persistent"</span><span class="p">:</span> <span class="s2">"Persistent"</span><span class="p">,</span>
+</span><span id="line-251">        <span class="s2">"wake_system"</span><span class="p">:</span> <span class="s2">"WakeSystem"</span><span class="p">,</span>
+</span><span id="line-252">        <span class="s2">"remain_after_elapse"</span><span class="p">:</span> <span class="s2">"RemainAfterElapse"</span><span class="p">,</span>
 </span><span id="line-253">    <span class="p">}</span>
-</span><span id="line-254">    <span class="n">repeated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;on_active_sec&quot;</span><span class="p">,</span> <span class="s2">&quot;on_boot_sec&quot;</span><span class="p">,</span> <span class="s2">&quot;on_startup_sec&quot;</span><span class="p">,</span> <span class="s2">&quot;on_unit_active_sec&quot;</span><span class="p">,</span> <span class="s2">&quot;on_unit_inactive_sec&quot;</span><span class="p">,</span> <span class="s2">&quot;on_calendar&quot;</span><span class="p">})</span>
+</span><span id="line-254">    <span class="n">repeated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"on_active_sec"</span><span class="p">,</span> <span class="s2">"on_boot_sec"</span><span class="p">,</span> <span class="s2">"on_startup_sec"</span><span class="p">,</span> <span class="s2">"on_unit_active_sec"</span><span class="p">,</span> <span class="s2">"on_unit_inactive_sec"</span><span class="p">,</span> <span class="s2">"on_calendar"</span><span class="p">})</span>
 </span><span id="line-255">
 </span><span id="line-256">    <span class="n">on_active_sec</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TimeSpan</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="line-257">    <span class="n">on_boot_sec</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">TimeSpan</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -457,13 +457,13 @@
 </span><span id="line-272">    <span class="n">remain_after_elapse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-273">
 </span><span id="line-274">    <span class="nd">@field_validator</span><span class="p">(</span>
-</span><span id="line-275">        <span class="s2">&quot;on_active_sec&quot;</span><span class="p">,</span>
-</span><span id="line-276">        <span class="s2">&quot;on_boot_sec&quot;</span><span class="p">,</span>
-</span><span id="line-277">        <span class="s2">&quot;on_startup_sec&quot;</span><span class="p">,</span>
-</span><span id="line-278">        <span class="s2">&quot;on_unit_active_sec&quot;</span><span class="p">,</span>
-</span><span id="line-279">        <span class="s2">&quot;on_unit_inactive_sec&quot;</span><span class="p">,</span>
-</span><span id="line-280">        <span class="s2">&quot;on_calendar&quot;</span><span class="p">,</span>
-</span><span id="line-281">        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">,</span>
+</span><span id="line-275">        <span class="s2">"on_active_sec"</span><span class="p">,</span>
+</span><span id="line-276">        <span class="s2">"on_boot_sec"</span><span class="p">,</span>
+</span><span id="line-277">        <span class="s2">"on_startup_sec"</span><span class="p">,</span>
+</span><span id="line-278">        <span class="s2">"on_unit_active_sec"</span><span class="p">,</span>
+</span><span id="line-279">        <span class="s2">"on_unit_inactive_sec"</span><span class="p">,</span>
+</span><span id="line-280">        <span class="s2">"on_calendar"</span><span class="p">,</span>
+</span><span id="line-281">        <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">,</span>
 </span><span id="line-282">    <span class="p">)</span>
 </span><span id="line-283">    <span class="nd">@classmethod</span>
 </span><span id="line-284">    <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_trigger</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
@@ -475,14 +475,14 @@
 </span><span id="line-290">            <span class="k">return</span> <span class="p">[</span><span class="n">_format_time_span</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">)</span> <span class="k">else</span> <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
 </span><span id="line-291">        <span class="k">return</span> <span class="n">value</span>
 </span><span id="line-292">
-</span><span id="line-293">    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;accuracy_sec&quot;</span><span class="p">,</span> <span class="s2">&quot;randomized_delay_sec&quot;</span><span class="p">,</span> <span class="s2">&quot;randomized_offset_sec&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;before&quot;</span><span class="p">)</span>
+</span><span id="line-293">    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"accuracy_sec"</span><span class="p">,</span> <span class="s2">"randomized_delay_sec"</span><span class="p">,</span> <span class="s2">"randomized_offset_sec"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">)</span>
 </span><span id="line-294">    <span class="nd">@classmethod</span>
 </span><span id="line-295">    <span class="k">def</span><span class="w"> </span><span class="nf">_normalize_time_span</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">object</span><span class="p">:</span>
 </span><span id="line-296">        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">timedelta</span><span class="p">):</span>
 </span><span id="line-297">            <span class="k">return</span> <span class="n">_format_time_span</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </span><span id="line-298">        <span class="k">return</span> <span class="n">value</span>
 </span><span id="line-299">
-</span><span id="line-300">    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;after&quot;</span><span class="p">)</span>
+</span><span id="line-300">    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
 </span><span id="line-301">    <span class="k">def</span><span class="w"> </span><span class="nf">_require_trigger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TimerConfiguration</span><span class="p">:</span>
 </span><span id="line-302">        <span class="n">triggers</span> <span class="o">=</span> <span class="p">(</span>
 </span><span id="line-303">            <span class="bp">self</span><span class="o">.</span><span class="n">on_active_sec</span><span class="p">,</span>
@@ -495,24 +495,24 @@
 </span><span id="line-310">            <span class="bp">self</span><span class="o">.</span><span class="n">on_timezone_change</span><span class="p">,</span>
 </span><span id="line-311">        <span class="p">)</span>
 </span><span id="line-312">        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">triggers</span><span class="p">):</span>
-</span><span id="line-313">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;a timer requires at least one trigger&quot;</span><span class="p">)</span>
+</span><span id="line-313">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"a timer requires at least one trigger"</span><span class="p">)</span>
 </span><span id="line-314">        <span class="k">return</span> <span class="bp">self</span></div>
 
 </span><span id="line-315">
 </span><span id="line-316">
 </span><span id="line-317"><span class="k">class</span><span class="w"> </span><span class="nc">InstallConfiguration</span><span class="p">(</span><span class="n">_Section</span><span class="p">):</span>
-</span><span id="line-318"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Enablement settings from a systemd ``[Install]`` section.&quot;&quot;&quot;</span>
+</span><span id="line-318"><span class="w">    </span><span class="sd">"""Enablement settings from a systemd ``[Install]`` section."""</span>
 </span><span id="line-319">
-</span><span id="line-320">    <span class="n">section_name</span> <span class="o">=</span> <span class="s2">&quot;Install&quot;</span>
+</span><span id="line-320">    <span class="n">section_name</span> <span class="o">=</span> <span class="s2">"Install"</span>
 </span><span id="line-321">    <span class="n">directives</span> <span class="o">=</span> <span class="p">{</span>
-</span><span id="line-322">        <span class="s2">&quot;alias&quot;</span><span class="p">:</span> <span class="s2">&quot;Alias&quot;</span><span class="p">,</span>
-</span><span id="line-323">        <span class="s2">&quot;wanted_by&quot;</span><span class="p">:</span> <span class="s2">&quot;WantedBy&quot;</span><span class="p">,</span>
-</span><span id="line-324">        <span class="s2">&quot;required_by&quot;</span><span class="p">:</span> <span class="s2">&quot;RequiredBy&quot;</span><span class="p">,</span>
-</span><span id="line-325">        <span class="s2">&quot;upheld_by&quot;</span><span class="p">:</span> <span class="s2">&quot;UpheldBy&quot;</span><span class="p">,</span>
-</span><span id="line-326">        <span class="s2">&quot;also&quot;</span><span class="p">:</span> <span class="s2">&quot;Also&quot;</span><span class="p">,</span>
-</span><span id="line-327">        <span class="s2">&quot;default_instance&quot;</span><span class="p">:</span> <span class="s2">&quot;DefaultInstance&quot;</span><span class="p">,</span>
+</span><span id="line-322">        <span class="s2">"alias"</span><span class="p">:</span> <span class="s2">"Alias"</span><span class="p">,</span>
+</span><span id="line-323">        <span class="s2">"wanted_by"</span><span class="p">:</span> <span class="s2">"WantedBy"</span><span class="p">,</span>
+</span><span id="line-324">        <span class="s2">"required_by"</span><span class="p">:</span> <span class="s2">"RequiredBy"</span><span class="p">,</span>
+</span><span id="line-325">        <span class="s2">"upheld_by"</span><span class="p">:</span> <span class="s2">"UpheldBy"</span><span class="p">,</span>
+</span><span id="line-326">        <span class="s2">"also"</span><span class="p">:</span> <span class="s2">"Also"</span><span class="p">,</span>
+</span><span id="line-327">        <span class="s2">"default_instance"</span><span class="p">:</span> <span class="s2">"DefaultInstance"</span><span class="p">,</span>
 </span><span id="line-328">    <span class="p">}</span>
-</span><span id="line-329">    <span class="n">space_separated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="s2">&quot;wanted_by&quot;</span><span class="p">,</span> <span class="s2">&quot;required_by&quot;</span><span class="p">,</span> <span class="s2">&quot;upheld_by&quot;</span><span class="p">,</span> <span class="s2">&quot;also&quot;</span><span class="p">})</span>
+</span><span id="line-329">    <span class="n">space_separated</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">({</span><span class="s2">"alias"</span><span class="p">,</span> <span class="s2">"wanted_by"</span><span class="p">,</span> <span class="s2">"required_by"</span><span class="p">,</span> <span class="s2">"upheld_by"</span><span class="p">,</span> <span class="s2">"also"</span><span class="p">})</span>
 </span><span id="line-330">
 </span><span id="line-331">    <span class="n">alias</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 </span><span id="line-332">    <span class="n">wanted_by</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
@@ -523,16 +523,16 @@
 </span><span id="line-337">
 </span><span id="line-338">
 </span><span id="line-339"><span class="k">class</span><span class="w"> </span><span class="nc">_SystemdConfiguration</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-</span><span id="line-340">    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">&quot;forbid&quot;</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-340">    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">extra</span><span class="o">=</span><span class="s2">"forbid"</span><span class="p">,</span> <span class="n">validate_assignment</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="line-341">
 </span><span id="line-342">    <span class="n">section_order</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
 </span><span id="line-343">
 </span><span id="line-344">    <span class="k">def</span><span class="w"> </span><span class="nf">to_unit_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 </span><span id="line-345">        <span class="n">sections</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">section_order</span><span class="p">]</span>
-</span><span id="line-346">        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">to_unit_file</span><span class="p">()</span> <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span> <span class="k">if</span> <span class="n">section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+</span><span id="line-346">        <span class="k">return</span> <span class="s2">"</span><span class="se">\n\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">section</span><span class="o">.</span><span class="n">to_unit_file</span><span class="p">()</span> <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">sections</span> <span class="k">if</span> <span class="n">section</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
 </span><span id="line-347">
 </span><span id="line-348">    <span class="k">def</span><span class="w"> </span><span class="nf">to_cfg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="line-349"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Compatibility alias for configuration generators in related projects.&quot;&quot;&quot;</span>
+</span><span id="line-349"><span class="w">        </span><span class="sd">"""Compatibility alias for configuration generators in related projects."""</span>
 </span><span id="line-350">
 </span><span id="line-351">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_unit_file</span><span class="p">()</span>
 </span><span id="line-352">
@@ -540,7 +540,7 @@
 <div class="viewcode-block" id="ServiceUnitConfiguration">
 <a class="viewcode-back" href="../../docs/src/_build/airflow_systemd.ServiceUnitConfiguration.html#airflow_systemd.ServiceUnitConfiguration">[docs]</a>
 </span><span id="line-354"><span class="k">class</span><span class="w"> </span><span class="nc">ServiceUnitConfiguration</span><span class="p">(</span><span class="n">_SystemdConfiguration</span><span class="p">):</span>
-</span><span id="line-355">    <span class="n">section_order</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">,</span> <span class="s2">&quot;service&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">)</span>
+</span><span id="line-355">    <span class="n">section_order</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"unit"</span><span class="p">,</span> <span class="s2">"service"</span><span class="p">,</span> <span class="s2">"install"</span><span class="p">)</span>
 </span><span id="line-356">
 </span><span id="line-357">    <span class="n">unit</span><span class="p">:</span> <span class="n">UnitConfiguration</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-358">    <span class="n">service</span><span class="p">:</span> <span class="n">ServiceConfiguration</span>
@@ -551,7 +551,7 @@
 <div class="viewcode-block" id="TimerUnitConfiguration">
 <a class="viewcode-back" href="../../docs/src/_build/airflow_systemd.TimerUnitConfiguration.html#airflow_systemd.TimerUnitConfiguration">[docs]</a>
 </span><span id="line-362"><span class="k">class</span><span class="w"> </span><span class="nc">TimerUnitConfiguration</span><span class="p">(</span><span class="n">_SystemdConfiguration</span><span class="p">):</span>
-</span><span id="line-363">    <span class="n">section_order</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">,</span> <span class="s2">&quot;timer&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">)</span>
+</span><span id="line-363">    <span class="n">section_order</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"unit"</span><span class="p">,</span> <span class="s2">"timer"</span><span class="p">,</span> <span class="s2">"install"</span><span class="p">)</span>
 </span><span id="line-364">
 </span><span id="line-365">    <span class="n">unit</span><span class="p">:</span> <span class="n">UnitConfiguration</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 </span><span id="line-366">    <span class="n">timer</span><span class="p">:</span> <span class="n">TimerConfiguration</span>

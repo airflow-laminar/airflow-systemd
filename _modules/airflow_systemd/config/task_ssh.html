@@ -183,14 +183,14 @@
 </span><span id="line-3">
 </span><span id="line-4"><span class="kn">from</span><span class="w"> </span><span class="nn">.systemd_ssh</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemdSSHAirflowConfiguration</span>
 </span><span id="line-5">
-</span><span id="line-6"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SystemdSSHOperator&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdSSHOperatorArgs&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdSSHTask&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdSSHTaskArgs&quot;</span><span class="p">)</span>
+</span><span id="line-6"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"SystemdSSHOperator"</span><span class="p">,</span> <span class="s2">"SystemdSSHOperatorArgs"</span><span class="p">,</span> <span class="s2">"SystemdSSHTask"</span><span class="p">,</span> <span class="s2">"SystemdSSHTaskArgs"</span><span class="p">)</span>
 </span><span id="line-7">
 </span><span id="line-8">
 <div class="viewcode-block" id="SystemdSSHTaskArgs">
 <a class="viewcode-back" href="../../../docs/src/_build/airflow_systemd.SystemdSSHTaskArgs.html#airflow_systemd.SystemdSSHTaskArgs">[docs]</a>
-</span><span id="line-9"><span class="k">class</span><span class="w"> </span><span class="nc">SystemdSSHTaskArgs</span><span class="p">(</span><span class="n">TaskArgs</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">&quot;allow&quot;</span><span class="p">):</span>
+</span><span id="line-9"><span class="k">class</span><span class="w"> </span><span class="nc">SystemdSSHTaskArgs</span><span class="p">(</span><span class="n">TaskArgs</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="s2">"allow"</span><span class="p">):</span>
 </span><span id="line-10">    <span class="n">cfg</span><span class="p">:</span> <span class="n">SystemdSSHAirflowConfiguration</span>
-</span><span id="line-11">    <span class="n">host</span><span class="p">:</span> <span class="n">Host</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Host used to override the configured SSH connection&quot;</span><span class="p">)</span></div>
+</span><span id="line-11">    <span class="n">host</span><span class="p">:</span> <span class="n">Host</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Host used to override the configured SSH connection"</span><span class="p">)</span></div>
 
 </span><span id="line-12">
 </span><span id="line-13">
@@ -200,15 +200,15 @@
 <div class="viewcode-block" id="SystemdSSHTask">
 <a class="viewcode-back" href="../../../docs/src/_build/airflow_systemd.SystemdSSHTask.html#airflow_systemd.SystemdSSHTask">[docs]</a>
 </span><span id="line-17"><span class="k">class</span><span class="w"> </span><span class="nc">SystemdSSHTask</span><span class="p">(</span><span class="n">Task</span><span class="p">,</span> <span class="n">SystemdSSHTaskArgs</span><span class="p">):</span>
-</span><span id="line-18">    <span class="n">operator</span><span class="p">:</span> <span class="n">ImportPath</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;airflow_systemd.SystemdSSH&quot;</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="line-18">    <span class="n">operator</span><span class="p">:</span> <span class="n">ImportPath</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">"airflow_systemd.SystemdSSH"</span><span class="p">,</span> <span class="n">validate_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="line-19">
-</span><span id="line-20">    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">&quot;operator&quot;</span><span class="p">)</span>
+</span><span id="line-20">    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"operator"</span><span class="p">)</span>
 </span><span id="line-21">    <span class="nd">@classmethod</span>
 </span><span id="line-22">    <span class="k">def</span><span class="w"> </span><span class="nf">validate_operator</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
 </span><span id="line-23">        <span class="kn">from</span><span class="w"> </span><span class="nn">airflow_systemd.airflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemdSSH</span>
 </span><span id="line-24">
 </span><span id="line-25">        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">SystemdSSH</span><span class="p">:</span>
-</span><span id="line-26">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;operator must be &#39;airflow_systemd.SystemdSSH&#39;, got: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</span><span id="line-26">            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"operator must be 'airflow_systemd.SystemdSSH', got: </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span><span id="line-27">        <span class="k">return</span> <span class="n">value</span></div>
 
 </span><span id="line-28">

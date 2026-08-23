@@ -183,18 +183,18 @@
 </span><span id="line-3">
 </span><span id="line-4"><span class="kn">from</span><span class="w"> </span><span class="nn">.systemd</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemdAirflowConfiguration</span>
 </span><span id="line-5">
-</span><span id="line-6"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;SSHOperatorArgs&quot;</span><span class="p">,</span> <span class="s2">&quot;SystemdSSHAirflowConfiguration&quot;</span><span class="p">,</span> <span class="s2">&quot;load_airflow_ssh_config&quot;</span><span class="p">)</span>
+</span><span id="line-6"><span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"SSHOperatorArgs"</span><span class="p">,</span> <span class="s2">"SystemdSSHAirflowConfiguration"</span><span class="p">,</span> <span class="s2">"load_airflow_ssh_config"</span><span class="p">)</span>
 </span><span id="line-7">
 </span><span id="line-8">
 <div class="viewcode-block" id="SystemdSSHAirflowConfiguration">
 <a class="viewcode-back" href="../../../docs/src/_build/airflow_systemd.SystemdSSHAirflowConfiguration.html#airflow_systemd.SystemdSSHAirflowConfiguration">[docs]</a>
 </span><span id="line-9"><span class="k">class</span><span class="w"> </span><span class="nc">SystemdSSHAirflowConfiguration</span><span class="p">(</span><span class="n">SystemdAirflowConfiguration</span><span class="p">):</span>
-</span><span id="line-10"><span class="w">    </span><span class="sd">&quot;&quot;&quot;Systemd configuration for a job managed over SSH.&quot;&quot;&quot;</span>
+</span><span id="line-10"><span class="w">    </span><span class="sd">"""Systemd configuration for a job managed over SSH."""</span>
 </span><span id="line-11">
-</span><span id="line-12">    <span class="n">command_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Shell prefix applied before remote commands&quot;</span><span class="p">)</span>
+</span><span id="line-12">    <span class="n">command_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">"Shell prefix applied before remote commands"</span><span class="p">)</span>
 </span><span id="line-13">    <span class="n">ssh_operator_args</span><span class="p">:</span> <span class="n">SSHOperatorArgs</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
 </span><span id="line-14">        <span class="n">default_factory</span><span class="o">=</span><span class="n">SSHOperatorArgs</span><span class="p">,</span>
-</span><span id="line-15">        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Airflow SSH connection and operator arguments&quot;</span><span class="p">,</span>
+</span><span id="line-15">        <span class="n">description</span><span class="o">=</span><span class="s2">"Airflow SSH connection and operator arguments"</span><span class="p">,</span>
 </span><span id="line-16">    <span class="p">)</span></div>
 
 </span><span id="line-17">
