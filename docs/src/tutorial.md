@@ -1,70 +1,98 @@
-# Tutorial: run a systemd job from Airflow
+# Tutorial: run your first systemd job
 
-In this tutorial, we will define a user-scoped systemd job in `airflow-config`
-YAML and load it as an Airflow DAG.
+We will run a five-second service from Airflow, monitor its completion, and
+remove its unit file and saved configuration.
 
-## Install the packages
+Use an initialized Airflow 2 environment on Linux with systemd. Run the DAG
+parser and all tasks as the same Unix user on that host. The user needs a
+running systemd user manager and permission to write its home directory.
 
-For Airflow 3, run:
+## Check the user manager
+
+Run these commands as the Airflow user:
 
 ```bash
-pip install 'airflow-systemd[airflow3]' airflow-config
+systemctl --user show -p Version
+test ! -e "$HOME/.config/systemd/user/airflow-systemd-demo.service"
 ```
 
-Use the `airflow` extra instead when running Airflow 2. The worker must have a
-user systemd manager and permission to write its user unit directory.
+The first command prints the manager's version. The second exits successfully
+when the tutorial's unit filename is unused. If the first command cannot connect
+to the user bus, complete the [user manager setup](how-to.md#how-to-prepare-a-user-manager)
+before continuing.
 
-## Define the DAG
+## Install the integration
 
-Create `config/systemd.yaml`:
+In the Airflow environment, run:
 
-```yaml
-dags:
-  nightly-systemd:
-    schedule: "@daily"
-    start_date: "2024-01-01"
-    catchup: false
-    tasks:
-      run-nightly:
-        _target_: airflow_systemd.SystemdTask
-        cfg:
-          scope: user
-          stop_on_exit: true
-          cleanup: true
-          service:
-            nightly:
-              unit:
-                description: Nightly batch job
-              service:
-                type: exec
-                exec_start: /opt/jobs/nightly
+```bash
+pip install 'airflow-systemd[airflow]'
 ```
 
-## Load the configuration
+## Create the DAG
 
-Create `nightly_systemd.py` in the DAG folder:
+Save this as `systemd_demo.py` in your Airflow DAG folder:
 
 ```python
-from airflow_config import load_config
+from datetime import datetime, timezone
+from pathlib import Path
 
-config = load_config("config", "systemd")
-config.generate_in_mem()
+from airflow import DAG
+from airflow_systemd import ServiceConfiguration, ServiceUnitConfiguration, Systemd, SystemdAirflowConfiguration
+
+with DAG(
+    dag_id="systemd-demo",
+    schedule=None,
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    catchup=False,
+) as dag:
+    systemd = Systemd(
+        dag=dag,
+        cfg=SystemdAirflowConfiguration(
+            scope="user",
+            unit_dir=Path.home() / ".config/systemd/user",
+            working_dir=Path.home() / ".local/state/airflow-systemd-demo",
+            service={
+                "airflow-systemd-demo": ServiceUnitConfiguration(
+                    service=ServiceConfiguration(type="exec", exec_start="/bin/sleep 5"),
+                ),
+            },
+        ),
+    )
 ```
 
-## Inspect the lifecycle
-
-Parse the DAG folder:
+List the generated tasks:
 
 ```bash
-airflow dags list | grep nightly-systemd
-airflow tasks list nightly-systemd
+airflow tasks list systemd-demo
 ```
 
-The task list includes the configure, start, check, restart, stop, and
-unconfigure steps created by `Systemd`.
+Look for `systemd-demo-configure-systemd`, `systemd-demo-start-services`, and
+`systemd-demo-check-services`. Restart, stop, cleanup, and failure-handling tasks
+also appear.
 
-Trigger the DAG in a test environment containing `/opt/jobs/nightly`. The check
-step remains active while the service runs and completes after systemd reports a
-successful stopped unit.
+## Run the service
 
-You have now connected a declarative Airflow DAG to a systemd-managed process.
+Execute one DAG run locally:
+
+```bash
+airflow dags test systemd-demo 2025-01-01
+```
+
+The configure task writes the service unit and `pydantic.json`, then reloads the
+user manager. The start task runs `/bin/sleep`. After the service finishes, the
+check task takes its success branch. Stop and cleanup remove the unit and saved
+configuration, then reload the manager again. The DAG run finishes with state
+`success`; restart and force-kill branches are skipped.
+
+Check the two generated paths:
+
+```bash
+test ! -e "$HOME/.config/systemd/user/airflow-systemd-demo.service" && echo "Unit removed"
+test ! -d "$HOME/.local/state/airflow-systemd-demo" && echo "State removed"
+```
+
+You should see `Unit removed` and `State removed`.
+
+For existing deployments, follow the [local and SSH guides](how-to.md). The
+[configuration reference](api.md) lists scope and lifecycle settings.
