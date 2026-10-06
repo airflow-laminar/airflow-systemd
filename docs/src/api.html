@@ -80,7 +80,7 @@
 <div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
 <div class="overflow-y-auto h-full w-full relative pr-6"><nav class="table w-full min-w-full my-6 lg:my-8">
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: run a systemd job from Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: run your first systemd job</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to.html">How-to guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="explanation.html">Why Airflow owns the schedule</a></li>
 <li class="toctree-l1 current" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="current reference internal expandable" href="#">API reference<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul x-cloak="" x-show="expanded">
@@ -129,8 +129,231 @@
 <div id="content" role="main">
 <section class="tex2jax_ignore mathjax_ignore" id="api-reference">
 <h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
-<section id="airflow-lifecycle">
-<h2>Airflow lifecycle<a class="headerlink" href="#airflow-lifecycle" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#airflow-lifecycle'">¶</a></h2>
+<section id="lifecycle-classes-and-task-models">
+<h2>Lifecycle classes and task models<a class="headerlink" href="#lifecycle-classes-and-task-models" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#lifecycle-classes-and-task-models'">¶</a></h2>
+<p>All names below are exported from <code class="docutils literal notranslate"><span class="pre">airflow_systemd</span></code>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Execution</p></th>
+<th class="head"><p>Lifecycle class</p></th>
+<th class="head"><p>Configuration model</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">airflow-config</span></code> task model</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Local</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Systemd</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SystemdTask</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>SSH</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SystemdSSH</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SystemdSSHAirflowConfiguration</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SystemdSSHTask</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">Systemd(dag,</span> <span class="pre">cfg,</span> <span class="pre">**kwargs)</span></code> adds lifecycle tasks to an existing Airflow DAG.
+<code class="docutils literal notranslate"><span class="pre">cfg</span></code> accepts a configuration model or a dictionary validated as that model.
+The optional <code class="docutils literal notranslate"><span class="pre">systemd_client</span></code> keyword supplies a client for client-backed
+operations.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SystemdSSH(dag,</span> <span class="pre">cfg,</span> <span class="pre">host=None,</span> <span class="pre">**kwargs)</span></code> adds the same lifecycle with SSH
+configuration operators and an SSH-backed service client. <code class="docutils literal notranslate"><span class="pre">host</span></code> accepts an
+<code class="docutils literal notranslate"><span class="pre">airflow-pydantic</span></code> <code class="docutils literal notranslate"><span class="pre">Host</span></code> or a dictionary validated as one. It overrides the
+SSH target and hook; its pool is used when <code class="docutils literal notranslate"><span class="pre">cfg.pool</span></code> is unset. Constructor
+keywords can override <code class="docutils literal notranslate"><span class="pre">command_prefix</span></code> and fields in <code class="docutils literal notranslate"><span class="pre">SSHOperatorArgs</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SystemdTaskArgs</span></code> contains <code class="docutils literal notranslate"><span class="pre">cfg</span></code> and inherited Airflow task arguments.
+<code class="docutils literal notranslate"><span class="pre">SystemdSSHTaskArgs</span></code> adds optional <code class="docutils literal notranslate"><span class="pre">host:</span> <span class="pre">Host</span></code>. The task models’ <code class="docutils literal notranslate"><span class="pre">operator</span></code>
+fields resolve to their corresponding lifecycle classes and reject other
+operators. <code class="docutils literal notranslate"><span class="pre">SystemdOperator</span></code>, <code class="docutils literal notranslate"><span class="pre">SystemdOperatorArgs</span></code>, <code class="docutils literal notranslate"><span class="pre">SystemdSSHOperator</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">SystemdSSHOperatorArgs</span></code> alias the corresponding task models.</p>
+<section id="dag-constraints-and-boundaries">
+<h3>DAG constraints and boundaries<a class="headerlink" href="#dag-constraints-and-boundaries" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#dag-constraints-and-boundaries'">¶</a></h3>
+<p>Both lifecycle classes set <code class="docutils literal notranslate"><span class="pre">catchup=False</span></code>, <code class="docutils literal notranslate"><span class="pre">concurrency=1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">max_active_tasks=1</span></code>, and <code class="docutils literal notranslate"><span class="pre">max_active_runs=1</span></code>. Generated task IDs use
+<code class="docutils literal notranslate"><span class="pre">&lt;dag_id&gt;-&lt;step&gt;</span></code>, independent of a task model’s <code class="docutils literal notranslate"><span class="pre">task_id</span></code>. A DAG supports one
+systemd lifecycle; multiple services belong in its <code class="docutils literal notranslate"><span class="pre">cfg.service</span></code> mapping.</p>
+<p>The exposed boundaries are <code class="docutils literal notranslate"><span class="pre">configure_systemd</span></code>, <code class="docutils literal notranslate"><span class="pre">start_services</span></code>,
+<code class="docutils literal notranslate"><span class="pre">check_services</span></code>, <code class="docutils literal notranslate"><span class="pre">restart_services</span></code>, <code class="docutils literal notranslate"><span class="pre">stop_services</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">unconfigure_systemd</span></code>. Upstream dependencies attach to configuration;
+downstream dependencies attach to unconfiguration. <code class="docutils literal notranslate"><span class="pre">systemd_client</span></code> returns the
+client stored by the lifecycle.</p>
+<p>Stop and cleanup follow the successful monitoring branch. They are not a
+failure finalizer. <code class="docutils literal notranslate"><span class="pre">cleanup=False</span></code> creates a skipped unconfiguration task.
+<code class="docutils literal notranslate"><span class="pre">stop_on_exit=False</span></code> creates skipped stop and unconfiguration tasks, regardless
+of <code class="docutils literal notranslate"><span class="pre">cleanup</span></code>. These skipped boundaries affect downstream <code class="docutils literal notranslate"><span class="pre">all_success</span></code> tasks.</p>
+</section>
+</section>
+<section id="configuration-models">
+<h2>Configuration models<a class="headerlink" href="#configuration-models" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#configuration-models'">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration</span></code> extends <code class="docutils literal notranslate"><span class="pre">SystemdConvenienceConfiguration</span></code>.
+<code class="docutils literal notranslate"><span class="pre">SystemdSSHAirflowConfiguration</span></code> adds SSH settings. Both inherit systemd unit
+models and path handling from <code class="docutils literal notranslate"><span class="pre">SystemdConfiguration</span></code>.</p>
+<section id="systemd-fields">
+<h3>Systemd fields<a class="headerlink" href="#systemd-fields" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#systemd-fields'">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">service</span></code></p></td>
+<td><p>Required</p></td>
+<td><p>Mapping of unit names to <code class="docutils literal notranslate"><span class="pre">ServiceUnitConfiguration</span></code> models. Names without a suffix receive <code class="docutils literal notranslate"><span class="pre">.service</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">timer</span></code></p></td>
+<td><p>Empty mapping</p></td>
+<td><p>Timer unit models. Configuration writes them; the Airflow lifecycle does not start or enable timers.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scope</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">system</span></code></p></td>
+<td><p>Manager scope: <code class="docutils literal notranslate"><span class="pre">system</span></code> or <code class="docutils literal notranslate"><span class="pre">user</span></code>. User scope adds <code class="docutils literal notranslate"><span class="pre">--user</span></code> to <code class="docutils literal notranslate"><span class="pre">systemctl</span></code> commands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">unit_dir</span></code></p></td>
+<td><p>Scope-dependent</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">/etc/systemd/system</span></code> for system scope; the parsing user’s <code class="docutils literal notranslate"><span class="pre">~/.config/systemd/user</span></code> for user scope.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">working_dir</span></code></p></td>
+<td><p>Derived temporary directory</p></td>
+<td><p>Directory for persisted configuration. Resolved on the parsing host when omitted.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">restart</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">no</span></code></p></td>
+<td><p>Default <code class="docutils literal notranslate"><span class="pre">Restart=</span></code> policy for services without their own value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">timeout_stop_sec</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">30s</span></code></p></td>
+<td><p>Default service stop timeout.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kill_mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">control-group</span></code></p></td>
+<td><p>Default termination behavior for a service’s processes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kill_signal</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SIGTERM</span></code></p></td>
+<td><p>Default stop signal.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">success_exit_status</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[0]</span></code></p></td>
+<td><p>Accepted exit statuses used by service configuration and monitoring.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">command_timeout</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">60</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">systemctl</span></code> command timeout in seconds.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Per-service values take precedence over convenience defaults. <code class="docutils literal notranslate"><span class="pre">exec_start</span></code>
+accepts a string or list of commands; multiple commands require <code class="docutils literal notranslate"><span class="pre">type="oneshot"</span></code>.
+Commands follow systemd <code class="docutils literal notranslate"><span class="pre">ExecStart=</span></code> syntax. Shell operators require an explicit
+shell command. <code class="docutils literal notranslate"><span class="pre">working_dir</span></code> stores lifecycle state; a service’s
+<code class="docutils literal notranslate"><span class="pre">working_directory</span></code> sets its process working directory.</p>
+<p>Configuration writes unit files under <code class="docutils literal notranslate"><span class="pre">unit_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">pydantic.json</span></code> under
+<code class="docutils literal notranslate"><span class="pre">working_dir</span></code>, then reloads the manager. Cleanup stops configured timers and
+services, removes their unit files and saved JSON, reloads the manager, and
+removes <code class="docutils literal notranslate"><span class="pre">working_dir</span></code> only if empty. The shared unit directory remains.
+Units are started directly; configuration does not enable them for boot.</p>
+<p><code class="docutils literal notranslate"><span class="pre">systemd_json()</span></code> returns JSON containing only fields accepted by
+<code class="docutils literal notranslate"><span class="pre">SystemdConvenienceConfiguration</span></code>, excluding Airflow and SSH settings.</p>
+</section>
+<section id="monitoring-and-lifecycle-fields">
+<h3>Monitoring and lifecycle fields<a class="headerlink" href="#monitoring-and-lifecycle-fields" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#monitoring-and-lifecycle-fields'">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">check_interval</span></code></p></td>
+<td><p>5 seconds</p></td>
+<td><p>Polling interval for the <code class="docutils literal notranslate"><span class="pre">airflow-ha</span></code> sensor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">check_timeout</span></code></p></td>
+<td><p>8 hours</p></td>
+<td><p>Sensor timeout.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">runtime</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Monitoring end condition relative to <code class="docutils literal notranslate"><span class="pre">reference_date</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">endtime</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Time-of-day end condition passed to <code class="docutils literal notranslate"><span class="pre">airflow-ha</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">maxretrigger</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Retrigger limit passed to <code class="docutils literal notranslate"><span class="pre">airflow-ha</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reference_date</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data_interval_end</span></code></p></td>
+<td><p>Reference for end conditions; also accepts <code class="docutils literal notranslate"><span class="pre">start_date</span></code> or <code class="docutils literal notranslate"><span class="pre">logical_date</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pool</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Airflow pool name or <code class="docutils literal notranslate"><span class="pre">airflow-pydantic</span></code> <code class="docutils literal notranslate"><span class="pre">Pool</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stop_on_exit</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Enables service stop on the success path.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cleanup</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+<td><p>Enables unconfiguration when <code class="docutils literal notranslate"><span class="pre">stop_on_exit</span></code> is also true.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">restart_on_initial</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Restarts services on an initial Airflow run.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">restart_on_retrigger</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+<td><p>Uses restart during the startup step; takes precedence over <code class="docutils literal notranslate"><span class="pre">restart_on_initial</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Duration fields accept Python <code class="docutils literal notranslate"><span class="pre">timedelta</span></code> values or numeric seconds and duration
+strings in YAML. They are passed to <code class="docutils literal notranslate"><span class="pre">HighAvailabilityOperator</span></code> as <code class="docutils literal notranslate"><span class="pre">poke_interval</span></code>,
+<code class="docutils literal notranslate"><span class="pre">timeout</span></code>, <code class="docutils literal notranslate"><span class="pre">runtime</span></code>, <code class="docutils literal notranslate"><span class="pre">endtime</span></code>, <code class="docutils literal notranslate"><span class="pre">maxretrigger</span></code>, and <code class="docutils literal notranslate"><span class="pre">reference_date</span></code>. The sensor
+uses <code class="docutils literal notranslate"><span class="pre">mode="poke"</span></code>.</p>
+</section>
+<section id="ssh-fields-and-command-runner">
+<h3>SSH fields and command runner<a class="headerlink" href="#ssh-fields-and-command-runner" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#ssh-fields-and-command-runner'">¶</a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">command_prefix</span></code></p></td>
+<td><p>Empty string</p></td>
+<td><p>Shell commands prepended to remote configuration and service commands.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ssh_operator_args</span></code></p></td>
+<td><p>Empty <code class="docutils literal notranslate"><span class="pre">SSHOperatorArgs</span></code></p></td>
+<td><p>SSH connection, hook, host, environment, PTY, and timeout settings.</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">AirflowSSHCommandRunner</span></code> accepts an optional <code class="docutils literal notranslate"><span class="pre">hook</span></code>, <code class="docutils literal notranslate"><span class="pre">command_prefix</span></code>,
+<code class="docutils literal notranslate"><span class="pre">environment</span></code>, <code class="docutils literal notranslate"><span class="pre">get_pty</span></code>, <code class="docutils literal notranslate"><span class="pre">ssh_conn_id</span></code>, <code class="docutils literal notranslate"><span class="pre">remote_host</span></code>, <code class="docutils literal notranslate"><span class="pre">conn_timeout</span></code>,
+<code class="docutils literal notranslate"><span class="pre">cmd_timeout</span></code>, and <code class="docutils literal notranslate"><span class="pre">banner_timeout</span></code>. <code class="docutils literal notranslate"><span class="pre">get_hook()</span></code> constructs an Airflow SSH hook
+lazily when no hook was supplied. <code class="docutils literal notranslate"><span class="pre">run(command:</span> <span class="pre">list[str],</span> <span class="pre">timeout:</span> <span class="pre">int)</span></code> shell
+quotes the command arguments, applies the prefix, and returns a
+<code class="docutils literal notranslate"><span class="pre">systemd-pydantic</span></code> <code class="docutils literal notranslate"><span class="pre">CommandResult</span></code> with exit status and decoded stdout/stderr.</p>
+<p><code class="docutils literal notranslate"><span class="pre">load_airflow_config</span></code> aliases <code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration.load</span></code>.
+<code class="docutils literal notranslate"><span class="pre">load_airflow_ssh_config</span></code> aliases <code class="docutils literal notranslate"><span class="pre">SystemdSSHAirflowConfiguration.load</span></code>.
+These load systemd configuration models; <code class="docutils literal notranslate"><span class="pre">airflow_config.load_config</span></code> loads
+collections of declarative DAGs. The <a class="reference internal" href="how-to.html"><span class="std std-doc">how-to guides</span></a> cover that
+workflow.</p>
+</section>
+</section>
+<section id="generated-api">
+<h2>Generated API<a class="headerlink" href="#generated-api" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#generated-api'">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_build/airflow_systemd.Systemd.html#airflow_systemd.Systemd" title="airflow_systemd.Systemd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Systemd</span></code></a>(dag, cfg, **kwargs)</p></td>
@@ -168,9 +391,8 @@
 </tr>
 </tbody>
 </table>
-</section>
 <section id="re-exported-systemd-models">
-<h2>Re-exported systemd models<a class="headerlink" href="#re-exported-systemd-models" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#re-exported-systemd-models'">¶</a></h2>
+<h3>Re-exported systemd models<a class="headerlink" href="#re-exported-systemd-models" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#re-exported-systemd-models'">¶</a></h3>
 <table class="autosummary longtable docutils align-default">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_build/airflow_systemd.ServiceConfiguration.html#airflow_systemd.ServiceConfiguration" title="airflow_systemd.ServiceConfiguration"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ServiceConfiguration</span></code></a></p></td>
@@ -201,11 +423,24 @@
 </table>
 </section>
 </section>
+</section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#airflow-lifecycle'" class="reference internal" href="#airflow-lifecycle">Airflow lifecycle</a></li>
+<li><a :data-current="activeSection === '#lifecycle-classes-and-task-models'" class="reference internal" href="#lifecycle-classes-and-task-models">Lifecycle classes and task models</a><ul>
+<li><a :data-current="activeSection === '#dag-constraints-and-boundaries'" class="reference internal" href="#dag-constraints-and-boundaries">DAG constraints and boundaries</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#configuration-models'" class="reference internal" href="#configuration-models">Configuration models</a><ul>
+<li><a :data-current="activeSection === '#systemd-fields'" class="reference internal" href="#systemd-fields">Systemd fields</a></li>
+<li><a :data-current="activeSection === '#monitoring-and-lifecycle-fields'" class="reference internal" href="#monitoring-and-lifecycle-fields">Monitoring and lifecycle fields</a></li>
+<li><a :data-current="activeSection === '#ssh-fields-and-command-runner'" class="reference internal" href="#ssh-fields-and-command-runner">SSH fields and command runner</a></li>
+</ul>
+</li>
+<li><a :data-current="activeSection === '#generated-api'" class="reference internal" href="#generated-api">Generated API</a><ul>
 <li><a :data-current="activeSection === '#re-exported-systemd-models'" class="reference internal" href="#re-exported-systemd-models">Re-exported systemd models</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </aside>

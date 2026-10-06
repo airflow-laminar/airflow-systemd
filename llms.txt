@@ -5,10 +5,10 @@
 ## Pages
 
 - [airflow-systemd](index.html.md): Run and monitor systemd-managed jobs from Apache Airflow.
-- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.html.md): In this tutorial, we will define a user-scoped systemd job in airflow-config YAML and load it as an Airflow DAG.
-- [How-to guides](docs/src/how-to.html.md): These guides cover common local, remote, and lifecycle configurations.
-- [Why Airflow owns the schedule](docs/src/explanation.html.md): Airflow and systemd can both schedule work: Airflow through DAG schedules and systemd through timer units. airflow-systemd deliberately uses Airflow as the o...
-- [API reference](docs/src/api.html.md): Systemd(dag, cfg, **kwargs)
+- [Tutorial: run your first systemd job](docs/src/tutorial.html.md): We will run a five-second service from Airflow, monitor its completion, and remove its unit file and saved configuration.
+- [How-to guides](docs/src/how-to.html.md): Run systemd services on an Airflow worker or an SSH host, with configuration in Python or airflow-config YAML.
+- [Why Airflow owns the schedule](docs/src/explanation.html.md): Airflow coordinates workflows; systemd owns service processes, their children, and their resource groups. airflow-systemd connects those responsibilities by...
+- [API reference](docs/src/api.html.md): All names below are exported from airflow_systemd.
 - [airflow_systemd.Systemd](docs/src/_build/airflow_systemd.Systemd.html.md): Bases: object
 - [airflow_systemd.SystemdSSH](docs/src/_build/airflow_systemd.SystemdSSH.html.md): Bases: Systemd
 - [airflow_systemd.AirflowSSHCommandRunner](docs/src/_build/airflow_systemd.AirflowSSHCommandRunner.html.md): Bases: object

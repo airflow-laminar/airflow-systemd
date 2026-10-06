@@ -21,9 +21,9 @@
 <meta content="#ffffff" media="(prefers-color-scheme: light)" name="theme-color"/>
 <meta content="#030711" media="(prefers-color-scheme: dark)" name="theme-color"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
-<title>Tutorial: run a systemd job from Airflow | airflow-systemd v0.2.0</title>
-<meta content="Tutorial: run a systemd job from Airflow | airflow-systemd v0.2.0" property="og:title"/>
-<meta content="Tutorial: run a systemd job from Airflow | airflow-systemd v0.2.0" name="twitter:title"/>
+<title>Tutorial: run your first systemd job | airflow-systemd v0.2.0</title>
+<meta content="Tutorial: run your first systemd job | airflow-systemd v0.2.0" property="og:title"/>
+<meta content="Tutorial: run your first systemd job | airflow-systemd v0.2.0" name="twitter:title"/>
 <link href="../../_static/pygments.css?v=03e43079" rel="stylesheet" type="text/css"/>
 <link href="../../_static/theme.css?v=d6d7c91b" rel="stylesheet" type="text/css"/>
 <link href="../../_static/mystnb.11b39860a7a0cbfd473a3ad8a317855267ff0bd372690045ca344a6b62be495e.css" rel="stylesheet" type="text/css"/>
@@ -80,7 +80,7 @@
 <div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
 <div class="overflow-y-auto h-full w-full relative pr-6"><nav class="table w-full min-w-full my-6 lg:my-8">
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial: run a systemd job from Airflow</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial: run your first systemd job</a></li>
 <li class="toctree-l1"><a class="reference internal" href="how-to.html">How-to guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="explanation.html">Why Airflow owns the schedule</a></li>
 <li class="toctree-l1" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="api.html">API reference<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul x-cloak="" x-show="expanded">
@@ -124,79 +124,101 @@
 <path d="M240 856h120V616h240v240h120V496L480 316 240 496v360Zm-80 80V456l320-240 320 240v480H520V696h-80v240H160Zm320-350Z"></path>
 </svg>
 </a>
-<div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">Tutorial: run a systemd job from Airflow</span>
+<div class="mr-1">/</div><span aria-current="page" class="font-medium text-foreground overflow-hidden text-ellipsis whitespace-nowrap">Tutorial: run your first systemd job</span>
 </nav>
 <div id="content" role="main">
-<section class="tex2jax_ignore mathjax_ignore" id="tutorial-run-a-systemd-job-from-airflow">
-<h1>Tutorial: run a systemd job from Airflow<a class="headerlink" href="#tutorial-run-a-systemd-job-from-airflow" title="Link to this heading">¶</a></h1>
-<p>In this tutorial, we will define a user-scoped systemd job in <code class="docutils literal notranslate"><span class="pre">airflow-config</span></code>
-YAML and load it as an Airflow DAG.</p>
-<section id="install-the-packages">
-<h2>Install the packages<a class="headerlink" href="#install-the-packages" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#install-the-packages'">¶</a></h2>
-<p>For Airflow 3, run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'airflow-systemd[airflow3]'</span><span class="w"> </span>airflow-config
+<section class="tex2jax_ignore mathjax_ignore" id="tutorial-run-your-first-systemd-job">
+<h1>Tutorial: run your first systemd job<a class="headerlink" href="#tutorial-run-your-first-systemd-job" title="Link to this heading">¶</a></h1>
+<p>We will run a five-second service from Airflow, monitor its completion, and
+remove its unit file and saved configuration.</p>
+<p>Use an initialized Airflow 2 environment on Linux with systemd. Run the DAG
+parser and all tasks as the same Unix user on that host. The user needs a
+running systemd user manager and permission to write its home directory.</p>
+<section id="check-the-user-manager">
+<h2>Check the user manager<a class="headerlink" href="#check-the-user-manager" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#check-the-user-manager'">¶</a></h2>
+<p>Run these commands as the Airflow user:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">systemctl<span class="w"> </span>--user<span class="w"> </span>show<span class="w"> </span>-p<span class="w"> </span>Version
+</span><span id="line-2"><span class="nb">test</span><span class="w"> </span>!<span class="w"> </span>-e<span class="w"> </span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.config/systemd/user/airflow-systemd-demo.service"</span>
 </span></code></pre></div>
 </div>
-<p>Use the <code class="docutils literal notranslate"><span class="pre">airflow</span></code> extra instead when running Airflow 2. The worker must have a
-user systemd manager and permission to write its user unit directory.</p>
+<p>The first command prints the manager’s version. The second exits successfully
+when the tutorial’s unit filename is unused. If the first command cannot connect
+to the user bus, complete the <a class="reference internal" href="how-to.html#how-to-prepare-a-user-manager"><span class="std std-ref">user manager setup</span></a>
+before continuing.</p>
 </section>
-<section id="define-the-dag">
-<h2>Define the DAG<a class="headerlink" href="#define-the-dag" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#define-the-dag'">¶</a></h2>
-<p>Create <code class="docutils literal notranslate"><span class="pre">config/systemd.yaml</span></code>:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">dags</span><span class="p">:</span>
-</span><span id="line-2"><span class="w">  </span><span class="nt">nightly-systemd</span><span class="p">:</span>
-</span><span id="line-3"><span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">"@daily"</span>
-</span><span id="line-4"><span class="w">    </span><span class="nt">start_date</span><span class="p">:</span><span class="w"> </span><span class="s">"2024-01-01"</span>
-</span><span id="line-5"><span class="w">    </span><span class="nt">catchup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="line-6"><span class="w">    </span><span class="nt">tasks</span><span class="p">:</span>
-</span><span id="line-7"><span class="w">      </span><span class="nt">run-nightly</span><span class="p">:</span>
-</span><span id="line-8"><span class="w">        </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_systemd.SystemdTask</span>
-</span><span id="line-9"><span class="w">        </span><span class="nt">cfg</span><span class="p">:</span>
-</span><span id="line-10"><span class="w">          </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
-</span><span id="line-11"><span class="w">          </span><span class="nt">stop_on_exit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="line-12"><span class="w">          </span><span class="nt">cleanup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="line-13"><span class="w">          </span><span class="nt">service</span><span class="p">:</span>
-</span><span id="line-14"><span class="w">            </span><span class="nt">nightly</span><span class="p">:</span>
-</span><span id="line-15"><span class="w">              </span><span class="nt">unit</span><span class="p">:</span>
-</span><span id="line-16"><span class="w">                </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Nightly batch job</span>
-</span><span id="line-17"><span class="w">              </span><span class="nt">service</span><span class="p">:</span>
-</span><span id="line-18"><span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exec</span>
-</span><span id="line-19"><span class="w">                </span><span class="nt">exec_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/jobs/nightly</span>
+<section id="install-the-integration">
+<h2>Install the integration<a class="headerlink" href="#install-the-integration" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#install-the-integration'">¶</a></h2>
+<p>In the Airflow environment, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">pip<span class="w"> </span>install<span class="w"> </span><span class="s1">'airflow-systemd[airflow]'</span>
 </span></code></pre></div>
 </div>
 </section>
-<section id="load-the-configuration">
-<h2>Load the configuration<a class="headerlink" href="#load-the-configuration" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#load-the-configuration'">¶</a></h2>
-<p>Create <code class="docutils literal notranslate"><span class="pre">nightly_systemd.py</span></code> in the DAG folder:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
-</span><span id="line-2">
-</span><span id="line-3"><span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s2">"config"</span><span class="p">,</span> <span class="s2">"systemd"</span><span class="p">)</span>
-</span><span id="line-4"><span class="n">config</span><span class="o">.</span><span class="n">generate_in_mem</span><span class="p">()</span>
+<section id="create-the-dag">
+<h2>Create the DAG<a class="headerlink" href="#create-the-dag" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#create-the-dag'">¶</a></h2>
+<p>Save this as <code class="docutils literal notranslate"><span class="pre">systemd_demo.py</span></code> in your Airflow DAG folder:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+</span><span id="line-2"><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAG</span>
+</span><span id="line-5"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_systemd</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceConfiguration</span><span class="p">,</span> <span class="n">ServiceUnitConfiguration</span><span class="p">,</span> <span class="n">Systemd</span><span class="p">,</span> <span class="n">SystemdAirflowConfiguration</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="k">with</span> <span class="n">DAG</span><span class="p">(</span>
+</span><span id="line-8">    <span class="n">dag_id</span><span class="o">=</span><span class="s2">"systemd-demo"</span><span class="p">,</span>
+</span><span id="line-9">    <span class="n">schedule</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+</span><span id="line-10">    <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span>
+</span><span id="line-11">    <span class="n">catchup</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="line-12"><span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+</span><span id="line-13">    <span class="n">systemd</span> <span class="o">=</span> <span class="n">Systemd</span><span class="p">(</span>
+</span><span id="line-14">        <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+</span><span id="line-15">        <span class="n">cfg</span><span class="o">=</span><span class="n">SystemdAirflowConfiguration</span><span class="p">(</span>
+</span><span id="line-16">            <span class="n">scope</span><span class="o">=</span><span class="s2">"user"</span><span class="p">,</span>
+</span><span id="line-17">            <span class="n">unit_dir</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">".config/systemd/user"</span><span class="p">,</span>
+</span><span id="line-18">            <span class="n">working_dir</span><span class="o">=</span><span class="n">Path</span><span class="o">.</span><span class="n">home</span><span class="p">()</span> <span class="o">/</span> <span class="s2">".local/state/airflow-systemd-demo"</span><span class="p">,</span>
+</span><span id="line-19">            <span class="n">service</span><span class="o">=</span><span class="p">{</span>
+</span><span id="line-20">                <span class="s2">"airflow-systemd-demo"</span><span class="p">:</span> <span class="n">ServiceUnitConfiguration</span><span class="p">(</span>
+</span><span id="line-21">                    <span class="n">service</span><span class="o">=</span><span class="n">ServiceConfiguration</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"exec"</span><span class="p">,</span> <span class="n">exec_start</span><span class="o">=</span><span class="s2">"/bin/sleep 5"</span><span class="p">),</span>
+</span><span id="line-22">                <span class="p">),</span>
+</span><span id="line-23">            <span class="p">},</span>
+</span><span id="line-24">        <span class="p">),</span>
+</span><span id="line-25">    <span class="p">)</span>
 </span></code></pre></div>
 </div>
+<p>List the generated tasks:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">airflow<span class="w"> </span>tasks<span class="w"> </span>list<span class="w"> </span>systemd-demo
+</span></code></pre></div>
+</div>
+<p>Look for <code class="docutils literal notranslate"><span class="pre">systemd-demo-configure-systemd</span></code>, <code class="docutils literal notranslate"><span class="pre">systemd-demo-start-services</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">systemd-demo-check-services</span></code>. Restart, stop, cleanup, and failure-handling tasks
+also appear.</p>
 </section>
-<section id="inspect-the-lifecycle">
-<h2>Inspect the lifecycle<a class="headerlink" href="#inspect-the-lifecycle" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#inspect-the-lifecycle'">¶</a></h2>
-<p>Parse the DAG folder:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">airflow<span class="w"> </span>dags<span class="w"> </span>list<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nightly-systemd
-</span><span id="line-2">airflow<span class="w"> </span>tasks<span class="w"> </span>list<span class="w"> </span>nightly-systemd
+<section id="run-the-service">
+<h2>Run the service<a class="headerlink" href="#run-the-service" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#run-the-service'">¶</a></h2>
+<p>Execute one DAG run locally:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">airflow<span class="w"> </span>dags<span class="w"> </span><span class="nb">test</span><span class="w"> </span>systemd-demo<span class="w"> </span><span class="m">2025</span>-01-01
 </span></code></pre></div>
 </div>
-<p>The task list includes the configure, start, check, restart, stop, and
-unconfigure steps created by <code class="docutils literal notranslate"><span class="pre">Systemd</span></code>.</p>
-<p>Trigger the DAG in a test environment containing <code class="docutils literal notranslate"><span class="pre">/opt/jobs/nightly</span></code>. The check
-step remains active while the service runs and completes after systemd reports a
-successful stopped unit.</p>
-<p>You have now connected a declarative Airflow DAG to a systemd-managed process.</p>
+<p>The configure task writes the service unit and <code class="docutils literal notranslate"><span class="pre">pydantic.json</span></code>, then reloads the
+user manager. The start task runs <code class="docutils literal notranslate"><span class="pre">/bin/sleep</span></code>. After the service finishes, the
+check task takes its success branch. Stop and cleanup remove the unit and saved
+configuration, then reload the manager again. The DAG run finishes with state
+<code class="docutils literal notranslate"><span class="pre">success</span></code>; restart and force-kill branches are skipped.</p>
+<p>Check the two generated paths:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nb">test</span><span class="w"> </span>!<span class="w"> </span>-e<span class="w"> </span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.config/systemd/user/airflow-systemd-demo.service"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"Unit removed"</span>
+</span><span id="line-2"><span class="nb">test</span><span class="w"> </span>!<span class="w"> </span>-d<span class="w"> </span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.local/state/airflow-systemd-demo"</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">"State removed"</span>
+</span></code></pre></div>
+</div>
+<p>You should see <code class="docutils literal notranslate"><span class="pre">Unit</span> <span class="pre">removed</span></code> and <code class="docutils literal notranslate"><span class="pre">State</span> <span class="pre">removed</span></code>.</p>
+<p>For existing deployments, follow the <a class="reference internal" href="how-to.html"><span class="std std-doc">local and SSH guides</span></a>. The
+<a class="reference internal" href="api.html"><span class="std std-doc">configuration reference</span></a> lists scope and lifecycle settings.</p>
 </section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#install-the-packages'" class="reference internal" href="#install-the-packages">Install the packages</a></li>
-<li><a :data-current="activeSection === '#define-the-dag'" class="reference internal" href="#define-the-dag">Define the DAG</a></li>
-<li><a :data-current="activeSection === '#load-the-configuration'" class="reference internal" href="#load-the-configuration">Load the configuration</a></li>
-<li><a :data-current="activeSection === '#inspect-the-lifecycle'" class="reference internal" href="#inspect-the-lifecycle">Inspect the lifecycle</a></li>
+<li><a :data-current="activeSection === '#check-the-user-manager'" class="reference internal" href="#check-the-user-manager">Check the user manager</a></li>
+<li><a :data-current="activeSection === '#install-the-integration'" class="reference internal" href="#install-the-integration">Install the integration</a></li>
+<li><a :data-current="activeSection === '#create-the-dag'" class="reference internal" href="#create-the-dag">Create the DAG</a></li>
+<li><a :data-current="activeSection === '#run-the-service'" class="reference internal" href="#run-the-service">Run the service</a></li>
 </ul>
 </div>
 </aside>

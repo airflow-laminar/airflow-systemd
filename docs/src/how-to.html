@@ -38,7 +38,7 @@
 <link href="../../search.html" rel="search" title="Search"/>
 <link href="../../genindex.html" rel="index" title="Index"/>
 <link href="explanation.html" rel="next" title="Why Airflow owns the schedule"/>
-<link href="tutorial.html" rel="prev" title="Tutorial: run a systemd job from Airflow"/>
+<link href="tutorial.html" rel="prev" title="Tutorial: run your first systemd job"/>
 </head>
 <body :class="{ 'overflow-hidden': showSidebar }" class="min-h-screen font-sans antialiased bg-background text-foreground" x-data="{ showSidebar: false, showScrollTop: false }">
 <div @click.self="showSidebar = false" class="fixed inset-0 z-50 overflow-hidden bg-background/80 backdrop-blur-sm md:hidden" x-cloak="" x-show="showSidebar"></div><div class="relative flex flex-col min-h-screen" id="page"><a class="absolute top-0 left-0 z-[100] block bg-background p-4 text-xl transition -translate-x-full opacity-0 focus:translate-x-0 focus:opacity-100" href="#content">
@@ -80,7 +80,7 @@
 <div class="relative overflow-hidden md:overflow-auto my-4 md:my-0">
 <div class="overflow-y-auto h-full w-full relative pr-6"><nav class="table w-full min-w-full my-6 lg:my-8">
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: run a systemd job from Airflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial: run your first systemd job</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">How-to guides</a></li>
 <li class="toctree-l1"><a class="reference internal" href="explanation.html">Why Airflow owns the schedule</a></li>
 <li class="toctree-l1" x-data="{ expanded: $el.classList.contains('current') ? true : false }"><a :class="{ 'expanded' : expanded }" @click="expanded = !expanded" class="reference internal expandable" href="api.html">API reference<button @click.prevent.stop="expanded = !expanded" type="button" x-cloak=""><span class="sr-only"></span><svg fill="currentColor" height="18px" stroke="none" viewbox="0 0 24 24" width="18px" xmlns="http://www.w3.org/2000/svg"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg></button></a><ul x-cloak="" x-show="expanded">
@@ -129,85 +129,323 @@
 <div id="content" role="main">
 <section class="tex2jax_ignore mathjax_ignore" id="how-to-guides">
 <h1>How-to guides<a class="headerlink" href="#how-to-guides" title="Link to this heading">¶</a></h1>
-<p>These guides cover common local, remote, and lifecycle configurations.</p>
-<section id="how-to-keep-a-service-running-after-the-dag-finishes">
-<h2>How to keep a service running after the DAG finishes<a class="headerlink" href="#how-to-keep-a-service-running-after-the-dag-finishes" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-keep-a-service-running-after-the-dag-finishes'">¶</a></h2>
-<p>Disable stop and cleanup, then choose when to restart the persistent service:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">cfg</span><span class="p">:</span>
-</span><span id="line-2"><span class="w">  </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
-</span><span id="line-3"><span class="w">  </span><span class="nt">stop_on_exit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="line-4"><span class="w">  </span><span class="nt">cleanup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-</span><span id="line-5"><span class="w">  </span><span class="nt">restart_on_initial</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="line-6"><span class="w">  </span><span class="nt">restart_on_retrigger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</span><span id="line-7"><span class="w">  </span><span class="nt">service</span><span class="p">:</span>
-</span><span id="line-8"><span class="w">    </span><span class="nt">api</span><span class="p">:</span>
-</span><span id="line-9"><span class="w">      </span><span class="nt">service</span><span class="p">:</span>
-</span><span id="line-10"><span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exec</span>
-</span><span id="line-11"><span class="w">        </span><span class="nt">exec_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/services/api</span>
-</span><span id="line-12"><span class="w">        </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">on-failure</span>
+<p>Run systemd services on an Airflow worker or an SSH host, with configuration in
+Python or <code class="docutils literal notranslate"><span class="pre">airflow-config</span></code> YAML.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Execution</p></th>
+<th class="head"><p>Inline Python</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">airflow-config</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Local worker</p></td>
+<td><p><a class="reference internal" href="#how-to-run-a-local-service-in-python">Local Python DAG</a></p></td>
+<td><p><a class="reference internal" href="#how-to-run-a-local-service-with-airflow-config">Local YAML DAG</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>SSH host</p></td>
+<td><p><a class="reference internal" href="#how-to-run-a-service-over-ssh-in-python">SSH Python DAG</a></p></td>
+<td><p><a class="reference internal" href="#how-to-run-a-service-over-ssh-with-airflow-config">SSH YAML DAG</a></p></td>
+</tr>
+</tbody>
+</table>
+<section id="how-to-prepare-a-user-manager">
+<h2>How to prepare a user manager<a class="headerlink" href="#how-to-prepare-a-user-manager" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-prepare-a-user-manager'">¶</a></h2>
+<p>For <code class="docutils literal notranslate"><span class="pre">scope="user"</span></code>, run Airflow tasks or SSH commands as the account that owns
+the services. On the target Linux host, check access as that account:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">systemctl<span class="w"> </span>--user<span class="w"> </span>show<span class="w"> </span>-p<span class="w"> </span>Version
 </span></code></pre></div>
 </div>
-<p>Use this for services whose ownership remains with systemd between Airflow runs.</p>
+<p>If services must remain available after logout, have an administrator enable
+lingering for the service account, here named <code class="docutils literal notranslate"><span class="pre">airflow</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">sudo<span class="w"> </span>loginctl<span class="w"> </span>enable-linger<span class="w"> </span>airflow
+</span></code></pre></div>
+</div>
+<p>For an Airflow worker or non-interactive SSH session without the user bus
+variables, set them in that process’s environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nb">export</span><span class="w"> </span><span class="nv">XDG_RUNTIME_DIR</span><span class="o">=</span><span class="s2">"/run/user/</span><span class="k">$(</span>id<span class="w"> </span>-u<span class="k">)</span><span class="s2">"</span>
+</span><span id="line-2"><span class="nb">export</span><span class="w"> </span><span class="nv">DBUS_SESSION_BUS_ADDRESS</span><span class="o">=</span><span class="s2">"unix:path=</span><span class="nv">$XDG_RUNTIME_DIR</span><span class="s2">/bus"</span>
+</span></code></pre></div>
+</div>
+<p>Check <code class="docutils literal notranslate"><span class="pre">systemctl</span> <span class="pre">--user</span> <span class="pre">show</span> <span class="pre">-p</span> <span class="pre">Version</span></code> again. The user manager and its bus must
+already be running; setting the variables only selects their addresses. For SSH,
+put these exports in <code class="docutils literal notranslate"><span class="pre">cfg.command_prefix</span></code> so they apply to every remote command.</p>
 </section>
-<section id="how-to-limit-monitoring">
-<h2>How to limit monitoring<a class="headerlink" href="#how-to-limit-monitoring" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-limit-monitoring'">¶</a></h2>
-<p>Set Airflow-specific timing fields on <code class="docutils literal notranslate"><span class="pre">SystemdAirflowConfiguration</span></code>:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">cfg</span><span class="p">:</span>
-</span><span id="line-2"><span class="w">  </span><span class="nt">check_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">00:00:10</span>
-</span><span id="line-3"><span class="w">  </span><span class="nt">check_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">08:00:00</span>
-</span><span id="line-4"><span class="w">  </span><span class="nt">runtime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">04:00:00</span>
-</span><span id="line-5"><span class="w">  </span><span class="nt">maxretrigger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
-</span><span id="line-6"><span class="w">  </span><span class="nt">service</span><span class="p">:</span>
-</span><span id="line-7"><span class="w">    </span><span class="nt">batch</span><span class="p">:</span>
-</span><span id="line-8"><span class="w">      </span><span class="nt">service</span><span class="p">:</span>
-</span><span id="line-9"><span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exec</span>
-</span><span id="line-10"><span class="w">        </span><span class="nt">exec_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/jobs/batch</span>
+<section id="how-to-run-a-local-service-in-python">
+<h2>How to run a local service in Python<a class="headerlink" href="#how-to-run-a-local-service-in-python" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-run-a-local-service-in-python'">¶</a></h2>
+<p>Install <code class="docutils literal notranslate"><span class="pre">airflow-systemd[airflow]</span></code> in Airflow 2, or
+<code class="docutils literal notranslate"><span class="pre">airflow-systemd[airflow3]</span></code> in Airflow 3. Complete the
+<a class="reference internal" href="#how-to-prepare-a-user-manager">user manager setup</a>.</p>
+<p>Run all lifecycle tasks on the same Linux host as the same Unix user. Use one
+worker host or route this DAG to a queue served by that host. Shared storage
+does not provide access to another host’s systemd manager.</p>
+<p>Save this DAG in the DAG folder. Replace the command and paths for your worker
+account, and choose a unit name reserved for this DAG:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAG</span>
+</span><span id="line-4"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_systemd</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceConfiguration</span><span class="p">,</span> <span class="n">ServiceUnitConfiguration</span><span class="p">,</span> <span class="n">Systemd</span><span class="p">,</span> <span class="n">SystemdAirflowConfiguration</span>
+</span><span id="line-5">
+</span><span id="line-6"><span class="k">with</span> <span class="n">DAG</span><span class="p">(</span>
+</span><span id="line-7">    <span class="n">dag_id</span><span class="o">=</span><span class="s2">"local-systemd"</span><span class="p">,</span>
+</span><span id="line-8">    <span class="n">schedule</span><span class="o">=</span><span class="s2">"@daily"</span><span class="p">,</span>
+</span><span id="line-9">    <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span>
+</span><span id="line-10">    <span class="n">catchup</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="line-11"><span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+</span><span id="line-12">    <span class="n">systemd</span> <span class="o">=</span> <span class="n">Systemd</span><span class="p">(</span>
+</span><span id="line-13">        <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+</span><span id="line-14">        <span class="n">cfg</span><span class="o">=</span><span class="n">SystemdAirflowConfiguration</span><span class="p">(</span>
+</span><span id="line-15">            <span class="n">scope</span><span class="o">=</span><span class="s2">"user"</span><span class="p">,</span>
+</span><span id="line-16">            <span class="n">unit_dir</span><span class="o">=</span><span class="s2">"/home/airflow/.config/systemd/user"</span><span class="p">,</span>
+</span><span id="line-17">            <span class="n">working_dir</span><span class="o">=</span><span class="s2">"/var/tmp/local-systemd"</span><span class="p">,</span>
+</span><span id="line-18">            <span class="n">service</span><span class="o">=</span><span class="p">{</span>
+</span><span id="line-19">                <span class="s2">"airflow-local-batch"</span><span class="p">:</span> <span class="n">ServiceUnitConfiguration</span><span class="p">(</span>
+</span><span id="line-20">                    <span class="n">service</span><span class="o">=</span><span class="n">ServiceConfiguration</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"exec"</span><span class="p">,</span> <span class="n">exec_start</span><span class="o">=</span><span class="s2">"/bin/sleep 5"</span><span class="p">),</span>
+</span><span id="line-21">                <span class="p">),</span>
+</span><span id="line-22">            <span class="p">},</span>
+</span><span id="line-23">        <span class="p">),</span>
+</span><span id="line-24">    <span class="p">)</span>
 </span></code></pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">check_interval</span></code> controls polling, <code class="docutils literal notranslate"><span class="pre">check_timeout</span></code> controls the sensor timeout,
-and <code class="docutils literal notranslate"><span class="pre">runtime</span></code> controls the allowed external job duration.</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">airflow</span> <span class="pre">tasks</span> <span class="pre">list</span> <span class="pre">local-systemd</span></code>, then trigger <code class="docutils literal notranslate"><span class="pre">local-systemd</span></code>.</p>
 </section>
-<section id="how-to-manage-a-remote-host">
-<h2>How to manage a remote host<a class="headerlink" href="#how-to-manage-a-remote-host" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-manage-a-remote-host'">¶</a></h2>
-<p>Use the SSH task model in <code class="docutils literal notranslate"><span class="pre">airflow-config</span></code>:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">dags</span><span class="p">:</span>
-</span><span id="line-2"><span class="w">  </span><span class="nt">remote-systemd</span><span class="p">:</span>
-</span><span id="line-3"><span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">"@daily"</span>
-</span><span id="line-4"><span class="w">    </span><span class="nt">tasks</span><span class="p">:</span>
-</span><span id="line-5"><span class="w">      </span><span class="nt">run-remote</span><span class="p">:</span>
-</span><span id="line-6"><span class="w">        </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_systemd.SystemdSSHTask</span>
-</span><span id="line-7"><span class="w">        </span><span class="nt">cfg</span><span class="p">:</span>
-</span><span id="line-8"><span class="w">          </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
-</span><span id="line-9"><span class="w">          </span><span class="nt">command_prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source /etc/profile &amp;&amp;</span>
-</span><span id="line-10"><span class="w">          </span><span class="nt">ssh_operator_args</span><span class="p">:</span>
-</span><span id="line-11"><span class="w">            </span><span class="nt">ssh_conn_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">systemd-host</span>
-</span><span id="line-12"><span class="w">          </span><span class="nt">service</span><span class="p">:</span>
-</span><span id="line-13"><span class="w">            </span><span class="nt">report</span><span class="p">:</span>
-</span><span id="line-14"><span class="w">              </span><span class="nt">service</span><span class="p">:</span>
-</span><span id="line-15"><span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exec</span>
-</span><span id="line-16"><span class="w">                </span><span class="nt">exec_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/jobs/report</span>
+<section id="how-to-run-a-local-service-with-airflow-config">
+<h2>How to run a local service with airflow-config<a class="headerlink" href="#how-to-run-a-local-service-with-airflow-config" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-run-a-local-service-with-airflow-config'">¶</a></h2>
+<p>Use the packages and worker placement from the
+<a class="reference internal" href="#how-to-run-a-local-service-in-python">local Python guide</a>. Install
+<code class="docutils literal notranslate"><span class="pre">airflow-config</span></code> in the DAG parsing environment.</p>
+<p>Create <code class="docutils literal notranslate"><span class="pre">config/local_systemd.yaml</span></code> beside the DAG loader:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># @package _global_</span>
+</span><span id="line-2"><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_config.Configuration</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="nt">dags</span><span class="p">:</span>
+</span><span id="line-5"><span class="w">  </span><span class="nt">local-systemd</span><span class="p">:</span>
+</span><span id="line-6"><span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">"@daily"</span>
+</span><span id="line-7"><span class="w">    </span><span class="nt">start_date</span><span class="p">:</span><span class="w"> </span><span class="s">"2025-01-01"</span>
+</span><span id="line-8"><span class="w">    </span><span class="nt">catchup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="line-9"><span class="w">    </span><span class="nt">tasks</span><span class="p">:</span>
+</span><span id="line-10"><span class="w">      </span><span class="nt">run</span><span class="p">:</span>
+</span><span id="line-11"><span class="w">        </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_systemd.SystemdTask</span>
+</span><span id="line-12"><span class="w">        </span><span class="nt">cfg</span><span class="p">:</span>
+</span><span id="line-13"><span class="w">          </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+</span><span id="line-14"><span class="w">          </span><span class="nt">unit_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/airflow/.config/systemd/user</span>
+</span><span id="line-15"><span class="w">          </span><span class="nt">working_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/tmp/local-systemd</span>
+</span><span id="line-16"><span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+</span><span id="line-17"><span class="w">            </span><span class="nt">airflow-local-batch</span><span class="p">:</span>
+</span><span id="line-18"><span class="w">              </span><span class="nt">service</span><span class="p">:</span>
+</span><span id="line-19"><span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exec</span>
+</span><span id="line-20"><span class="w">                </span><span class="nt">exec_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/sleep 5</span>
 </span></code></pre></div>
 </div>
-<p>Configuration and cleanup use Airflow’s SSH operator. Status and lifecycle calls
-use a <code class="docutils literal notranslate"><span class="pre">SystemdClient</span></code> command runner backed by the same SSH connection.</p>
+<p>Replace paths and the command for your worker account. Save <code class="docutils literal notranslate"><span class="pre">local_systemd.py</span></code>
+in the DAG folder:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="sd">"""Generate Airflow DAGs from the local systemd configuration."""</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
+</span><span id="line-4">
+</span><span id="line-5"><span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s2">"config"</span><span class="p">,</span> <span class="s2">"local_systemd"</span><span class="p">)</span>
+</span><span id="line-6"><span class="n">config</span><span class="o">.</span><span class="n">generate_in_mem</span><span class="p">()</span>
+</span></code></pre></div>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">airflow</span> <span class="pre">tasks</span> <span class="pre">list</span> <span class="pre">local-systemd</span></code>, then trigger <code class="docutils literal notranslate"><span class="pre">local-systemd</span></code>. Deploy
+either this loader or the inline Python DAG for that DAG ID.</p>
+</section>
+<section id="how-to-run-a-service-over-ssh-in-python">
+<h2>How to run a service over SSH in Python<a class="headerlink" href="#how-to-run-a-service-over-ssh-in-python" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-run-a-service-over-ssh-in-python'">¶</a></h2>
+<p>Install <code class="docutils literal notranslate"><span class="pre">airflow-systemd[airflow]</span></code> in Airflow 2, or
+<code class="docutils literal notranslate"><span class="pre">airflow-systemd[airflow3]</span></code> in Airflow 3. These extras include the SSH provider.
+On the remote Linux host, install the convenience commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span id="line-1">pip<span class="w"> </span>install<span class="w"> </span>systemd-pydantic
+</span></code></pre></div>
+</div>
+<p>Create an Airflow SSH connection named <code class="docutils literal notranslate"><span class="pre">systemd-host</span></code> for the <code class="docutils literal notranslate"><span class="pre">airflow</span></code> account
+on your target host. Complete the <a class="reference internal" href="#how-to-prepare-a-user-manager">user manager setup</a>
+for that account. Ensure <code class="docutils literal notranslate"><span class="pre">systemctl</span></code> and <code class="docutils literal notranslate"><span class="pre">_systemd_convenience</span></code> are on the remote
+non-interactive shell’s <code class="docutils literal notranslate"><span class="pre">PATH</span></code>.</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">unit_dir</span></code> and <code class="docutils literal notranslate"><span class="pre">working_dir</span></code> to explicit absolute paths on the remote host.
+Replace <code class="docutils literal notranslate"><span class="pre">/home/airflow</span></code> below if the SSH account has a different home. If the
+remote package is in a virtual environment, prepend its activation command to
+<code class="docutils literal notranslate"><span class="pre">command_prefix</span></code>, for example <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">/opt/systemd-venv/bin/activate</span></code>.</p>
+<p>Save this DAG in the DAG folder:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">DAG</span>
+</span><span id="line-4"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">SSHOperatorArgs</span>
+</span><span id="line-5"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_systemd</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServiceConfiguration</span><span class="p">,</span> <span class="n">ServiceUnitConfiguration</span><span class="p">,</span> <span class="n">SystemdSSH</span><span class="p">,</span> <span class="n">SystemdSSHAirflowConfiguration</span>
+</span><span id="line-6">
+</span><span id="line-7"><span class="k">with</span> <span class="n">DAG</span><span class="p">(</span>
+</span><span id="line-8">    <span class="n">dag_id</span><span class="o">=</span><span class="s2">"ssh-systemd"</span><span class="p">,</span>
+</span><span id="line-9">    <span class="n">schedule</span><span class="o">=</span><span class="s2">"@daily"</span><span class="p">,</span>
+</span><span id="line-10">    <span class="n">start_date</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2025</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">),</span>
+</span><span id="line-11">    <span class="n">catchup</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+</span><span id="line-12"><span class="p">)</span> <span class="k">as</span> <span class="n">dag</span><span class="p">:</span>
+</span><span id="line-13">    <span class="n">systemd</span> <span class="o">=</span> <span class="n">SystemdSSH</span><span class="p">(</span>
+</span><span id="line-14">        <span class="n">dag</span><span class="o">=</span><span class="n">dag</span><span class="p">,</span>
+</span><span id="line-15">        <span class="n">cfg</span><span class="o">=</span><span class="n">SystemdSSHAirflowConfiguration</span><span class="p">(</span>
+</span><span id="line-16">            <span class="n">scope</span><span class="o">=</span><span class="s2">"user"</span><span class="p">,</span>
+</span><span id="line-17">            <span class="n">unit_dir</span><span class="o">=</span><span class="s2">"/home/airflow/.config/systemd/user"</span><span class="p">,</span>
+</span><span id="line-18">            <span class="n">working_dir</span><span class="o">=</span><span class="s2">"/var/tmp/ssh-systemd"</span><span class="p">,</span>
+</span><span id="line-19">            <span class="n">command_prefix</span><span class="o">=</span><span class="p">(</span>
+</span><span id="line-20">                <span class="s1">'export XDG_RUNTIME_DIR="/run/user/$(id -u)"</span><span class="se">\n</span><span class="s1">'</span>
+</span><span id="line-21">                <span class="s1">'export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"'</span>
+</span><span id="line-22">            <span class="p">),</span>
+</span><span id="line-23">            <span class="n">ssh_operator_args</span><span class="o">=</span><span class="n">SSHOperatorArgs</span><span class="p">(</span><span class="n">ssh_conn_id</span><span class="o">=</span><span class="s2">"systemd-host"</span><span class="p">),</span>
+</span><span id="line-24">            <span class="n">service</span><span class="o">=</span><span class="p">{</span>
+</span><span id="line-25">                <span class="s2">"airflow-ssh-batch"</span><span class="p">:</span> <span class="n">ServiceUnitConfiguration</span><span class="p">(</span>
+</span><span id="line-26">                    <span class="n">service</span><span class="o">=</span><span class="n">ServiceConfiguration</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="s2">"exec"</span><span class="p">,</span> <span class="n">exec_start</span><span class="o">=</span><span class="s2">"/bin/sleep 5"</span><span class="p">),</span>
+</span><span id="line-27">                <span class="p">),</span>
+</span><span id="line-28">            <span class="p">},</span>
+</span><span id="line-29">        <span class="p">),</span>
+</span><span id="line-30">    <span class="p">)</span>
+</span></code></pre></div>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">airflow</span> <span class="pre">tasks</span> <span class="pre">list</span> <span class="pre">ssh-systemd</span></code>, then trigger <code class="docutils literal notranslate"><span class="pre">ssh-systemd</span></code>. Service start,
+checks, restart, stop, and cleanup all use the configured SSH connection.</p>
+</section>
+<section id="how-to-run-a-service-over-ssh-with-airflow-config">
+<h2>How to run a service over SSH with airflow-config<a class="headerlink" href="#how-to-run-a-service-over-ssh-with-airflow-config" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-run-a-service-over-ssh-with-airflow-config'">¶</a></h2>
+<p>Complete the remote package, SSH connection, and user manager setup from the
+<a class="reference internal" href="#how-to-run-a-service-over-ssh-in-python">SSH Python guide</a>. Install
+<code class="docutils literal notranslate"><span class="pre">airflow-config</span></code> in the DAG parsing environment.</p>
+<p>Create <code class="docutils literal notranslate"><span class="pre">config/ssh_systemd.yaml</span></code> beside the DAG loader, replacing paths and the
+command for your SSH account:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="c1"># @package _global_</span>
+</span><span id="line-2"><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_config.Configuration</span>
+</span><span id="line-3">
+</span><span id="line-4"><span class="nt">dags</span><span class="p">:</span>
+</span><span id="line-5"><span class="w">  </span><span class="nt">ssh-systemd</span><span class="p">:</span>
+</span><span id="line-6"><span class="w">    </span><span class="nt">schedule</span><span class="p">:</span><span class="w"> </span><span class="s">"@daily"</span>
+</span><span id="line-7"><span class="w">    </span><span class="nt">start_date</span><span class="p">:</span><span class="w"> </span><span class="s">"2025-01-01"</span>
+</span><span id="line-8"><span class="w">    </span><span class="nt">catchup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="line-9"><span class="w">    </span><span class="nt">tasks</span><span class="p">:</span>
+</span><span id="line-10"><span class="w">      </span><span class="nt">run</span><span class="p">:</span>
+</span><span id="line-11"><span class="w">        </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_systemd.SystemdSSHTask</span>
+</span><span id="line-12"><span class="w">        </span><span class="nt">cfg</span><span class="p">:</span>
+</span><span id="line-13"><span class="w">          </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+</span><span id="line-14"><span class="w">          </span><span class="nt">unit_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/airflow/.config/systemd/user</span>
+</span><span id="line-15"><span class="w">          </span><span class="nt">working_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/tmp/ssh-systemd</span>
+</span><span id="line-16"><span class="w">          </span><span class="nt">command_prefix</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|-</span>
+</span><span id="line-17"><span class="w">            </span><span class="no">export XDG_RUNTIME_DIR="/run/user/$(id -u)"</span>
+</span><span id="line-18"><span class="w">            </span><span class="no">export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"</span>
+</span><span id="line-19"><span class="w">          </span><span class="nt">ssh_operator_args</span><span class="p">:</span>
+</span><span id="line-20"><span class="w">            </span><span class="nt">ssh_conn_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">systemd-host</span>
+</span><span id="line-21"><span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+</span><span id="line-22"><span class="w">            </span><span class="nt">airflow-ssh-batch</span><span class="p">:</span>
+</span><span id="line-23"><span class="w">              </span><span class="nt">service</span><span class="p">:</span>
+</span><span id="line-24"><span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exec</span>
+</span><span id="line-25"><span class="w">                </span><span class="nt">exec_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/sleep 5</span>
+</span></code></pre></div>
+</div>
+<p>If needed, add <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">/opt/systemd-venv/bin/activate</span></code> as the first line of
+<code class="docutils literal notranslate"><span class="pre">command_prefix</span></code>. Save <code class="docutils literal notranslate"><span class="pre">ssh_systemd.py</span></code> in the DAG folder:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="sd">"""Generate Airflow DAGs from the SSH systemd configuration."""</span>
+</span><span id="line-2">
+</span><span id="line-3"><span class="kn">from</span><span class="w"> </span><span class="nn">airflow_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
+</span><span id="line-4">
+</span><span id="line-5"><span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s2">"config"</span><span class="p">,</span> <span class="s2">"ssh_systemd"</span><span class="p">)</span>
+</span><span id="line-6"><span class="n">config</span><span class="o">.</span><span class="n">generate_in_mem</span><span class="p">()</span>
+</span></code></pre></div>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">airflow</span> <span class="pre">tasks</span> <span class="pre">list</span> <span class="pre">ssh-systemd</span></code>, then trigger <code class="docutils literal notranslate"><span class="pre">ssh-systemd</span></code>. Deploy either
+this loader or the inline Python DAG for that DAG ID.</p>
+</section>
+<section id="how-to-use-the-system-manager">
+<h2>How to use the system manager<a class="headerlink" href="#how-to-use-the-system-manager" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-use-the-system-manager'">¶</a></h2>
+<p>Set <code class="docutils literal notranslate"><span class="pre">scope="system"</span></code> and <code class="docutils literal notranslate"><span class="pre">unit_dir="/etc/systemd/system"</span></code> on either Python
+configuration model, or set these fields under <code class="docutils literal notranslate"><span class="pre">cfg</span></code> in YAML:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system</span>
+</span><span id="line-2"><span class="nt">unit_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/systemd/system</span>
+</span></code></pre></div>
+</div>
+<p>Run the lifecycle as an account authorized to write that directory and issue
+system-wide <code class="docutils literal notranslate"><span class="pre">systemctl</span></code> commands. For SSH, select that account in the Airflow
+connection. The client does not add <code class="docutils literal notranslate"><span class="pre">sudo</span></code> to commands. Set <code class="docutils literal notranslate"><span class="pre">service.user</span></code> on
+each service if the workload should run as a different Unix user:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">service</span><span class="p">:</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">airflow-system-batch</span><span class="p">:</span>
+</span><span id="line-3"><span class="w">    </span><span class="nt">service</span><span class="p">:</span>
+</span><span id="line-4"><span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exec</span>
+</span><span id="line-5"><span class="w">      </span><span class="nt">exec_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/jobs/batch</span>
+</span><span id="line-6"><span class="w">      </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow</span>
+</span></code></pre></div>
+</div>
+<p>Use a writable <code class="docutils literal notranslate"><span class="pre">working_dir</span></code> for the lifecycle account. Apply the scope and unit
+directory together; changing <code class="docutils literal notranslate"><span class="pre">scope</span></code> on an already constructed model does not
+recompute an existing <code class="docutils literal notranslate"><span class="pre">unit_dir</span></code>.</p>
+</section>
+<section id="how-to-limit-monitoring-or-keep-a-service-running">
+<h2>How to limit monitoring or keep a service running<a class="headerlink" href="#how-to-limit-monitoring-or-keep-a-service-running" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-limit-monitoring-or-keep-a-service-running'">¶</a></h2>
+<p>Set monitoring limits under <code class="docutils literal notranslate"><span class="pre">cfg</span></code> in local or SSH YAML:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">check_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">00:00:10</span>
+</span><span id="line-2"><span class="nt">check_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">08:00:00</span>
+</span><span id="line-3"><span class="nt">runtime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">04:00:00</span>
+</span><span id="line-4"><span class="nt">maxretrigger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+</span></code></pre></div>
+</div>
+<p>In Python, use <code class="docutils literal notranslate"><span class="pre">timedelta(seconds=10)</span></code>, <code class="docutils literal notranslate"><span class="pre">timedelta(hours=8)</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">timedelta(hours=4)</span></code> for the three duration fields, importing <code class="docutils literal notranslate"><span class="pre">timedelta</span></code> from
+<code class="docutils literal notranslate"><span class="pre">datetime</span></code>. Use <code class="docutils literal notranslate"><span class="pre">runtime</span></code> or <code class="docutils literal notranslate"><span class="pre">endtime</span></code> to end monitoring through the stop branch;
+<code class="docutils literal notranslate"><span class="pre">check_timeout</span></code> is the sensor timeout. See the
+<a class="reference internal" href="api.html#monitoring-and-lifecycle-fields"><span class="std std-ref">timing reference</span></a> for reference dates.</p>
+<p>To retain a service between runs, set <code class="docutils literal notranslate"><span class="pre">stop_on_exit=False</span></code>, <code class="docutils literal notranslate"><span class="pre">cleanup=False</span></code>,
+<code class="docutils literal notranslate"><span class="pre">restart_on_initial=True</span></code>, and <code class="docutils literal notranslate"><span class="pre">restart_on_retrigger=True</span></code> in Python, or under
+<code class="docutils literal notranslate"><span class="pre">cfg</span></code> in YAML:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">stop_on_exit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="line-2"><span class="nt">cleanup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</span><span id="line-3"><span class="nt">restart_on_initial</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="line-4"><span class="nt">restart_on_retrigger</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span><span id="line-5"><span class="nt">runtime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">04:00:00</span>
+</span></code></pre></div>
+</div>
+<p>Keep unit names, scope, and paths stable across runs. Set an end condition for
+monitoring a service that never exits. To let systemd restart it between Airflow
+runs, set <code class="docutils literal notranslate"><span class="pre">restart:</span> <span class="pre">on-failure</span></code> inside its <code class="docutils literal notranslate"><span class="pre">service</span></code> section.</p>
 </section>
 <section id="how-to-chain-the-lifecycle-with-other-tasks">
 <h2>How to chain the lifecycle with other tasks<a class="headerlink" href="#how-to-chain-the-lifecycle-with-other-tasks" title="Link to this heading" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#how-to-chain-the-lifecycle-with-other-tasks'">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">Systemd</span></code> object behaves like a task group boundary:</p>
+<p>In Python, connect existing Airflow tasks to the <code class="docutils literal notranslate"><span class="pre">Systemd</span></code> or <code class="docutils literal notranslate"><span class="pre">SystemdSSH</span></code>
+object:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="n">prepare</span> <span class="o">&gt;&gt;</span> <span class="n">systemd</span> <span class="o">&gt;&gt;</span> <span class="n">publish</span>
 </span></code></pre></div>
 </div>
-<p>Upstream dependencies attach to <code class="docutils literal notranslate"><span class="pre">configure_systemd</span></code>. Downstream dependencies
-attach to <code class="docutils literal notranslate"><span class="pre">unconfigure_systemd</span></code>, including when cleanup is represented by a skip
-task.</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">airflow-config</span></code>, use the task mapping key in dependencies:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span id="line-1"><span class="nt">tasks</span><span class="p">:</span>
+</span><span id="line-2"><span class="w">  </span><span class="nt">prepare</span><span class="p">:</span>
+</span><span id="line-3"><span class="w">    </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_pydantic.BashTask</span>
+</span><span id="line-4"><span class="w">    </span><span class="nt">bash_command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">echo prepare</span>
+</span><span id="line-5"><span class="w">  </span><span class="nt">run</span><span class="p">:</span>
+</span><span id="line-6"><span class="w">    </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_systemd.SystemdTask</span>
+</span><span id="line-7"><span class="w">    </span><span class="nt">dependencies</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">prepare</span><span class="p p-Indicator">]</span>
+</span><span id="line-8"><span class="w">    </span><span class="nt">cfg</span><span class="p">:</span>
+</span><span id="line-9"><span class="w">      </span><span class="nt">scope</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">user</span>
+</span><span id="line-10"><span class="w">      </span><span class="nt">unit_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/airflow/.config/systemd/user</span>
+</span><span id="line-11"><span class="w">      </span><span class="nt">working_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/tmp/chained-systemd</span>
+</span><span id="line-12"><span class="w">      </span><span class="nt">service</span><span class="p">:</span>
+</span><span id="line-13"><span class="w">        </span><span class="nt">airflow-chained-batch</span><span class="p">:</span>
+</span><span id="line-14"><span class="w">          </span><span class="nt">service</span><span class="p">:</span>
+</span><span id="line-15"><span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exec</span>
+</span><span id="line-16"><span class="w">            </span><span class="nt">exec_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/bin/sleep 5</span>
+</span><span id="line-17"><span class="w">  </span><span class="nt">publish</span><span class="p">:</span>
+</span><span id="line-18"><span class="w">    </span><span class="nt">_target_</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">airflow_pydantic.BashTask</span>
+</span><span id="line-19"><span class="w">    </span><span class="nt">bash_command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">echo publish</span>
+</span><span id="line-20"><span class="w">    </span><span class="nt">dependencies</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">run</span><span class="p p-Indicator">]</span>
+</span></code></pre></div>
+</div>
+<p>Upstream tasks precede configuration; downstream tasks follow unconfiguration.
+Keep stop and cleanup enabled for downstream tasks with the default
+<code class="docutils literal notranslate"><span class="pre">all_success</span></code> trigger rule. Disabling cleanup creates a skipped boundary task.</p>
 </section>
 </section>
 </div></div><aside class="hidden text-sm xl:block" id="right-sidebar">
 <div class="sticky top-16 -mt-10 max-h-[calc(100vh-5rem)] h-full overflow-y-auto pt-6 space-y-2"><p class="font-medium">On this page</p>
 <ul>
-<li><a :data-current="activeSection === '#how-to-keep-a-service-running-after-the-dag-finishes'" class="reference internal" href="#how-to-keep-a-service-running-after-the-dag-finishes">How to keep a service running after the DAG finishes</a></li>
-<li><a :data-current="activeSection === '#how-to-limit-monitoring'" class="reference internal" href="#how-to-limit-monitoring">How to limit monitoring</a></li>
-<li><a :data-current="activeSection === '#how-to-manage-a-remote-host'" class="reference internal" href="#how-to-manage-a-remote-host">How to manage a remote host</a></li>
+<li><a :data-current="activeSection === '#how-to-prepare-a-user-manager'" class="reference internal" href="#how-to-prepare-a-user-manager">How to prepare a user manager</a></li>
+<li><a :data-current="activeSection === '#how-to-run-a-local-service-in-python'" class="reference internal" href="#how-to-run-a-local-service-in-python">How to run a local service in Python</a></li>
+<li><a :data-current="activeSection === '#how-to-run-a-local-service-with-airflow-config'" class="reference internal" href="#how-to-run-a-local-service-with-airflow-config">How to run a local service with airflow-config</a></li>
+<li><a :data-current="activeSection === '#how-to-run-a-service-over-ssh-in-python'" class="reference internal" href="#how-to-run-a-service-over-ssh-in-python">How to run a service over SSH in Python</a></li>
+<li><a :data-current="activeSection === '#how-to-run-a-service-over-ssh-with-airflow-config'" class="reference internal" href="#how-to-run-a-service-over-ssh-with-airflow-config">How to run a service over SSH with airflow-config</a></li>
+<li><a :data-current="activeSection === '#how-to-use-the-system-manager'" class="reference internal" href="#how-to-use-the-system-manager">How to use the system manager</a></li>
+<li><a :data-current="activeSection === '#how-to-limit-monitoring-or-keep-a-service-running'" class="reference internal" href="#how-to-limit-monitoring-or-keep-a-service-running">How to limit monitoring or keep a service running</a></li>
 <li><a :data-current="activeSection === '#how-to-chain-the-lifecycle-with-other-tasks'" class="reference internal" href="#how-to-chain-the-lifecycle-with-other-tasks">How to chain the lifecycle with other tasks</a></li>
 </ul>
 </div>

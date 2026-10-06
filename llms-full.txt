@@ -9,32 +9,55 @@ Run and monitor systemd-managed jobs from Apache Airflow.
 [![License](https://img.shields.io/github/license/airflow-laminar/airflow-systemd)](https://github.com/airflow-laminar/airflow-systemd)
 [![PyPI](https://img.shields.io/pypi/v/airflow-systemd.svg)](https://pypi.python.org/pypi/airflow-systemd)
 
+Manage services on an Airflow worker’s systemd manager or on an SSH host.
+Define units directly in a Python DAG or in `airflow-config` YAML.
+
 ```python
+from datetime import datetime, timezone
+from pathlib import Path
+
 from airflow import DAG
 from airflow_systemd import ServiceConfiguration, ServiceUnitConfiguration, Systemd, SystemdAirflowConfiguration
 
-dag = DAG(dag_id="nightly-systemd", schedule="@daily")
-config = SystemdAirflowConfiguration(
-    scope="user",
-    service={
-        "nightly": ServiceUnitConfiguration(
-            service=ServiceConfiguration(type="exec", exec_start="/opt/jobs/nightly")
-        )
-    },
-)
-Systemd(dag=dag, cfg=config)
+with DAG(
+    dag_id="nightly-systemd",
+    schedule="@daily",
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    catchup=False,
+) as dag:
+    systemd = Systemd(
+        dag=dag,
+        cfg=SystemdAirflowConfiguration(
+            scope="user",
+            unit_dir=Path.home() / ".config/systemd/user",
+            working_dir=Path.home() / ".local/state/nightly-systemd",
+            service={
+                "airflow-nightly": ServiceUnitConfiguration(
+                    service=ServiceConfiguration(type="exec", exec_start="/bin/sleep 5"),
+                ),
+            },
+        ),
+    )
 ```
 
-The generated task lifecycle writes unit files, starts services, monitors state
-with `airflow-ha`, handles retriggers, stops services, and optionally removes the
-generated configuration. `SystemdSSH` applies the same lifecycle remotely.
+The lifecycle writes unit files, reloads the manager, starts services, monitors
+state with `airflow-ha`, and stops and removes generated configuration on
+successful completion. `SystemdSSH` performs configuration and service
+operations over the configured SSH connection.
 
 ## Documentation
 
-- [Tutorial: run a systemd job from Airflow](docs/src/tutorial.html.md)
-- [How-to guides](docs/src/how-to.html.md)
-- [Why Airflow owns the schedule](docs/src/explanation.html.md)
-- [API reference](docs/src/api.html.md)
+Start with the [tutorial](docs/src/tutorial.html.md) to run a self-contained local
+service and check cleanup. For an existing deployment, choose a how-to guide:
+
+| Execution    | Inline Python                                                                             | `airflow-config` YAML                                                                                 |
+|--------------|-------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------|
+| Local worker | [Run a local service](docs/src/how-to.html.md#how-to-run-a-local-service-in-python)       | [Configure a local service](docs/src/how-to.html.md#how-to-run-a-local-service-with-airflow-config)   |
+| SSH host     | [Run a service over SSH](docs/src/how-to.html.md#how-to-run-a-service-over-ssh-in-python) | [Configure an SSH service](docs/src/how-to.html.md#how-to-run-a-service-over-ssh-with-airflow-config) |
+
+The [API reference](docs/src/api.html.md) describes scope, paths, monitoring defaults,
+and DAG constraints. [Why Airflow owns the schedule](docs/src/explanation.html.md)
+explains service ownership, user managers, remote paths, and restart policies.
 
 Published documentation is available at
 [airflow-laminar.github.io/airflow-systemd](https://airflow-laminar.github.io/airflow-systemd/).
@@ -53,207 +76,654 @@ This library was generated using [copier](https://copier.readthedocs.io/en/stabl
 
 <!-- docs/src/tutorial.html.md -->
 
-# Tutorial: run a systemd job from Airflow
+# Tutorial: run your first systemd job
 
-In this tutorial, we will define a user-scoped systemd job in `airflow-config`
-YAML and load it as an Airflow DAG.
+We will run a five-second service from Airflow, monitor its completion, and
+remove its unit file and saved configuration.
 
-## Install the packages
+Use an initialized Airflow 2 environment on Linux with systemd. Run the DAG
+parser and all tasks as the same Unix user on that host. The user needs a
+running systemd user manager and permission to write its home directory.
 
-For Airflow 3, run:
+## Check the user manager
+
+Run these commands as the Airflow user:
 
 ```bash
-pip install 'airflow-systemd[airflow3]' airflow-config
+systemctl --user show -p Version
+test ! -e "$HOME/.config/systemd/user/airflow-systemd-demo.service"
 ```
 
-Use the `airflow` extra instead when running Airflow 2. The worker must have a
-user systemd manager and permission to write its user unit directory.
+The first command prints the manager’s version. The second exits successfully
+when the tutorial’s unit filename is unused. If the first command cannot connect
+to the user bus, complete the [user manager setup](how-to.html.md#how-to-prepare-a-user-manager)
+before continuing.
 
-## Define the DAG
+## Install the integration
 
-Create `config/systemd.yaml`:
+In the Airflow environment, run:
 
-```yaml
-dags:
-  nightly-systemd:
-    schedule: "@daily"
-    start_date: "2024-01-01"
-    catchup: false
-    tasks:
-      run-nightly:
-        _target_: airflow_systemd.SystemdTask
-        cfg:
-          scope: user
-          stop_on_exit: true
-          cleanup: true
-          service:
-            nightly:
-              unit:
-                description: Nightly batch job
-              service:
-                type: exec
-                exec_start: /opt/jobs/nightly
+```bash
+pip install 'airflow-systemd[airflow]'
 ```
 
-## Load the configuration
+## Create the DAG
 
-Create `nightly_systemd.py` in the DAG folder:
+Save this as `systemd_demo.py` in your Airflow DAG folder:
 
 ```python
-from airflow_config import load_config
+from datetime import datetime, timezone
+from pathlib import Path
 
-config = load_config("config", "systemd")
-config.generate_in_mem()
+from airflow import DAG
+from airflow_systemd import ServiceConfiguration, ServiceUnitConfiguration, Systemd, SystemdAirflowConfiguration
+
+with DAG(
+    dag_id="systemd-demo",
+    schedule=None,
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    catchup=False,
+) as dag:
+    systemd = Systemd(
+        dag=dag,
+        cfg=SystemdAirflowConfiguration(
+            scope="user",
+            unit_dir=Path.home() / ".config/systemd/user",
+            working_dir=Path.home() / ".local/state/airflow-systemd-demo",
+            service={
+                "airflow-systemd-demo": ServiceUnitConfiguration(
+                    service=ServiceConfiguration(type="exec", exec_start="/bin/sleep 5"),
+                ),
+            },
+        ),
+    )
 ```
 
-## Inspect the lifecycle
-
-Parse the DAG folder:
+List the generated tasks:
 
 ```bash
-airflow dags list | grep nightly-systemd
-airflow tasks list nightly-systemd
+airflow tasks list systemd-demo
 ```
 
-The task list includes the configure, start, check, restart, stop, and
-unconfigure steps created by `Systemd`.
+Look for `systemd-demo-configure-systemd`, `systemd-demo-start-services`, and
+`systemd-demo-check-services`. Restart, stop, cleanup, and failure-handling tasks
+also appear.
 
-Trigger the DAG in a test environment containing `/opt/jobs/nightly`. The check
-step remains active while the service runs and completes after systemd reports a
-successful stopped unit.
+## Run the service
 
-You have now connected a declarative Airflow DAG to a systemd-managed process.
+Execute one DAG run locally:
+
+```bash
+airflow dags test systemd-demo 2025-01-01
+```
+
+The configure task writes the service unit and `pydantic.json`, then reloads the
+user manager. The start task runs `/bin/sleep`. After the service finishes, the
+check task takes its success branch. Stop and cleanup remove the unit and saved
+configuration, then reload the manager again. The DAG run finishes with state
+`success`; restart and force-kill branches are skipped.
+
+Check the two generated paths:
+
+```bash
+test ! -e "$HOME/.config/systemd/user/airflow-systemd-demo.service" && echo "Unit removed"
+test ! -d "$HOME/.local/state/airflow-systemd-demo" && echo "State removed"
+```
+
+You should see `Unit removed` and `State removed`.
+
+For existing deployments, follow the [local and SSH guides](how-to.html.md). The
+[configuration reference](api.html.md) lists scope and lifecycle settings.
 
 <!-- docs/src/how-to.html.md -->
 
 # How-to guides
 
-These guides cover common local, remote, and lifecycle configurations.
+Run systemd services on an Airflow worker or an SSH host, with configuration in
+Python or `airflow-config` YAML.
 
-## How to keep a service running after the DAG finishes
+| Execution    | Inline Python        | `airflow-config`   |
+|--------------|----------------------|--------------------|
+| Local worker | [Local Python DAG]() | [Local YAML DAG]() |
+| SSH host     | [SSH Python DAG]()   | [SSH YAML DAG]()   |
 
-Disable stop and cleanup, then choose when to restart the persistent service:
+## How to prepare a user manager
 
-```yaml
-cfg:
-  scope: user
-  stop_on_exit: false
-  cleanup: false
-  restart_on_initial: true
-  restart_on_retrigger: true
-  service:
-    api:
-      service:
-        type: exec
-        exec_start: /opt/services/api
-        restart: on-failure
+For `scope="user"`, run Airflow tasks or SSH commands as the account that owns
+the services. On the target Linux host, check access as that account:
+
+```bash
+systemctl --user show -p Version
 ```
 
-Use this for services whose ownership remains with systemd between Airflow runs.
+If services must remain available after logout, have an administrator enable
+lingering for the service account, here named `airflow`:
 
-## How to limit monitoring
-
-Set Airflow-specific timing fields on `SystemdAirflowConfiguration`:
-
-```yaml
-cfg:
-  check_interval: 00:00:10
-  check_timeout: 08:00:00
-  runtime: 04:00:00
-  maxretrigger: 3
-  service:
-    batch:
-      service:
-        type: exec
-        exec_start: /opt/jobs/batch
+```bash
+sudo loginctl enable-linger airflow
 ```
 
-`check_interval` controls polling, `check_timeout` controls the sensor timeout,
-and `runtime` controls the allowed external job duration.
+For an Airflow worker or non-interactive SSH session without the user bus
+variables, set them in that process’s environment:
 
-## How to manage a remote host
+```bash
+export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
+```
 
-Use the SSH task model in `airflow-config`:
+Check `systemctl --user show -p Version` again. The user manager and its bus must
+already be running; setting the variables only selects their addresses. For SSH,
+put these exports in `cfg.command_prefix` so they apply to every remote command.
+
+## How to run a local service in Python
+
+Install `airflow-systemd[airflow]` in Airflow 2, or
+`airflow-systemd[airflow3]` in Airflow 3. Complete the
+[user manager setup]().
+
+Run all lifecycle tasks on the same Linux host as the same Unix user. Use one
+worker host or route this DAG to a queue served by that host. Shared storage
+does not provide access to another host’s systemd manager.
+
+Save this DAG in the DAG folder. Replace the command and paths for your worker
+account, and choose a unit name reserved for this DAG:
+
+```python
+from datetime import datetime, timezone
+
+from airflow import DAG
+from airflow_systemd import ServiceConfiguration, ServiceUnitConfiguration, Systemd, SystemdAirflowConfiguration
+
+with DAG(
+    dag_id="local-systemd",
+    schedule="@daily",
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    catchup=False,
+) as dag:
+    systemd = Systemd(
+        dag=dag,
+        cfg=SystemdAirflowConfiguration(
+            scope="user",
+            unit_dir="/home/airflow/.config/systemd/user",
+            working_dir="/var/tmp/local-systemd",
+            service={
+                "airflow-local-batch": ServiceUnitConfiguration(
+                    service=ServiceConfiguration(type="exec", exec_start="/bin/sleep 5"),
+                ),
+            },
+        ),
+    )
+```
+
+Run `airflow tasks list local-systemd`, then trigger `local-systemd`.
+
+## How to run a local service with airflow-config
+
+Use the packages and worker placement from the
+[local Python guide](). Install
+`airflow-config` in the DAG parsing environment.
+
+Create `config/local_systemd.yaml` beside the DAG loader:
 
 ```yaml
+# @package _global_
+_target_: airflow_config.Configuration
+
 dags:
-  remote-systemd:
+  local-systemd:
     schedule: "@daily"
+    start_date: "2025-01-01"
+    catchup: false
     tasks:
-      run-remote:
+      run:
+        _target_: airflow_systemd.SystemdTask
+        cfg:
+          scope: user
+          unit_dir: /home/airflow/.config/systemd/user
+          working_dir: /var/tmp/local-systemd
+          service:
+            airflow-local-batch:
+              service:
+                type: exec
+                exec_start: /bin/sleep 5
+```
+
+Replace paths and the command for your worker account. Save `local_systemd.py`
+in the DAG folder:
+
+```python
+"""Generate Airflow DAGs from the local systemd configuration."""
+
+from airflow_config import load_config
+
+config = load_config("config", "local_systemd")
+config.generate_in_mem()
+```
+
+Run `airflow tasks list local-systemd`, then trigger `local-systemd`. Deploy
+either this loader or the inline Python DAG for that DAG ID.
+
+## How to run a service over SSH in Python
+
+Install `airflow-systemd[airflow]` in Airflow 2, or
+`airflow-systemd[airflow3]` in Airflow 3. These extras include the SSH provider.
+On the remote Linux host, install the convenience commands:
+
+```bash
+pip install systemd-pydantic
+```
+
+Create an Airflow SSH connection named `systemd-host` for the `airflow` account
+on your target host. Complete the [user manager setup]()
+for that account. Ensure `systemctl` and `_systemd_convenience` are on the remote
+non-interactive shell’s `PATH`.
+
+Set `unit_dir` and `working_dir` to explicit absolute paths on the remote host.
+Replace `/home/airflow` below if the SSH account has a different home. If the
+remote package is in a virtual environment, prepend its activation command to
+`command_prefix`, for example `source /opt/systemd-venv/bin/activate`.
+
+Save this DAG in the DAG folder:
+
+```python
+from datetime import datetime, timezone
+
+from airflow import DAG
+from airflow_pydantic import SSHOperatorArgs
+from airflow_systemd import ServiceConfiguration, ServiceUnitConfiguration, SystemdSSH, SystemdSSHAirflowConfiguration
+
+with DAG(
+    dag_id="ssh-systemd",
+    schedule="@daily",
+    start_date=datetime(2025, 1, 1, tzinfo=timezone.utc),
+    catchup=False,
+) as dag:
+    systemd = SystemdSSH(
+        dag=dag,
+        cfg=SystemdSSHAirflowConfiguration(
+            scope="user",
+            unit_dir="/home/airflow/.config/systemd/user",
+            working_dir="/var/tmp/ssh-systemd",
+            command_prefix=(
+                'export XDG_RUNTIME_DIR="/run/user/$(id -u)"\n'
+                'export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"'
+            ),
+            ssh_operator_args=SSHOperatorArgs(ssh_conn_id="systemd-host"),
+            service={
+                "airflow-ssh-batch": ServiceUnitConfiguration(
+                    service=ServiceConfiguration(type="exec", exec_start="/bin/sleep 5"),
+                ),
+            },
+        ),
+    )
+```
+
+Run `airflow tasks list ssh-systemd`, then trigger `ssh-systemd`. Service start,
+checks, restart, stop, and cleanup all use the configured SSH connection.
+
+## How to run a service over SSH with airflow-config
+
+Complete the remote package, SSH connection, and user manager setup from the
+[SSH Python guide](). Install
+`airflow-config` in the DAG parsing environment.
+
+Create `config/ssh_systemd.yaml` beside the DAG loader, replacing paths and the
+command for your SSH account:
+
+```yaml
+# @package _global_
+_target_: airflow_config.Configuration
+
+dags:
+  ssh-systemd:
+    schedule: "@daily"
+    start_date: "2025-01-01"
+    catchup: false
+    tasks:
+      run:
         _target_: airflow_systemd.SystemdSSHTask
         cfg:
           scope: user
-          command_prefix: source /etc/profile &&
+          unit_dir: /home/airflow/.config/systemd/user
+          working_dir: /var/tmp/ssh-systemd
+          command_prefix: |-
+            export XDG_RUNTIME_DIR="/run/user/$(id -u)"
+            export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
           ssh_operator_args:
             ssh_conn_id: systemd-host
           service:
-            report:
+            airflow-ssh-batch:
               service:
                 type: exec
-                exec_start: /opt/jobs/report
+                exec_start: /bin/sleep 5
 ```
 
-Configuration and cleanup use Airflow’s SSH operator. Status and lifecycle calls
-use a `SystemdClient` command runner backed by the same SSH connection.
+If needed, add `source /opt/systemd-venv/bin/activate` as the first line of
+`command_prefix`. Save `ssh_systemd.py` in the DAG folder:
+
+```python
+"""Generate Airflow DAGs from the SSH systemd configuration."""
+
+from airflow_config import load_config
+
+config = load_config("config", "ssh_systemd")
+config.generate_in_mem()
+```
+
+Run `airflow tasks list ssh-systemd`, then trigger `ssh-systemd`. Deploy either
+this loader or the inline Python DAG for that DAG ID.
+
+## How to use the system manager
+
+Set `scope="system"` and `unit_dir="/etc/systemd/system"` on either Python
+configuration model, or set these fields under `cfg` in YAML:
+
+```yaml
+scope: system
+unit_dir: /etc/systemd/system
+```
+
+Run the lifecycle as an account authorized to write that directory and issue
+system-wide `systemctl` commands. For SSH, select that account in the Airflow
+connection. The client does not add `sudo` to commands. Set `service.user` on
+each service if the workload should run as a different Unix user:
+
+```yaml
+service:
+  airflow-system-batch:
+    service:
+      type: exec
+      exec_start: /opt/jobs/batch
+      user: airflow
+```
+
+Use a writable `working_dir` for the lifecycle account. Apply the scope and unit
+directory together; changing `scope` on an already constructed model does not
+recompute an existing `unit_dir`.
+
+## How to limit monitoring or keep a service running
+
+Set monitoring limits under `cfg` in local or SSH YAML:
+
+```yaml
+check_interval: 00:00:10
+check_timeout: 08:00:00
+runtime: 04:00:00
+maxretrigger: 3
+```
+
+In Python, use `timedelta(seconds=10)`, `timedelta(hours=8)`, and
+`timedelta(hours=4)` for the three duration fields, importing `timedelta` from
+`datetime`. Use `runtime` or `endtime` to end monitoring through the stop branch;
+`check_timeout` is the sensor timeout. See the
+[timing reference](api.html.md#monitoring-and-lifecycle-fields) for reference dates.
+
+To retain a service between runs, set `stop_on_exit=False`, `cleanup=False`,
+`restart_on_initial=True`, and `restart_on_retrigger=True` in Python, or under
+`cfg` in YAML:
+
+```yaml
+stop_on_exit: false
+cleanup: false
+restart_on_initial: true
+restart_on_retrigger: true
+runtime: 04:00:00
+```
+
+Keep unit names, scope, and paths stable across runs. Set an end condition for
+monitoring a service that never exits. To let systemd restart it between Airflow
+runs, set `restart: on-failure` inside its `service` section.
 
 ## How to chain the lifecycle with other tasks
 
-The `Systemd` object behaves like a task group boundary:
+In Python, connect existing Airflow tasks to the `Systemd` or `SystemdSSH`
+object:
 
 ```python
 prepare >> systemd >> publish
 ```
 
-Upstream dependencies attach to `configure_systemd`. Downstream dependencies
-attach to `unconfigure_systemd`, including when cleanup is represented by a skip
-task.
+In `airflow-config`, use the task mapping key in dependencies:
+
+```yaml
+tasks:
+  prepare:
+    _target_: airflow_pydantic.BashTask
+    bash_command: echo prepare
+  run:
+    _target_: airflow_systemd.SystemdTask
+    dependencies: [prepare]
+    cfg:
+      scope: user
+      unit_dir: /home/airflow/.config/systemd/user
+      working_dir: /var/tmp/chained-systemd
+      service:
+        airflow-chained-batch:
+          service:
+            type: exec
+            exec_start: /bin/sleep 5
+  publish:
+    _target_: airflow_pydantic.BashTask
+    bash_command: echo publish
+    dependencies: [run]
+```
+
+Upstream tasks precede configuration; downstream tasks follow unconfiguration.
+Keep stop and cleanup enabled for downstream tasks with the default
+`all_success` trigger rule. Disabling cleanup creates a skipped boundary task.
 
 <!-- docs/src/explanation.html.md -->
 
 # Why Airflow owns the schedule
 
-Airflow and systemd can both schedule work: Airflow through DAG schedules and
-systemd through timer units. `airflow-systemd` deliberately uses Airflow as the
-only scheduler and starts service units directly.
+Airflow coordinates workflows; systemd owns service processes, their children,
+and their resource groups. `airflow-systemd` connects those responsibilities by
+creating service units and starting them within an Airflow DAG run.
 
-Two active schedulers would create ambiguous ownership. A timer could start the
-service outside a DAG run, while Airflow would still monitor, restart, or stop it
-according to a different execution interval. Direct service activation keeps
-each external process lifecycle attached to one DAG run. Timer models remain in
-[systemd-pydantic](https://github.com/airflow-laminar/systemd-pydantic) for
-deployments where systemd owns scheduling.
+Systemd can also schedule work through timer units. A timer that starts the same
+service independently of Airflow gives both schedulers control over its lifetime.
+Airflow could then monitor or stop a service started outside its own run. This
+integration starts service units directly, so the DAG schedule remains the
+workload’s scheduling policy. Timer models are re-exported from
+`systemd-pydantic`, but the Airflow lifecycle does not start or enable timers.
 
-## Lifecycle mapping
+## Why worker placement and scope matter
 
-The integration maps external process states to `airflow-ha` results. A finished
-service with an accepted exit status stops monitoring successfully. A running or
-otherwise healthy service continues. A failed service retriggers through the
-restart path. This separates lightweight Airflow polling from process ownership:
-systemd launches, signals, and records the process; Airflow coordinates the
-larger workflow.
+A systemd manager belongs to a host. A user manager also belongs to a Unix user.
+A local lifecycle therefore needs every task to reach the same manager and
+configuration files. Sharing a directory between workers does not share their
+service managers. Routing the tasks to one worker host preserves that ownership.
 
-## Local and SSH execution
+The system manager and user managers have separate unit directories and
+permissions. A user manager lets an application account manage its own services
+without writing system-wide unit files. Its D-Bus session must be reachable from
+the worker or SSH session. Lingering keeps that manager available after logout,
+which matters for services that remain active between DAG runs.
 
-Local mode calls `systemd-pydantic` convenience functions on the worker.
-`SystemdSSH` sends configuration commands through Airflow’s SSH provider and
-uses an SSH-backed `SystemdClient` for status and lifecycle operations. Both
-modes expose the same task graph and Airflow-specific controls.
+System scope fits units managed as part of host administration. The account
+configuring those units needs both filesystem permissions and authorization to
+control the system manager. A service’s `User=` setting controls the workload’s
+identity separately from the account that writes and manages its unit.
 
-## Comparison with supervisord
+## Why SSH configuration needs explicit remote paths
 
-[airflow-supervisor](https://github.com/airflow-laminar/airflow-supervisor)
-creates a dedicated supervisord instance for the job. `airflow-systemd` uses the
-host’s existing service manager instead. Systemd is a natural fit when unit
-files, journald, cgroups, and host boot relationships are already operational
-standards; supervisord is useful when a self-contained process manager is easier
-to provision.
+Configuration models are constructed when Airflow parses a DAG. Their default
+home directory, temporary directory, and username come from that parsing
+process. Those defaults may describe the scheduler rather than the SSH account.
+Explicit remote paths give configuration commands and later task processes the
+same unit files and saved state on the target host.
+
+`SystemdSSH` uses Airflow SSH operators to write and remove configuration.
+Service control and status checks use a `SystemdClient` with an
+`AirflowSSHCommandRunner` backed by the same connection. All of those operations
+run on the remote host. The shell prefix applies to both paths, so environment
+setup for a virtual environment or user bus is consistent across the lifecycle.
+
+## Why monitoring and service restart are separate
+
+The monitor maps service state to `airflow-ha` results. Successful completion
+ends monitoring. Running or otherwise healthy services continue. Failed checks
+take the restart and retrigger path. Airflow polling follows the workflow’s
+monitoring window, while systemd retains ownership of the process.
+
+Systemd’s `Restart=` policy can restart a service while Airflow is between
+checks or DAG runs. Airflow’s restart flags control startup within the DAG
+lifecycle. These policies serve different intervals and can be configured
+independently. Finite batch jobs normally use the default `Restart=no` so their
+completion remains visible to the workflow.
+
+A persistent service may never complete. Its Airflow monitoring window needs an
+end condition, and stop and cleanup must be disabled if the service should
+remain available for the next run. Cleanup normally removes generated unit
+files and saved configuration; journald owns the service’s logs separately.
+
+## Python and airflow-config describe the same lifecycle
+
+Inline Python constructs `Systemd` or `SystemdSSH` with a typed configuration.
+It keeps the definition beside other Airflow code and works without
+`airflow-config`.
+
+YAML loads into `SystemdTask` or `SystemdSSHTask`, which construct the same
+lifecycle classes. `airflow-config` adds Hydra composition and configuration
+loading to the DAG parsing environment. Execution location remains a separate
+choice: either configuration format can target a local or remote manager.
+
+## Systemd and supervisord
+
+[airflow-supervisor](https://github.com/airflow-laminar/airflow-supervisor) creates
+a dedicated supervisord instance with its own PID, logs, and control endpoint.
+`airflow-systemd` uses the target host’s existing manager and journald. Systemd
+fits deployments where services already belong in host administration;
+supervisord fits applications that need a separate process manager installed
+with their dependencies.
 
 <!-- docs/src/api.html.md -->
 
 # API reference
 
-## Airflow lifecycle
+## Lifecycle classes and task models
+
+All names below are exported from `airflow_systemd`.
+
+| Execution   | Lifecycle class   | Configuration model              | `airflow-config` task model   |
+|-------------|-------------------|----------------------------------|-------------------------------|
+| Local       | `Systemd`         | `SystemdAirflowConfiguration`    | `SystemdTask`                 |
+| SSH         | `SystemdSSH`      | `SystemdSSHAirflowConfiguration` | `SystemdSSHTask`              |
+
+`Systemd(dag, cfg, **kwargs)` adds lifecycle tasks to an existing Airflow DAG.
+`cfg` accepts a configuration model or a dictionary validated as that model.
+The optional `systemd_client` keyword supplies a client for client-backed
+operations.
+
+`SystemdSSH(dag, cfg, host=None, **kwargs)` adds the same lifecycle with SSH
+configuration operators and an SSH-backed service client. `host` accepts an
+`airflow-pydantic` `Host` or a dictionary validated as one. It overrides the
+SSH target and hook; its pool is used when `cfg.pool` is unset. Constructor
+keywords can override `command_prefix` and fields in `SSHOperatorArgs`.
+
+`SystemdTaskArgs` contains `cfg` and inherited Airflow task arguments.
+`SystemdSSHTaskArgs` adds optional `host: Host`. The task models’ `operator`
+fields resolve to their corresponding lifecycle classes and reject other
+operators. `SystemdOperator`, `SystemdOperatorArgs`, `SystemdSSHOperator`, and
+`SystemdSSHOperatorArgs` alias the corresponding task models.
+
+### DAG constraints and boundaries
+
+Both lifecycle classes set `catchup=False`, `concurrency=1`,
+`max_active_tasks=1`, and `max_active_runs=1`. Generated task IDs use
+`<dag_id>-<step>`, independent of a task model’s `task_id`. A DAG supports one
+systemd lifecycle; multiple services belong in its `cfg.service` mapping.
+
+The exposed boundaries are `configure_systemd`, `start_services`,
+`check_services`, `restart_services`, `stop_services`, and
+`unconfigure_systemd`. Upstream dependencies attach to configuration;
+downstream dependencies attach to unconfiguration. `systemd_client` returns the
+client stored by the lifecycle.
+
+Stop and cleanup follow the successful monitoring branch. They are not a
+failure finalizer. `cleanup=False` creates a skipped unconfiguration task.
+`stop_on_exit=False` creates skipped stop and unconfiguration tasks, regardless
+of `cleanup`. These skipped boundaries affect downstream `all_success` tasks.
+
+## Configuration models
+
+`SystemdAirflowConfiguration` extends `SystemdConvenienceConfiguration`.
+`SystemdSSHAirflowConfiguration` adds SSH settings. Both inherit systemd unit
+models and path handling from `SystemdConfiguration`.
+
+### Systemd fields
+
+| Field                 | Default                     | Meaning                                                                                                |
+|-----------------------|-----------------------------|--------------------------------------------------------------------------------------------------------|
+| `service`             | Required                    | Mapping of unit names to `ServiceUnitConfiguration` models. Names without a suffix receive `.service`. |
+| `timer`               | Empty mapping               | Timer unit models. Configuration writes them; the Airflow lifecycle does not start or enable timers.   |
+| `scope`               | `system`                    | Manager scope: `system` or `user`. User scope adds `--user` to `systemctl` commands.                   |
+| `unit_dir`            | Scope-dependent             | `/etc/systemd/system` for system scope; the parsing user’s `~/.config/systemd/user` for user scope.    |
+| `working_dir`         | Derived temporary directory | Directory for persisted configuration. Resolved on the parsing host when omitted.                      |
+| `restart`             | `no`                        | Default `Restart=` policy for services without their own value.                                        |
+| `timeout_stop_sec`    | `30s`                       | Default service stop timeout.                                                                          |
+| `kill_mode`           | `control-group`             | Default termination behavior for a service’s processes.                                                |
+| `kill_signal`         | `SIGTERM`                   | Default stop signal.                                                                                   |
+| `success_exit_status` | `[0]`                       | Accepted exit statuses used by service configuration and monitoring.                                   |
+| `command_timeout`     | `60`                        | `systemctl` command timeout in seconds.                                                                |
+
+Per-service values take precedence over convenience defaults. `exec_start`
+accepts a string or list of commands; multiple commands require `type="oneshot"`.
+Commands follow systemd `ExecStart=` syntax. Shell operators require an explicit
+shell command. `working_dir` stores lifecycle state; a service’s
+`working_directory` sets its process working directory.
+
+Configuration writes unit files under `unit_dir` and `pydantic.json` under
+`working_dir`, then reloads the manager. Cleanup stops configured timers and
+services, removes their unit files and saved JSON, reloads the manager, and
+removes `working_dir` only if empty. The shared unit directory remains.
+Units are started directly; configuration does not enable them for boot.
+
+`systemd_json()` returns JSON containing only fields accepted by
+`SystemdConvenienceConfiguration`, excluding Airflow and SSH settings.
+
+### Monitoring and lifecycle fields
+
+| Field                  | Default             | Meaning                                                                           |
+|------------------------|---------------------|-----------------------------------------------------------------------------------|
+| `check_interval`       | 5 seconds           | Polling interval for the `airflow-ha` sensor.                                     |
+| `check_timeout`        | 8 hours             | Sensor timeout.                                                                   |
+| `runtime`              | `None`              | Monitoring end condition relative to `reference_date`.                            |
+| `endtime`              | `None`              | Time-of-day end condition passed to `airflow-ha`.                                 |
+| `maxretrigger`         | `None`              | Retrigger limit passed to `airflow-ha`.                                           |
+| `reference_date`       | `data_interval_end` | Reference for end conditions; also accepts `start_date` or `logical_date`.        |
+| `pool`                 | `None`              | Airflow pool name or `airflow-pydantic` `Pool`.                                   |
+| `stop_on_exit`         | `True`              | Enables service stop on the success path.                                         |
+| `cleanup`              | `True`              | Enables unconfiguration when `stop_on_exit` is also true.                         |
+| `restart_on_initial`   | `False`             | Restarts services on an initial Airflow run.                                      |
+| `restart_on_retrigger` | `False`             | Uses restart during the startup step; takes precedence over `restart_on_initial`. |
+
+Duration fields accept Python `timedelta` values or numeric seconds and duration
+strings in YAML. They are passed to `HighAvailabilityOperator` as `poke_interval`,
+`timeout`, `runtime`, `endtime`, `maxretrigger`, and `reference_date`. The sensor
+uses `mode="poke"`.
+
+### SSH fields and command runner
+
+| Field               | Default                 | Meaning                                                                |
+|---------------------|-------------------------|------------------------------------------------------------------------|
+| `command_prefix`    | Empty string            | Shell commands prepended to remote configuration and service commands. |
+| `ssh_operator_args` | Empty `SSHOperatorArgs` | SSH connection, hook, host, environment, PTY, and timeout settings.    |
+
+`AirflowSSHCommandRunner` accepts an optional `hook`, `command_prefix`,
+`environment`, `get_pty`, `ssh_conn_id`, `remote_host`, `conn_timeout`,
+`cmd_timeout`, and `banner_timeout`. `get_hook()` constructs an Airflow SSH hook
+lazily when no hook was supplied. `run(command: list[str], timeout: int)` shell
+quotes the command arguments, applies the prefix, and returns a
+`systemd-pydantic` `CommandResult` with exit status and decoded stdout/stderr.
+
+`load_airflow_config` aliases `SystemdAirflowConfiguration.load`.
+`load_airflow_ssh_config` aliases `SystemdSSHAirflowConfiguration.load`.
+These load systemd configuration models; `airflow_config.load_config` loads
+collections of declarative DAGs. The [how-to guides](how-to.html.md) cover that
+workflow.
+
+## Generated API
 
 | [`Systemd`](_build/airflow_systemd.Systemd.html.md#airflow_systemd.Systemd)(dag, cfg, \*\*kwargs)                                                | Airflow task group for a locally managed systemd job.   |
 |--------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------|
@@ -268,7 +738,7 @@ to provision.
 | [`load_airflow_config`](_build/airflow_systemd.load_airflow_config.html.md#airflow_systemd.load_airflow_config)([config_dir, ...])               |                                                         |
 | [`load_airflow_ssh_config`](_build/airflow_systemd.load_airflow_ssh_config.html.md#airflow_systemd.load_airflow_ssh_config)([config_dir, ...])   |                                                         |
 
-## Re-exported systemd models
+### Re-exported systemd models
 
 | [`ServiceConfiguration`](_build/airflow_systemd.ServiceConfiguration.html.md#airflow_systemd.ServiceConfiguration)                                  | Process supervision settings from a systemd `[Service]` section.   |
 |-----------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------|
