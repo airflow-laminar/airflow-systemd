@@ -118,6 +118,8 @@ Replace paths and the command for your worker account. Save `local_systemd.py`
 in the DAG folder:
 
 ```python
+"""Generate Airflow DAGs from the local systemd configuration."""
+
 from airflow_config import load_config
 
 config = load_config("config", "local_systemd")
@@ -226,6 +228,8 @@ If needed, add `source /opt/systemd-venv/bin/activate` as the first line of
 `command_prefix`. Save `ssh_systemd.py` in the DAG folder:
 
 ```python
+"""Generate Airflow DAGs from the SSH systemd configuration."""
+
 from airflow_config import load_config
 
 config = load_config("config", "ssh_systemd")
