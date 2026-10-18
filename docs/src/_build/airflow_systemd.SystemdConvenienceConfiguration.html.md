@@ -14,7 +14,7 @@ Systemd defaults and persisted state used by convenience commands.
 
 #### *field* kill_signal *: str* *= 'SIGTERM'*
 
-#### *field* success_exit_status *: list[int | str]* *= [0]*
+#### *field* success_exit_status *: list[int | str]* *[Optional]*
 
 #### *field* command_timeout *: int* *= 60*
 
